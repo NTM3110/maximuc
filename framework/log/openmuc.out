@@ -1,0 +1,823 @@
+Nov 27, 2025 11:53:44 AM org.jline.utils.Log logr
+WARNING: Unable to create a system terminal, creating a dumb terminal (enable debug logging for more information)
+bundle://16d6b393-7571-434a-84d2-14015d648e2c_41.0:1/gosh_profile:23.0IOException: no matches found: bundle://16d6b393-7571-434a-84d2-14015d648e2c_41.0:1/gosh_profile: ERROR: java.lang.NullPointerException: Cannot invoke org.jline.reader.LineReader.setOpt(org.jline.reader.LineReader$Option) because reader is null
+java.io.IOException: no matches found: bundle://16d6b393-7571-434a-84d2-14015d648e2c_41.0:1/gosh_profile: ERROR: java.lang.NullPointerException: Cannot invoke org.jline.reader.LineReader.setOpt(org.jline.reader.LineReader$Option) because reader is null
+	at org.apache.felix.gogo.runtime.Expander.generateFileNames(Expander.java:662)
+	at org.apache.felix.gogo.runtime.Expander.expand(Expander.java:131)
+	at org.apache.felix.gogo.runtime.Expander.expand(Expander.java:73)
+	at org.apache.felix.gogo.runtime.Expander.expand(Expander.java:58)
+	at org.apache.felix.gogo.runtime.Closure.eval(Closure.java:399)
+	at org.apache.felix.gogo.runtime.Closure.executeStatement(Closure.java:463)
+	at org.apache.felix.gogo.runtime.Closure.execute(Closure.java:415)
+	at org.apache.felix.gogo.runtime.Pipe.doCall(Pipe.java:416)
+	at org.apache.felix.gogo.runtime.Pipe.call(Pipe.java:229)
+	at org.apache.felix.gogo.runtime.Pipe.call(Pipe.java:59)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+25.11.27 11:53:44.790 [FelixStartLevel] INFO  org.eclipse.jetty.server.Server - [36mjetty-11.0.22; built: 2024-06-27T16:27:26.756Z; git: e711d4c7040cb1e61aa68cb248fa7280b734a3bb; jvm 21.0.8+9-Ubuntu-0ubuntu124.04.1
+[0;39m25.11.27 11:53:44.823 [FelixStartLevel] INFO  o.e.j.s.s.DefaultSessionIdManager - [36mSession workerName=node0
+[0;39m25.11.27 11:53:44.831 [FelixStartLevel] INFO  o.e.j.server.handler.ContextHandler - [36mStarted o.e.j.s.ServletContextHandler@251cff63{/,null,AVAILABLE}
+[0;39m25.11.27 11:53:44.838 [FelixStartLevel] INFO  org.eclipse.jetty.server.Server - [36mStarted Server@30d0a6c6{STARTING}[11.0.22,sto=0] @682ms
+[0;39m25.11.27 11:53:44.854 [FelixStartLevel] INFO  o.e.jetty.server.AbstractConnector - [36mStarted ServerConnector@21a96940{HTTP/1.1, (http/1.1)}{0.0.0.0:8888}
+[0;39m25.11.27 11:53:44.874 [FelixStartLevel] INFO  o.e.jetty.util.ssl.SslContextFactory - [36mx509=X509@1f8112c1(openmuc,h=[openmuc],a=[],w=[]) for Server@43e24573[provider=null,keyStore=file:///home/shou/Documents/ATEnergy/openmuc-demo/framework/conf/https-certificate.jks,trustStore=null]
+[0;39m25.11.27 11:53:44.928 [FelixStartLevel] INFO  o.e.jetty.server.AbstractConnector - [36mStarted ServerConnector@3d319089{SSL, (ssl, http/1.1)}{0.0.0.0:8889}
+[0;39m25.11.27 11:53:44.928 [FelixStartLevel] INFO  org.apache.felix.http - [36mStarted Jetty 11.0.22 at port(s) HTTP:8888 HTTPS:8889 on context path / [minThreads=8,maxThreads=200,acceptors=1,selectors=6]
+[0;39m25.11.27 11:53:44.980 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mActivating Data Manager with config conf/channels.xml
+[0;39m25.11.27 11:53:44.996 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'virtual'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'virtual'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'virtual'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'virtual'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'virtual'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'modbus'.
+[0;39m25.11.27 11:53:44.997 [FelixStartLevel] WARN  o.o.f.core.datamanager.Device - [33mNo driver bundle available for configured driver: 'modbus'.
+[0;39m25.11.27 11:53:45.002 [FelixStartLevel] INFO  o.o.f.datalogger.ascii.AsciiLogger - [36mActivating Ascii Logger
+[0;39m25.11.27 11:53:45.003 [OpenMUC Data Manager] INFO  o.o.f.core.datamanager.DataManager - [36mData logger registered: asciilogger
+[0;39m25.11.27 11:53:45.013 [FelixStartLevel] INFO  o.o.f.d.sql.SqlLoggerService - [36mActivating SQL Logger
+[0;39m25.11.27 11:53:45.016 [OpenMUC Data Manager] INFO  o.o.f.core.datamanager.DataManager - [36mData logger registered: sqllogger
+[0;39m25.11.27 11:53:45.027 [OpenMUC Data Manager] INFO  o.o.f.core.datamanager.DataManager - [36mDriver registered: modbus
+[0;39m25.11.27 11:53:45.028 [OpenMUC Data Manager Pool - thread-1] INFO  o.o.f.driver.modbus.ModbusDriver - [36mSet sampling timeout to 3000 ms.
+[0;39m25.11.27 11:53:45.028 [OpenMUC Data Manager Pool - thread-2] INFO  o.o.f.driver.modbus.ModbusDriver - [36mSet sampling timeout to 3000 ms.
+[0;39m25.11.27 11:53:45.028 [OpenMUC Data Manager Pool - thread-1] INFO  o.o.f.driver.modbus.ModbusDriver - [36mNew Modbus Connection on device: /dev/ttyS1
+[0;39m25.11.27 11:53:45.028 [OpenMUC Data Manager Pool - thread-2] INFO  o.o.f.driver.modbus.ModbusDriver - [36mNew Modbus Connection on device: /dev/ttyS7
+[0;39m25.11.27 11:53:45.029 [FelixStartLevel] INFO  o.o.f.lib.ssl.SslManagerComponent - [36mSSL Component activated
+[0;39m25.11.27 11:53:45.041 [OpenMUC Data Manager Pool - thread-1] INFO  o.o.f.d.m.rtu.ModbusRTUConnection - [36mModbus Device: /dev/ttyS1 connected
+[0;39m25.11.27 11:53:45.041 [OpenMUC Data Manager Pool - thread-2] INFO  o.o.f.d.m.rtu.ModbusRTUConnection - [36mModbus Device: /dev/ttyS7 connected
+[0;39m25.11.27 11:53:45.058 [FelixStartLevel] INFO  o.o.f.s.i.server.Iec61850Server - [36mDeactivating 61850 Server 25931e2e-2ee8-43a1-a5c6-f6d247ac97a5
+[0;39m25.11.27 11:53:45.058 [FelixStartLevel] INFO  o.o.f.s.i.server.Iec61850Server - [36mupdated server mappings for 25931e2e-2ee8-43a1-a5c6-f6d247ac97a5
+[0;39m25.11.27 11:53:45.059 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mRegistered Server: iec61850.
+[0;39m25.11.27 11:53:45.062 [FelixStartLevel] INFO  o.o.f.server.modbus.ModbusComponent - [36mActivating Modbus Server
+[0;39m25.11.27 11:53:45.065 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mRegistered Server: modbus.
+[0;39m25.11.27 11:53:45.095 [FelixStartLevel] INFO  o.o.f.server.restws.RestServer - [36mActivating REST Server
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Channel Access Tool.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Channel Configurator.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Data Exporter.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Data Plotter.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Media Viewer.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin Simple Demo Visualisation.
+[0;39m25.11.27 11:53:45.100 [FelixStartLevel] WARN  o.o.framework.webui.base.WebUiBase - [33mCan't register WebUI plugin User Configurator.
+[0;39m25.11.27 11:53:45.101 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mActivating WebUI Base
+[0;39m25.11.27 11:53:45.102 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Channel Configurator
+[0;39m25.11.27 11:53:45.102 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Channel Access Tool
+[0;39m25.11.27 11:53:45.102 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Data Plotter
+[0;39m25.11.27 11:53:45.102 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Media Viewer
+[0;39m25.11.27 11:53:45.103 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Simple Demo Visualisation
+[0;39m25.11.27 11:53:45.103 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: User Configurator
+[0;39m25.11.27 11:53:45.103 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin registered: Data Exporter
+[0;39m25.11.27 11:53:45.132 [FelixStartLevel] INFO  org.apache.felix.webconsole - [36mServlet 3 bridge enabled
+[0;39m25.11.27 11:53:46.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:46.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:46.192 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mCONNECTED TO LATEST_VALUES DB AND RESTORING VALUES
+[0;39m25.11.27 11:53:46.193 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_string_name: value: Dan 1
+[0;39m25.11.27 11:53:46.193 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_string_name: value: Dan 2
+[0;39m25.11.27 11:53:46.193 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel dev_serial_comm_0: value: /dev/ttyS1:RTU:SERIAL_ENCODING_RTU:9600:DATABITS_8:PARITY_NONE:STOPBITS_1:ECHO_FALSE:FLOWCONTROL_NONE:FLOWCONTROL_NONE
+[0;39m25.11.27 11:53:46.193 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_cell_qty: value: 2.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_cell_qty: value: 3.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_cell_brand: value: PHoenix
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_cell_brand: value: Phoenix
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel dev_serial_comm_number: value: 3.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_cell_model: value: PX100
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_Cnominal: value: 100.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_cell_model: value: PX100
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel account_1_username: value: admin
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel account_1_password: value: admin1
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str1_Vnominal: value: 2.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_Cnominal: value: 2.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel str2_Vnominal: value: 2.0
+[0;39m25.11.27 11:53:46.194 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel site_name_1: value: Site1
+[0;39m25.11.27 11:53:46.195 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel dev_serial_comm_2: value: /dev/ttyS9:RTU:SERIAL_ENCODING_RTU:9600:DATABITS_8:PARITY_NONE:STOPBITS_1:ECHO_FALSE:FLOWCONTROL_NONE:FLOWCONTROL_NONE
+[0;39m25.11.27 11:53:46.195 [Modbus Update] INFO  o.o.f.a.s.LatestValuesRestorer - [36mRestoring channel dev_serial_comm_1: value: /dev/ttyS7:RTU:SERIAL_ENCODING_RTU:9600:DATABITS_8:PARITY_NONE:STOPBITS_1:ECHO_FALSE:FLOWCONTROL_NONE:FLOWCONTROL_NONE
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mInitializing isInitSoC0 array: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mCreated SoCEngines array.
+[0;39m25.11.27 11:53:46.196 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:46.197 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:46.197 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:46.197 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:46.197 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:46.197 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:46.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:47.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:47.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:47.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:47.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:47.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:47.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:47.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:47.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:47.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:47.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:48.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:48.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:48.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:48.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:48.627 [CM Event Dispatcher (Fire ConfigurationEvent: pid=org.openmuc.framework.server.iec61850.server.Iec61850Server)] INFO  o.o.f.s.i.server.Iec61850Server - [36mDeactivating 61850 Server 25931e2e-2ee8-43a1-a5c6-f6d247ac97a5
+[0;39m25.11.27 11:53:48.630 [CM Event Dispatcher (Fire ConfigurationEvent: pid=org.openmuc.framework.server.iec61850.server.Iec61850Server)] INFO  o.o.f.s.i.server.Iec61850Server - [36mNo updates in mappings. Leaving server unchanged
+[0;39m25.11.27 11:53:48.630 [CM Event Dispatcher (Fire ConfigurationEvent: pid=org.openmuc.framework.server.iec61850.server.Iec61850Server)] INFO  o.o.f.core.datamanager.DataManager - [36mRegistered Server: iec61850.
+[0;39m25.11.27 11:53:48.705 [CM Configuration Updater (Update: pid=org.openmuc.framework.lib.ssl.SslManager)] INFO  o.o.framework.lib.ssl.SslManager - [36mSuccessfully loaded
+[0;39m25.11.27 11:53:48.758 [CM Configuration Updater (Update: pid=org.openmuc.framework.server.iec61850.server.Iec61850Server)] INFO  o.o.f.s.i.server.Iec61850Server - [36mServer 0212aff4-f31a-46d4-9ec3-68f9bbb22109 got update with {felix.fileinstall.filename=file:/home/shou/Documents/ATEnergy/openmuc-demo/framework/conf/properties/org.openmuc.framework.server.iec61850.server.Iec61850Server.cfg, port=10003, schedulingEnabled=true, sclPath=conf/iec61850-server-example.cid, service.pid=org.openmuc.framework.server.iec61850.server.Iec61850Server}
+[0;39m25.11.27 11:53:48.758 [CM Configuration Updater (Update: pid=org.openmuc.framework.server.iec61850.server.Iec61850Server)] INFO  o.o.f.s.i.server.Iec61850Server - [36mDeactivating 61850 Server 0212aff4-f31a-46d4-9ec3-68f9bbb22109
+[0;39m25.11.27 11:53:48.758 [CM Configuration Updater (Update: pid=org.openmuc.framework.datalogger.sql.SqlLoggerService)] INFO  o.o.f.d.sql.SqlLoggerService - [36mConfiguration changed - new configuration 
+url=jdbc:postgresql://localhost:5432/openmuc
+user=openmuc_user
+password=*****
+ssl=false
+socket_timeout=5
+tcp_keep_alive=true
+psql_pass=postgres
+timezone=Asia/Bangkok
+[0;39m25.11.27 11:53:48.760 [CM Configuration Updater (Update: pid=org.openmuc.framework.datalogger.sql.SqlLoggerService)] INFO  o.o.f.datalogger.sql.DbConnector - [36msql driver
+[0;39m25.11.27 11:53:48.760 [CM Configuration Updater (Update: pid=org.openmuc.framework.datalogger.sql.SqlLoggerService)] INFO  o.o.f.datalogger.sql.DbConnector - [36mURL is: jdbc:postgresql://localhost:5432/openmuc
+[0;39m25.11.27 11:53:48.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:49.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:49.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:50.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:50.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:50.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:50.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:50.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:51.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:51.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:51.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:51.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:51.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:51.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:51.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:51.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:51.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:51.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:52.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:52.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:52.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:52.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:52.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:52.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:52.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:52.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:52.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :0.0, Cell count: 0
+[0;39m25.11.27 11:53:52.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:53.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:53.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:53.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:53.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:53.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> -50.01
+[0;39m25.11.27 11:53:53.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:53.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:53.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:53.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> -50.01
+[0;39m25.11.27 11:53:53.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> -50.01
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> -50.01
+[0;39m25.11.27 11:53:53.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> -50.01
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :161.11111111111103, Cell count: 2
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :176.66666666666663, Cell count: 3
+[0;39m25.11.27 11:53:53.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:53.006 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:53.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:53.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:53.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:53.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:53.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8066666666666662, Vp: 0.0
+[0;39m25.11.27 11:53:54.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8065277499999995
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.788938583519836, Vp: 0.0032754926085703196, y_pred: 2.1717561224999997, nu: -0.009756122499999798, R0: 1.0E-4
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.788938583519836, Vp: 0.0032754926085703196
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.7887996668531694
+[0;39m25.11.27 11:53:54.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7911194784696841, Vp: 0.004838125786455521, y_pred: 2.1607717671057847, nu: 0.002228232894215143, R0: 1.0E-4
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5955555555555556, Vp: 0.0
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5886097222222223
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5867743673085797, Vp: 0.001976679664898978, y_pred: 2.06301801, nu: -0.0010180100000001246, R0: 1.0E-4
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:54.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5867743673085797, Vp: 0.001976679664898978
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5798285339752464
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5876694381153992, Vp: 0.0033687378958178215, y_pred: 2.057468629607207, nu: 0.0075313703927930575, R0: 1.0E-4
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5876694381153992, Vp: 0.0033687378958178215
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5807236047820659
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5898849343675093, Vp: 0.0050106895318831534, y_pred: 2.0571439561509024, nu: 0.010856043849097663, R0: 1.0E-4
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:54.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :158.00580619895203, Cell count: 2
+[0;39m25.11.27 11:53:54.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :176.4328739791488, Cell count: 3
+[0;39m25.11.27 11:53:54.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:54.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:55.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7911194784696841, Vp: 0.004838125786455521
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.7909805618030175
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7925302275961391, Vp: 0.006419051183412569, y_pred: 2.160163668314225, nu: 0.0018363316857747947, R0: 1.0E-4
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7925302275961391, Vp: 0.006419051183412569
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.7923913109294725
+[0;39m25.11.27 11:53:55.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7951733668275145, Vp: 0.007995420929239865, y_pred: 2.1594016262940205, nu: 0.003598373705979263, R0: 1.0E-4
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5898849343675093, Vp: 0.0050106895318831534
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.582939101034176
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5878052020725683, Vp: 0.006711380760250653, y_pred: 2.0557060754100904, nu: 0.006293924589909405, R0: 1.0E-4
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5878052020725683, Vp: 0.006711380760250653
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5808593687392349
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5894194381198392, Vp: 0.008539384560138965, y_pred: 2.053434539210418, nu: 0.011565460789582094, R0: 1.0E-4
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5894194381198392, Vp: 0.008539384560138965
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5824736047865059
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5932261387386054, Vp: 0.01039887501577225, y_pred: 2.0530193418217952, nu: 0.01498065817820482, R0: 1.0E-4
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :158.77035944236536, Cell count: 2
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :177.04507789310128, Cell count: 3
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:55.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:55.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:56.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7951733668275145, Vp: 0.007995420929239865
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.7950344501608478
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7972633932861193, Vp: 0.009509080294596857, y_pred: 2.1589884876896037, nu: 0.0030115123103962027, R0: 1.0E-4
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:56.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.7972633932861193, Vp: 0.009509080294596857
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.7971244766194526
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8002854799288479, Vp: 0.010994542753354502, y_pred: 2.158596023198887, nu: 0.004403976801112819, R0: 1.0E-4
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5932261387386054, Vp: 0.01039887501577225
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5862803054052721
+[0;39m25.11.27 11:53:56.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5931864367130435, Vp: 0.011975542228104655, y_pred: 2.052090841167389, nu: 0.00990915883261101, R0: 1.0E-4
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5931864367130435, Vp: 0.011975542228104655
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5862406033797102
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5957896423095873, Vp: 0.013498099161300008, y_pred: 2.0508551414041705, nu: 0.01414485859582948, R0: 1.0E-4
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:56.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5957896423095873, Vp: 0.013498099161300008
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.588843808976254
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5998129818914375, Vp: 0.014862934469858865, y_pred: 2.0511751548360793, nu: 0.0168248451639208, R0: 1.0E-4
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :159.7548873214967, Cell count: 2
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :178.87890609140683, Cell count: 3
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:56.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:56.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:56.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:56.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:56.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8002854799288479, Vp: 0.010994542753354502
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8001465632621813
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8026278431147786, Vp: 0.012367635632598083, y_pred: 2.1584397728522946, nu: 0.0035602271477053193, R0: 1.0E-4
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8026278431147786, Vp: 0.012367635632598083
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.802488926448112
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8056656267239131, Vp: 0.013673079539265253, y_pred: 2.1582943980506824, nu: 0.004705601949317462, R0: 1.0E-4
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:57.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5998129818914375, Vp: 0.014862934469858865
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5928671485581042
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5998928692948987, Vp: 0.015986606415932563, y_pred: 2.050814064104781, nu: 0.01118593589521888, R0: 1.0E-4
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5998928692948987, Vp: 0.015986606415932563
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5929470359615654
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6019706370448368, Vp: 0.016928819044078305, y_pred: 2.0500625250875686, nu: 0.014937474912431359, R0: 1.0E-4
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6019706370448368, Vp: 0.016928819044078305
+[0;39m25.11.27 11:53:57.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5950248037115035
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6050691269932418, Vp: 0.017650724426313807, y_pred: 2.0506974185783022, nu: 0.017302581421697827, R0: 1.0E-4
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :160.8293469838692, Cell count: 2
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :180.69326333329772, Cell count: 3
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:57.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:58.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:58.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8056656267239131, Vp: 0.013673079539265253
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8055267100572464
+[0;39m25.11.27 11:53:58.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8079283916826092, Vp: 0.014861727659817347, y_pred: 2.158316228963459, nu: 0.0036837710365409393, R0: 1.0E-4
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8079283916826092, Vp: 0.014861727659817347
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8077894750159426
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8107350328645825, Vp: 0.01596138587193442, y_pred: 2.158310257480348, nu: 0.004689742519651929, R0: 1.0E-4
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:58.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6050691269932418, Vp: 0.017650724426313807
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5981232936599085
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.60451974268351, Vp: 0.018320456317958166, y_pred: 2.0505309289419604, nu: 0.011469071058039404, R0: 1.0E-4
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.60451974268351, Vp: 0.018320456317958166
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5975739093501767
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6056517273017249, Vp: 0.01874193812228697, y_pred: 2.0499274607055193, nu: 0.015072539294480602, R0: 1.0E-4
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:58.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6056517273017249, Vp: 0.01874193812228697
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5987058939683916
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6076555564314615, Vp: 0.0189273509029107, y_pred: 2.0506314460696036, nu: 0.01736855393039649, R0: 1.0E-4
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :161.8663424547192, Cell count: 2
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :181.78270264166966, Cell count: 3
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:58.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:58.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:53:58.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8107350328645825, Vp: 0.01596138587193442
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8105961161979158
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8127566066019594, Vp: 0.01696861234707558, y_pred: 2.1584235707107244, nu: 0.0035764292892754845, R0: 1.0E-4
+[0;39m25.11.27 11:53:59.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8127566066019594, Vp: 0.01696861234707558
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8126176899352927
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8152407748989786, Vp: 0.017878426050895752, y_pred: 2.15848141374116, nu: 0.0045185862588397185, R0: 1.0E-4
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6076555564314615, Vp: 0.0189273509029107
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6007097230981282
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6064204037943709, Vp: 0.01925241131290506, y_pred: 2.0504820270363924, nu: 0.011517972963607459, R0: 1.0E-4
+[0;39m25.11.27 11:53:59.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6064204037943709, Vp: 0.01925241131290506
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5994745704610376
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.606686064927676, Vp: 0.019280715274732883, y_pred: 2.0498974009602073, nu: 0.015102599039792608, R0: 1.0E-4
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.606686064927676, Vp: 0.019280715274732883
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5997402315943426
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6077567150178296, Vp: 0.019063013838276244, y_pred: 2.050585059706458, nu: 0.01741494029354218, R0: 1.0E-4
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:53:59.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :162.7997381500938, Cell count: 2
+[0;39m25.11.27 11:53:59.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :182.08631837398764, Cell count: 3
+[0;39m25.11.27 11:53:59.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:53:59.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:53:59.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.162
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.47
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.162, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8152407748989786, Vp: 0.017878426050895752
+[0;39m25.11.27 11:54:00.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.815101858232312
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.816981369455298, Vp: 0.018729623870949265, y_pred: 2.1586299664561897, nu: 0.003370033543810269, R0: 1.0E-4
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.163
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.5
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.163, current: 50.01, temperature: 29.5
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.816981369455298, Vp: 0.018729623870949265
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8168424527886313
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8191418066763597, Vp: 0.019479638038641823, y_pred: 2.1587095960774825, nu: 0.0042904039225173385, R0: 1.0E-4
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.062
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.42
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.062, current: 50.01, temperature: 26.42
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6077567150178296, Vp: 0.019063013838276244
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6008108816844963
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6059643551647363, Vp: 0.01914350327929139, y_pred: 2.050398668611661, nu: 0.011601331388338743, R0: 1.0E-4
+[0;39m25.11.27 11:54:00.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.065
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.5
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.065, current: 50.01, temperature: 26.5
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6059643551647363, Vp: 0.01914350327929139
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.599018521831403
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6055428448537876, Vp: 0.01888455745707953, y_pred: 2.049795641708805, nu: 0.015204358291195152, R0: 1.0E-4
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.068
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.67
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.67
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6055428448537876, Vp: 0.01888455745707953
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5985970115204543
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6058804112658509, Vp: 0.018367538882119387, y_pred: 2.0504469605999787, nu: 0.017553039400021397, R0: 1.0E-4
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :163.61231761316577, Cell count: 2
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :181.7387611284375, Cell count: 3
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:54:00.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:54:00.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:54:01.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:54:01.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:01.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:01.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.161
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.39
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.161, current: 50.01, temperature: 29.39
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8191418066763597, Vp: 0.019479638038641823
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8190028900096931
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8202476617017539, Vp: 0.02023326388595607, y_pred: 2.158584279367652, nu: 0.002415720632348073, R0: 1.0E-4
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:54:01.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> -50.01
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.164
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.47
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.164, current: -50.01, temperature: 29.47
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8202476617017539, Vp: 0.02023326388595607
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8203865783684205
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8162100447484902, Vp: 0.01780136019681669, y_pred: 2.172423724574131, nu: -0.008423724574130986, R0: 1.0E-4
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> -50.01
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.063
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.51
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.063, current: -50.01, temperature: 26.51
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6058804112658509, Vp: 0.018367538882119387
+[0;39m25.11.27 11:54:01.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6128262445991842
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.609840532287117, Vp: 0.016254460340994068, y_pred: 2.0704340131316195, nu: -0.007434013131619288, R0: 1.0E-4
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> -50.01
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.068
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.48
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: -50.01, temperature: 26.48
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.609840532287117, Vp: 0.016254460340994068
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6167863656204503
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6144055490627495, Vp: 0.014165226174594533, y_pred: 2.0741184922052587, nu: -0.006118492205258619, R0: 1.0E-4
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> -50.01
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.07
+[0;39m25.11.27 11:54:01.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.56
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.07, current: -50.01, temperature: 26.56
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6144055490627495, Vp: 0.014165226174594533
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6213513823960828
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6181675422548053, Vp: 0.012427139015701381, y_pred: 2.078437522212372, nu: -0.008437522212372262, R0: 1.0E-4
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :163.6457706450244, Cell count: 2
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :184.24136236046718, Cell count: 3
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:54:01.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:54:01.999 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:54:02.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:54:02.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.161
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.39
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.161, current: 50.01, temperature: 29.39
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8162100447484902, Vp: 0.01780136019681669
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8160711280818236
+[0;39m25.11.27 11:54:02.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8170932887275033, Vp: 0.018618383198674923, y_pred: 2.158859350449845, nu: 0.002140649550155249, R0: 1.0E-4
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.164
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.47
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.164, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8170932887275033, Vp: 0.018618383198674923
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8169543720608367
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8193661664626085, Vp: 0.0191881979008308, y_pred: 2.1587606383886357, nu: 0.0052393616113644015, R0: 1.0E-4
+[0;39m25.11.27 11:54:02.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.063
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.51
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.063, current: 50.01, temperature: 26.51
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6181675422548053, Vp: 0.012427139015701381
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.611221708921472
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6116968674751512, Vp: 0.013503221508114727, y_pred: 2.0617026219497463, nu: 0.0012973780502538723, R0: 1.0E-4
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.068
+[0;39m25.11.27 11:54:02.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.48
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.48
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6116968674751512, Vp: 0.013503221508114727
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6047510341418179
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6084284534889848, Vp: 0.013592109183298059, y_pred: 2.057663539931109, nu: 0.010336460068891107, R0: 1.0E-4
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.07
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.56
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.07, current: 50.01, temperature: 26.56
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6084284534889848, Vp: 0.013592109183298059
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.6014826201556515
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.606190542766262, Vp: 0.013287863448909285, y_pred: 2.0563883103459095, nu: 0.01361168965409032, R0: 1.0E-4
+[0;39m25.11.27 11:54:02.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:54:02.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:54:02.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :163.64594551901118, Cell count: 2
+[0;39m25.11.27 11:54:02.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :182.6315863730398, Cell count: 3
+[0;39m25.11.27 11:54:02.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:54:02.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:54:03.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:54:03.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.161
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.39
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.161, current: 50.01, temperature: 29.39
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8193661664626085, Vp: 0.0191881979008308
+[0;39m25.11.27 11:54:03.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8192272497959419
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8201325092699536, Vp: 0.019915078566098275, y_pred: 2.1589621094023843, nu: 0.0020378905976157213, R0: 1.0E-4
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.164
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.47
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.164, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8201325092699536, Vp: 0.019915078566098275
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.819993592603287
+[0;39m25.11.27 11:54:03.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8221835803661921, Vp: 0.020366349495800608, y_pred: 2.158896427033686, nu: 0.0051035729663140295, R0: 1.0E-4
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.063
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.51
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.063, current: 50.01, temperature: 26.51
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.606190542766262, Vp: 0.013287863448909285
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5992447094329287
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6017700946140674, Vp: 0.013622047336297072, y_pred: 2.0554952839683542, nu: 0.0075047160316459305, R0: 1.0E-4
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.068
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.48
+[0;39m25.11.27 11:54:03.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.48
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.6017700946140674, Vp: 0.013622047336297072
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5948242612807341
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5997113201430179, Vp: 0.013071498958611611, y_pred: 2.053083607606848, nu: 0.014916392393152123, R0: 1.0E-4
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.07
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.56
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.07, current: 50.01, temperature: 26.56
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5997113201430179, Vp: 0.013071498958611611
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5927654868096845
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5982047296639365, Vp: 0.012251409375381616, y_pred: 2.0529601800536765, nu: 0.01703981994632331, R0: 1.0E-4
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:54:03.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:54:03.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :164.23160896361458, Cell count: 2
+[0;39m25.11.27 11:54:03.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :179.96861444210217, Cell count: 3
+[0;39m25.11.27 11:54:03.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:54:03.005 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:54:03.925 [FelixStartLevel] INFO  o.o.f.server.restws.RestServer - [36mDeactivating REST Server
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mDeactivating WebUI Base
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Channel Access Tool.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Channel Configurator.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Data Exporter.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Data Plotter.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Media Viewer.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: Simple Demo Visualisation.
+[0;39m25.11.27 11:54:03.927 [FelixStartLevel] INFO  o.o.framework.webui.base.WebUiBase - [36mWebUI plugin deregistered: User Configurator.
+[0;39m25.11.27 11:54:03.930 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mUnregistering driver: modbus.
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str1_cell_qty
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mDetect = str2_cell_qty
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mlogger.info("------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36m------------- GETCELLDIMESION: stringNumber_1 2----------------
+
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mAll cell dimensions are initialized: string number: 2, cell number: 3
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell1: -----> 50.01
+[0;39m25.11.27 11:54:04.000 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell1: -----> 2.161
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell1: -----> 29.39
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.161, current: 50.01, temperature: 29.39
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8221835803661921, Vp: 0.020366349495800608
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8220446636995254
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8228286028711473, Vp: 0.02102290836719196, y_pred: 2.159110701643776, nu: 0.0018892983562239785, R0: 1.0E-4
+[0;39m25.11.27 11:54:04.001 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 68.62745098039215
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 1_cell2: -----> 50.01
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 1_cell2: -----> 2.164
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 1_cell2: -----> 29.47
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.164, current: 50.01, temperature: 29.47
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8228286028711473, Vp: 0.02102290836719196
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.8226896862044807
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.8246748436780991, Vp: 0.021377808859479847, y_pred: 2.1590572308431843, nu: 0.004942769156815796, R0: 1.0E-4
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 64.70588235294117
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell1: -----> 50.01
+[0;39m25.11.27 11:54:04.002 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell1: -----> 2.063
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell1: -----> 26.51
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.063, current: 50.01, temperature: 26.51
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5982047296639365, Vp: 0.012251409375381616
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5912588963306031
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5944063420541481, Vp: 0.012250491439461, y_pred: 2.052886299442159, nu: 0.01011370055784111, R0: 1.0E-4
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 56.86274509803921
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell2: -----> 50.01
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell2: -----> 2.068
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell2: -----> 26.48
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.068, current: 50.01, temperature: 26.48
+[0;39m25.11.27 11:54:04.003 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5944063420541481, Vp: 0.012250491439461
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5874605087208148
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5925994908838179, Vp: 0.011381872425150628, y_pred: 2.051072897056879, nu: 0.016927102943121053, R0: 1.0E-4
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 45.09803921568628
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mI of string 2_cell3: -----> 50.01
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mV of string 2_cell3: -----> 2.07
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mT of string 2_cell3: -----> 26.56
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mvoltage: 2.07, current: 50.01, temperature: 26.56
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5925994908838179, Vp: 0.011381872425150628
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC_pred: 0.5856536575504846
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSoC: 0.5911760735256352, Vp: 0.010294154208023971, y_pred: 2.0513650020938248, nu: 0.018634997906175066, R0: 1.0E-4
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mSetLatestSoH ----> currentSoH: 29.411764705882348
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mPushing calculated data to channels. stringNumber: {}, cellNumber: {}
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :164.75034465492462, Cell count: 2
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :177.8181906463601, Cell count: 3
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 0 -----------> Total :133.33333333333331, Cell count: 2
+[0;39m25.11.27 11:54:04.004 [Modbus Update] INFO  o.o.f.app.simpledemo.SimpleDemoApp - [36mString 1 -----------> Total :131.37254901960785, Cell count: 3
+[0;39m25.11.27 11:54:04.061 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mDriver unregistered: modbus
+[0;39m25.11.27 11:54:04.067 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mUnregistering data logger: sqllogger.
+[0;39m25.11.27 11:54:04.067 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mData logger deregistered: sqllogger
+[0;39m25.11.27 11:54:04.068 [FelixStartLevel] INFO  o.o.f.d.sql.SqlLoggerService - [36mDeactivating SQL Logger
+[0;39m25.11.27 11:54:04.071 [FelixStartLevel] INFO  o.o.f.server.modbus.ModbusComponent - [36mDeactivating Modbus Server
+[0;39m25.11.27 11:54:04.075 [FelixStartLevel] INFO  o.o.f.s.i.server.Iec61850Server - [36mDeactivating 61850 Server 0212aff4-f31a-46d4-9ec3-68f9bbb22109
+[0;39m25.11.27 11:54:04.078 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mDeactivating Data Manager
+[0;39m25.11.27 11:54:04.079 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mUnregistering data logger: asciilogger.
+[0;39m25.11.27 11:54:04.079 [FelixStartLevel] INFO  o.o.f.core.datamanager.DataManager - [36mData logger deregistered: asciilogger
+[0;39m25.11.27 11:54:04.079 [FelixStartLevel] INFO  o.o.f.datalogger.ascii.AsciiLogger - [36mDeactivating Ascii Logger
+[0;39m25.11.27 11:54:04.087 [FelixStartLevel] INFO  org.eclipse.jetty.server.Server - [36mStopped Server@30d0a6c6{STOPPING}[11.0.22,sto=0]
+[0;39m25.11.27 11:54:04.090 [FelixStartLevel] INFO  o.e.jetty.server.AbstractConnector - [36mStopped ServerConnector@21a96940{HTTP/1.1, (http/1.1)}{0.0.0.0:8888}
+[0;39m25.11.27 11:54:04.091 [FelixStartLevel] INFO  o.e.jetty.server.AbstractConnector - [36mStopped ServerConnector@3d319089{SSL, (ssl, http/1.1)}{0.0.0.0:8889}
+[0;39m25.11.27 11:54:04.093 [FelixStartLevel] INFO  o.e.j.server.handler.ContextHandler - [36mStopped o.e.j.s.ServletContextHandler@251cff63{/,null,STOPPED}
+[0;39m25.11.27 11:54:04.094 [FelixStartLevel] INFO  org.apache.felix.http - [36mStopped Jetty
+[0;39m
