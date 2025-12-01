@@ -1,54 +1,58 @@
 package org.openmuc.framework.server.connectivity;
 
 import org.openmuc.framework.server.connectivity.servlets.VpnConnectionServlet;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.service.component.ComponentContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OSGi Bundle Activator for Connectivity Manager.
+ * OSGi Declarative Service for Connectivity Manager.
  * Registers REST endpoints for VPN and 4G management.
  */
-public class ConnectivityManagerActivator implements BundleActivator {
+@Component
+public class ConnectivityManagerActivator {
 
     private static final Logger logger = LoggerFactory.getLogger(ConnectivityManagerActivator.class);
     private static final String VPN_ALIAS = "/api/vpn/connections";
-
-    private HttpService httpService;
+    
+    private static HttpService httpService;
     private final VpnConnectionServlet vpnServlet = new VpnConnectionServlet();
 
-    @Override
-    public void start(BundleContext context) throws Exception {
-        logger.info("Starting Connectivity Manager Bundle");
+    @Reference
+    protected void setHttpService(HttpService httpService) {
+        ConnectivityManagerActivator.httpService = httpService;
+    }
 
-        // Get HttpService
-        ServiceReference<HttpService> serviceRef = context.getServiceReference(HttpService.class);
-        if (serviceRef != null) {
-            httpService = context.getService(serviceRef);
+    protected void unsetHttpService(HttpService httpService) {
+        ConnectivityManagerActivator.httpService = null;
+    }
 
-            if (httpService != null) {
-                try {
-                    // Register VPN connection servlet
-                    httpService.registerServlet(VPN_ALIAS, vpnServlet, null, null);
-                    logger.info("Registered VPN Connection servlet at {}", VPN_ALIAS);
-                } catch (Exception e) {
-                    logger.error("Failed to register VPN Connection servlet", e);
-                    throw e;
-                }
-            } else {
-                logger.error("HttpService not available");
+    @Activate
+    protected void activate(ComponentContext context) throws Exception {
+        logger.info("Activating Connectivity Manager");
+
+        if (httpService != null) {
+            try {
+                // Register VPN connection servlet
+                httpService.registerServlet(VPN_ALIAS, vpnServlet, null, null);
+                logger.info("Registered VPN Connection servlet at {}", VPN_ALIAS);
+            } catch (Exception e) {
+                logger.error("Failed to register VPN Connection servlet", e);
+                throw e;
             }
         } else {
-            logger.error("HttpService reference not found");
+            logger.error("HttpService not available");
         }
     }
 
-    @Override
-    public void stop(BundleContext context) throws Exception {
-        logger.info("Stopping Connectivity Manager Bundle");
+    @Deactivate
+    protected void deactivate(ComponentContext context) {
+        logger.info("Deactivating Connectivity Manager");
 
         if (httpService != null) {
             try {
