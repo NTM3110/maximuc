@@ -8,6 +8,9 @@ dependencies {
 
     implementation group: 'com.ghgande', name: 'j2mod', version: j2modVersion
     embed group: 'com.ghgande', name: 'j2mod', version: j2modVersion
+    
+    implementation group: 'com.fazecast', name: 'jSerialComm', version: '2.10.4'
+    // embed group: 'com.fazecast', name: 'jSerialComm', version: '2.10.4' // Use separate bundle
 
     testImplementation group: "commons-codec", name: "commons-codec", version: commonsCodecVersion
 }
@@ -16,12 +19,13 @@ jar {
   bnd(
     'Bundle-Name': projectName,
     'Bundle-ClassPath':
-      ".,lib/j2mod-${j2modVersion}.jar,lib/jSerialComm-2.10.4.jar",
+      ".,lib/j2mod-${j2modVersion}.jar",
     'Import-Package':
+      'com.fazecast.jSerialComm,' +                 // ← Explicitly import jSerialComm
       '!android.*,' +                               // ← block ALL Android imports
       '!com.fazecast.jSerialComm.android*,' +       // ← (defensive) block android subpkg
       '!com.ghgande.j2mod*,' +                      // ← you’re embedding j2mod
-      '!com.fazecast.jSerialComm,' +                // ← you’re embedding jSerialComm
+      // '!com.fazecast.jSerialComm,' +             // ← Allow import from separate bundle
       '*' + jarDefaultImportPackageVersion
   )
 
