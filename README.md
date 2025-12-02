@@ -36,10 +36,11 @@ Sau khi có framework, chúng ta cần build các module (như modbus driver) v�
 **Chạy lệnh Gradle:**
 ```bash
 ./gradlew updateBundles -x test
+./gradlew :{tên project mói tạo hoặc thay đổi}:clean :{tên project mói tạo hoặc thay đổi}:build
 ```
 *Lệnh này sẽ:*
 1.  Clean và Build tất cả các subprojects.
-2.  Tự động copy các file JAR (bao gồm cả `jSerialComm` và `openmuc-driver-modbus`) vào thư mục `framework/bundle`.
+2.  Copy các file JAR (bao gồm cả `jSerialComm` và `openmuc-driver-modbus`) vào thư mục `framework/bundle`.
 3.  `-x test`: Bỏ qua chạy test để build nhanh hơn (tùy chọn).
 
 ## 3. Chạy ứng dụng (Running OpenMUC)
