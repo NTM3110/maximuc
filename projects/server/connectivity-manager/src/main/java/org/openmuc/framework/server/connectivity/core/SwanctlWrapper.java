@@ -88,7 +88,7 @@ public class SwanctlWrapper {
      * @return CommandResult with success status
      */
     public CommandResult loadSecrets() {
-        String command = SUDO_CMD + " " + SWANCTL_CMD + " --load-secrets";
+        String command = SUDO_CMD + " " + SWANCTL_CMD + " --load-creds";
         return executeCommand(command);
     }
 
