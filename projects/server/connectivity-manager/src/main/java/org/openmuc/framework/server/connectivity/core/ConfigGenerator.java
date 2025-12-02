@@ -38,7 +38,7 @@ public class ConfigGenerator {
 
         // Start connections block
         content.append("connections {\n");
-        content.append("  \"").append(conn.getName()).append("\" {\n");
+        content.append("  ").append(conn.getName()).append(" {\n");
 
         // Local address
         content.append("    local_addrs = %any\n");
@@ -66,7 +66,7 @@ public class ConfigGenerator {
 
         // Children (IPsec SA)
         content.append("    children {\n");
-        content.append("      \"").append(conn.getName()).append("-child\" {\n");
+        content.append("      ").append(conn.getName()).append("-child {\n");
         content.append("        local_ts = ")
                 .append(conn.getLocalTrafficSelector() != null ? conn.getLocalTrafficSelector() : "0.0.0.0/0")
                 .append("\n");
@@ -110,7 +110,7 @@ public class ConfigGenerator {
         content.append("# METADATA: ").append(gson.toJson(metadata)).append("\n\n");
 
         content.append("connections {\n");
-        content.append("  \"").append(conn.getName()).append("\" {\n");
+        content.append("  ").append(conn.getName()).append(" {\n");
 
         // IKE version
         String ikeVersion = conn.getIkeVersion() != null ? conn.getIkeVersion() : "any";
@@ -161,7 +161,7 @@ public class ConfigGenerator {
 
         // Children
         content.append("    children {\n");
-        content.append("      \"").append(conn.getName()).append("-child\" {\n");
+        content.append("      ").append(conn.getName()).append("-child {\n");
         content.append("        local_ts = ")
                 .append(conn.getLocalTrafficSelector() != null ? conn.getLocalTrafficSelector() : "0.0.0.0/0")
                 .append("\n");
