@@ -36,7 +36,8 @@ Sau khi có framework, chúng ta cần build các module (như modbus driver) v�
 **Chạy lệnh Gradle:**
 ```bash
 ./gradlew updateBundles -x test
-./gradlew :{tên project mói tạo hoặc thay đổi}:clean :{tên project mói tạo hoặc thay đổi}:build
+./gradlew :{project mói tạo hoặc thay đổi}:clean :{project mói tạo hoặc thay đổi}:build
+rm -rf ./framework/bundle/{project mới tạo hoặc thay đổi}.jar cp ./build/libs-all/{project mói tạo hoặc thay đổi} ./framework/bundle
 ```
 *Lệnh này sẽ:*
 1.  Clean và Build tất cả các subprojects.
