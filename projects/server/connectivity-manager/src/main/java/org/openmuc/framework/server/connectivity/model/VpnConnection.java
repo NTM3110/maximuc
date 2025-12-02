@@ -43,7 +43,7 @@ public class VpnConnection {
 
     // Default constructor
     public VpnConnection() {
-        this.status = ConnectionStatus.IDLE;
+        this.status = "IDLE";
         this.ikeVersion = "any";
         this.startAction = "none";
         this.activeInitiator = false;
@@ -196,11 +196,11 @@ public class VpnConnection {
         this.useServerValue = useServerValue;
     }
 
-    public ConnectionStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(ConnectionStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 
