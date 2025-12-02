@@ -80,7 +80,6 @@ public class ConfigGenerator {
         // Connection settings
         content.append("    version = 0\n"); // Any IKE version
         content.append("    mobike = no\n");
-        content.append("    auto = add\n");
 
         content.append("  }\n");
         content.append("}\n");
@@ -120,13 +119,6 @@ public class ConfigGenerator {
             content.append("    version = 2\n");
         } else {
             content.append("    version = 0\n"); // Any version
-        }
-
-        // Auto start
-        if (conn.isActiveInitiator()) {
-            content.append("    auto = start\n");
-        } else {
-            content.append("    auto = add\n");
         }
 
         // Addresses
