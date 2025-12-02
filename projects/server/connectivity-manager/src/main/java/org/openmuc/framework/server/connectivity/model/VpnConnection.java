@@ -1,5 +1,6 @@
 package org.openmuc.framework.server.connectivity.model;
 
+import com.google.gson.annotations.SerializedName;
 import java.util.Objects;
 
 /**
@@ -9,24 +10,36 @@ import java.util.Objects;
 public class VpnConnection {
 
     private String name;
+    @SerializedName("category")
     private String category; // "site-to-site", "road-warrior"
+    @SerializedName("auth_method")
     private String authMethod; // "ikev2-psk", "ikev2-cert"
+    @SerializedName("ike_version")
     private String ikeVersion; // "ikev1", "ikev2", "any"
+    @SerializedName("server_address")
     private String serverAddress;
+    @SerializedName("remote_address")
     private String remoteAddress;
+    @SerializedName("local_identity")
     private String localIdentity;
     private String peerIdentity;
+    @SerializedName("remote_identity")
     private String remoteIdentity;
+    @SerializedName("pre_shared_key")
     private String preSharedKey;
+    @SerializedName("local_traffic_selector")
     private String localTrafficSelector;
+    @SerializedName("remote_traffic_selector")
     private String remoteTrafficSelector;
     private String startAction; // "none", "trap", "start"
+    @SerializedName("server_certificate_name")
     private String serverCertificateName;
+    @SerializedName("ca_certificate_name")
     private String caCertificateName;
     private boolean activeInitiator;
     private boolean autoCASelect;
     private boolean useServerValue;
-    private ConnectionStatus status;
+    private String status; // IDLE, CONNECTING, ESTABLISHED, FAILED
 
     // Default constructor
     public VpnConnection() {

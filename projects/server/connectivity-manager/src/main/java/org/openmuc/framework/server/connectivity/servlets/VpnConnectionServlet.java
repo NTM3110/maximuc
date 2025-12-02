@@ -48,9 +48,16 @@ public class VpnConnectionServlet extends HttpServlet {
         try {
             if (pathInfo == null || pathInfo.equals("/")) {
                 // GET /api/vpn/connections - List all connections
-                List<VpnConnection> connections = connectionParser.getAllConnections();
-                resp.getWriter().write(gson.toJson(connections));
-                resp.setStatus(HttpServletResponse.SC_OK);
+                try {
+                    List<VpnConnection> connections = connectionParser.getAllConnections();
+                    resp.getWriter().write(gson.toJson(connections));
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                } catch (Exception e) {
+                    logger.error("Error getting connections", e);
+                    // Return empty array on error instead of failing
+                    resp.getWriter().write("[]");
+                    resp.setStatus(HttpServletResponse.SC_OK);
+                }
             } else {
                 // GET /api/vpn/connections/{name}
                 String connectionName = pathInfo.substring(1);
