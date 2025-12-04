@@ -63,6 +63,8 @@ public class MqttDriverConnection implements Connection {
     private final Map<String, Long> lastLoggedRecords = new HashMap<>();
     private final List<ChannelRecordContainer> recordContainerList = new ArrayList<>();
     private final Properties settings = new Properties();
+    private boolean publishByDevice;
+    private String deviceTopic;
 
     public MqttDriverConnection(String host, String settings) throws ArgumentSyntaxException {
         MqttSettings mqttSettings = getMqttSettings(host, settings);
@@ -72,8 +74,7 @@ public class MqttDriverConnection implements Connection {
         mqttReader = new MqttReader(mqttConnection, pid);
         if (mqttSettings.isSsl()) {
             logger.debug("not connecting: waiting for ssl");
-        }
-        else {
+        } else {
             mqttConnection.connect();
         }
     }
@@ -103,6 +104,8 @@ public class MqttDriverConnection implements Connection {
         byte[] firstWillPayload = this.settings.getProperty("firstWillPayload", "").getBytes();
         boolean webSocket = Boolean.parseBoolean(this.settings.getProperty("webSocket", "false"));
         boolean retainedMessages = Boolean.parseBoolean(this.settings.getProperty("retainedMessages", "false"));
+        this.publishByDevice = Boolean.parseBoolean(this.settings.getProperty("publishByDevice", "false"));
+        this.deviceTopic = this.settings.getProperty("deviceTopic", "");
 
         return new MqttSettings(host, port, username, password, ssl, maxBufferSize, maxFileSize, maxFileCount,
                 connectionRetryInterval, connectionAliveInterval, persistenceDirectory, lastWillTopic, lastWillPayload,
@@ -181,8 +184,7 @@ public class MqttDriverConnection implements Connection {
         Record record;
         if (parsers.containsKey(settings.getProperty("parser"))) {
             record = parsers.get(settings.getProperty("parser")).deserialize(message, valueType);
-        }
-        else {
+        } else {
             record = new Record(new ByteArrayValue(message), System.currentTimeMillis());
         }
 
@@ -192,23 +194,48 @@ public class MqttDriverConnection implements Connection {
     @Override
     public Object write(List<ChannelValueContainer> containers, Object containerListHandle)
             throws UnsupportedOperationException, ConnectionException {
-        for (ChannelValueContainer container : containers) {
-            Record record = new Record(container.getValue(), System.currentTimeMillis());
-            LoggingRecord loggingRecord = new LoggingRecord(container.getChannelAddress(), record);
+        if (publishByDevice) {
             if (parsers.containsKey(settings.getProperty("parser"))) {
+                List<LoggingRecord> loggingRecords = new ArrayList<>();
+                for (ChannelValueContainer container : containers) {
+                    Record record = new Record(container.getValue(), System.currentTimeMillis());
+                    loggingRecords.add(new LoggingRecord(container.getChannelAddress(), record));
+                }
+
                 byte[] message;
                 try {
-                    message = parsers.get(settings.getProperty("parser")).serialize(loggingRecord);
+                    message = parsers.get(settings.getProperty("parser")).serialize(loggingRecords);
                 } catch (SerializationException e) {
                     logger.error(e.getMessage());
-                    continue;
+                    return null;
                 }
-                mqttWriter.write(container.getChannelAddress(), message);
-                container.setFlag(Flag.VALID);
-            }
-            else {
+                mqttWriter.write(deviceTopic, message);
+
+                for (ChannelValueContainer container : containers) {
+                    container.setFlag(Flag.VALID);
+                }
+            } else {
                 logger.error("A parser is needed to write messages and none have been registered.");
                 throw new UnsupportedOperationException();
+            }
+        } else {
+            for (ChannelValueContainer container : containers) {
+                Record record = new Record(container.getValue(), System.currentTimeMillis());
+                LoggingRecord loggingRecord = new LoggingRecord(container.getChannelAddress(), record);
+                if (parsers.containsKey(settings.getProperty("parser"))) {
+                    byte[] message;
+                    try {
+                        message = parsers.get(settings.getProperty("parser")).serialize(loggingRecord);
+                    } catch (SerializationException e) {
+                        logger.error(e.getMessage());
+                        continue;
+                    }
+                    mqttWriter.write(container.getChannelAddress(), message);
+                    container.setFlag(Flag.VALID);
+                } else {
+                    logger.error("A parser is needed to write messages and none have been registered.");
+                    throw new UnsupportedOperationException();
+                }
             }
         }
         return null;

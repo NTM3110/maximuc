@@ -73,7 +73,7 @@ public class MqttDriver implements DriverService {
         final String DEVICE_SETTINGS = "port=<port>;user=<user>;password=<pw>;"
                 + "framework=<framework_name>;parser=<parser_name>[;lastWillTopic=<topic>;lastWillPayload=<payload>]"
                 + "[;lastWillAlways=<boolean>][;firstWillTopic=<topic>;firstWillPayload=<payload>]"
-                + "[;buffersize=<buffersize>][;ssl=<true/false>]";
+                + "[;buffersize=<buffersize>][;ssl=<true/false>][;publishByDevice=<true/false>][;deviceTopic=<topic>]";
         final String CHANNEL_ADDRESS = "<channel>";
         final String DEVICE_SCAN_SETTINGS = "device scan not supported";
 
@@ -160,8 +160,7 @@ public class MqttDriver implements DriverService {
         if (event.getType() == ServiceEvent.UNREGISTERING) {
             logger.info("{} unregistering, removing Parser from MqttDriver", parser.getClass().getName());
             connection.setParser(parserId, null);
-        }
-        else {
+        } else {
             logger.info("{} changed, updating Parser in MqttDriver", parser.getClass().getName());
             connection.setParser(parserId, parser);
         }
