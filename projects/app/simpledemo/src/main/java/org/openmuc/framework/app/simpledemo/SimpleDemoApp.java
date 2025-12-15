@@ -42,11 +42,10 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 @Component(service = {})
-public final class SimpleDemoApp 
-{
-   private static final Logger logger = LoggerFactory.getLogger(SimpleDemoApp.class);
+public final class SimpleDemoApp {
+	private static final Logger logger = LoggerFactory.getLogger(SimpleDemoApp.class);
 	private static final String APP_NAME = "ATEnergy BMS App";
-	private static final String[] OPTIONS = {"R", "V", "T", "I", "SOC", "SOH"};
+	private static final String[] OPTIONS = { "R", "V", "T", "I", "SOC", "SOH" };
 	private static final List<String> STRING_CHANNEL_TEMPLATES = Arrays.asList(
         "str%d_cell_qty",
         "str%d_Cnominal",
@@ -72,7 +71,6 @@ public final class SimpleDemoApp
 	private boolean isCellNumberChanged = false;
 	private boolean isUpdatedOverall = false;
 
-
 	private boolean isInitPowerCells = false;
 	private boolean[] isInitCellDimensions;
 	private boolean isFirstInitAllDimension = false;
@@ -92,8 +90,6 @@ public final class SimpleDemoApp
 	// maps internal index (0..stringNumber_1-1) to actual "strX" number
 	private int[] stringIds = new int[0];
 
-
-	
 	@Reference
 	private DataAccessService dataAccessService;
 
@@ -106,19 +102,19 @@ public final class SimpleDemoApp
 	@Deactivate
 	private void deactivate() {
 		// logger.info("Deactivating {}", APP_NAME);
-        updateTimer.cancel();
-        updateTimer.purge();
-	}	
+		updateTimer.cancel();
+		updateTimer.purge();
+	}
 
-	private void initiatePowerCells(){
-		for(int i = 0; i < stringNumber_1; i++) {
-			for	(int j = 0; j < maxCellNumber; j++) {
+	private void initiatePowerCells() {
+		for (int i = 0; i < stringNumber_1; i++) {
+			for (int j = 0; j < maxCellNumber; j++) {
 				powerCells[i][j] = new PowerCell();
 			}
 		}
 	}
 
-		/**
+	/**
 	 * Detects all existing string IDs from channel IDs.
 	 * Works with IDs like "str2_cell1_V", "str10_Cnominal", "str3_string_SOC", etc.
 	 */
@@ -140,8 +136,7 @@ public final class SimpleDemoApp
 				try {
 					int value = Integer.parseInt(id.substring(start, end));
 					ids.add(value);
-				}
-				catch (NumberFormatException ignore) {
+				} catch (NumberFormatException ignore) {
 					// ignore malformed IDs like "strX_..."
 				}
 			}
@@ -150,30 +145,29 @@ public final class SimpleDemoApp
 		return ids.stream().mapToInt(Integer::intValue).toArray();
 	}
 
-
-
 	private Channel[][][] initiateChannel() {
-		
+
 		// logger.info("Initiate Channel {}", APP_NAME);
 
 		// stringNumber_1 = 2; //TODO: change back to get from dimension function
 		// maxCellNumber = 2; //TODO: change back to get from dimension function
-		
+
 		// logger.info("DATA OPTION NUMBER {}", DATA_OPTION_NUM);
-		if(stringNumber <= 0) return null;
+		if (stringNumber <= 0)
+			return null;
 		Channel[][][] channels = new Channel[stringNumber_1][cellNumber][DATA_OPTION_NUM];
 		String[][][] array = new String[stringNumber_1][cellNumber][DATA_OPTION_NUM];
-		
-		// logger.info("Current string number is {} with maxCellNumber = {}", stringNumber_1, maxCellNumber);
-		for(int i = 0; i < stringNumber_1; i++) {
+
+		// logger.info("Current string number is {} with maxCellNumber = {}",
+		// stringNumber_1, maxCellNumber);
+		for (int i = 0; i < stringNumber_1; i++) {
 			int strId = stringIds[i];
-			for	(int j = 0; j < cellNumbers[i]; j++) {				
-				for(int k = 0; k < DATA_OPTION_NUM; k++){
-					if(k == 3) {
-						array[i][j][k] = "str" + strId + "_total" + "_"+ OPTIONS[k];
-					}
-					else {
-						array[i][j][k] = "str" + strId + "_cell" + (j+1) + "_"+ OPTIONS[k];
+			for (int j = 0; j < cellNumbers[i]; j++) {
+				for (int k = 0; k < DATA_OPTION_NUM; k++) {
+					if (k == 3) {
+						array[i][j][k] = "str" + strId + "_total" + "_" + OPTIONS[k];
+					} else {
+						array[i][j][k] = "str" + strId + "_cell" + (j + 1) + "_" + OPTIONS[k];
 					}
 					channels[i][j][k] = dataAccessService.getChannel(array[i][j][k]);
 					// logger.info("Get channels {} ----> {}", APP_NAME, array[i][j][k]);
@@ -182,14 +176,15 @@ public final class SimpleDemoApp
 		}
 		return channels;
 	}
-	
+
 	private void resetFlagInitStringSoC0(int stringIndex) {
-		if(isInitSoC0 != null) {
-			for(int j = 0; j < isInitSoC0[stringIndex].length; j++) {
+		if (isInitSoC0 != null) {
+			for (int j = 0; j < isInitSoC0[stringIndex].length; j++) {
 				isInitSoC0[stringIndex][j] = false;
 			}
 		}
 	}
+
 	private int setSoCEngine(int stringNumber) {
 		for (int i = 0; i < stringNumber; i++) {
 			int strId = stringIds[i];
@@ -216,20 +211,25 @@ public final class SimpleDemoApp
 				double Cnominal = -1.0;
 				Record CnominalRecord = dataAccessService.getChannel(CnominalChannelName).getLatestRecord();
 				Cnominal = CnominalRecord.getValue().asDouble();
-				if(Cnominal < 0) {
-					// logger.warn("Cnominal is not set properly yet for string {}. Skipping set SoC engine this cycle.", i+1);
+				if (Cnominal < 0) {
+					// logger.warn("Cnominal is not set properly yet for string {}. Skipping set SoC
+					// engine this cycle.", i+1);
 					continue;
 				}
-				// logger.info("Old value: String {}: Cnominal: {}, Vcutoff: {}, Vfloat: {}", i+1, socEngines[i]!=null?socEngines[i].getCnominal():"null", socEngines[i]!=null?socEngines[i].getVcutoff():"null", socEngines[i]!=null?socEngines[i].getVfloat():"null");
-				// logger.info("New Value: String {}: Cnominal: {}, Vcutoff: {}, Vfloat: {}", i+1, Cnominal, vCutoff, vFloat);
+				// logger.info("Old value: String {}: Cnominal: {}, Vcutoff: {}, Vfloat: {}",
+				// i+1, socEngines[i]!=null?socEngines[i].getCnominal():"null",
+				// socEngines[i]!=null?socEngines[i].getVcutoff():"null",
+				// socEngines[i]!=null?socEngines[i].getVfloat():"null");
+				// logger.info("New Value: String {}: Cnominal: {}, Vcutoff: {}, Vfloat: {}",
+				// i+1, Cnominal, vCutoff, vFloat);
 				boolean isSoCEngineChanged = false;
 				if (isSetSoCEngine[i]) {
-					if(socEngines[i].getVcutoff() != vCutoff) {
+					if (socEngines[i].getVcutoff() != vCutoff) {
 						socEngines[i].setVcutoff(vCutoff);
 						// logger.info("Update Vcutoff for string {} to {}", i+1, vCutoff);
 						isSoCEngineChanged = true;
 					}
-					if(socEngines[i].getCnominal() != Cnominal) {
+					if (socEngines[i].getCnominal() != Cnominal) {
 						socEngines[i].setCnominal(Cnominal);
 						// logger.info("Update Cnominal for string {} to {}", i+1, Cnominal);
 						isSoCEngineChanged = true;
@@ -245,13 +245,15 @@ public final class SimpleDemoApp
 						double VfloatNew = socEngines[i].getVfloat();
 						double CnominalNew = socEngines[i].getCnominal();
 						socEngines[i] = new SoCEngine(CnominalNew, VcutoffNew, VfloatNew);
-						// logger.info("Re-initialize SoC engine for string {} due to parameter change.", i+1);
+						// logger.info("Re-initialize SoC engine for string {} due to parameter
+						// change.", i+1);
 					}
 				}
-				if(!isSetSoCEngine[i]) {
-					socEngines[i] = new SoCEngine(Cnominal, vCutoff, vFloat);		
+				if (!isSetSoCEngine[i]) {
+					socEngines[i] = new SoCEngine(Cnominal, vCutoff, vFloat);
 					isSetSoCEngine[i] = true;
-					// logger.info("Set SoC engine for string {} with Cnominal: {}, Vcutoff: {}, Vfloat: {}", i+1, Cnominal, vCutoff, vFloat);
+					// logger.info("Set SoC engine for string {} with Cnominal: {}, Vcutoff: {},
+					// Vfloat: {}", i+1, Cnominal, vCutoff, vFloat);
 				}
 			}catch(NullPointerException e) {
 				logger.warn("There is no value yet with this channel at string {}: {}, skipping set SoC engine this cycle.", i+1, e.getMessage());
@@ -260,17 +262,18 @@ public final class SimpleDemoApp
 		}
 		return 1;
 	}
-	
+
 	private void setLatestSoC(PowerCell powerCell, double deltaT, boolean isInitSoC0, int stringIndex) {
-		if(!isInitSoC0) {
+		if (!isInitSoC0) {
 			double firstSoC = socEngines[stringIndex].initialSoCFromVoltage(powerCell.getVoltage());
-			// logger.info("Calculate the first SoC: voltage {}--------> firstSoc: {}", powerCell.getVoltage(), firstSoC);
+			// logger.info("Calculate the first SoC: voltage {}--------> firstSoc: {}",
+			// powerCell.getVoltage(), firstSoC);
 			powerCell.setSoc(firstSoC * 100);
 			// logger.info("First SoC ----> {}", firstSoC*100);
-		}
-		else {
-			double currentSoC = socEngines[stringIndex].updatedSoCEKF(powerCell.getVoltage(), powerCell.getCurrent(), powerCell.getTemp(), deltaT);
-			powerCell.setSoc(currentSoC*100);
+		} else {
+			double currentSoC = socEngines[stringIndex].updatedSoCEKF(powerCell.getVoltage(), powerCell.getCurrent(),
+					powerCell.getTemp(), deltaT);
+			powerCell.setSoc(currentSoC * 100);
 			// logger.info("SetLatestSoC ----> currentSoC: {}", currentSoC*100);
 		}
 	}
@@ -280,12 +283,12 @@ public final class SimpleDemoApp
 		powerCell.setSoh(currentSoH*100);
 		// logger.info("SetLatestSoH ----> currentSoH: {}", currentSoH*100);
 	}
-	
+
 	private void calculateSoCSoH() {
-		for(int i = 0; i < stringNumber; i++) {
-			for	(int j = 0; j < cellNumbers[i]; j++) {
+		for (int i = 0; i < stringNumber; i++) {
+			for (int j = 0; j < cellNumbers[i]; j++) {
 				final int si = i; // final copies for capture
-	            final int sj = j;
+				final int sj = j;
 				// try{
 					if(channels[si][sj][3] == null || 
 					   channels[si][sj][1] == null ||
@@ -333,14 +336,36 @@ public final class SimpleDemoApp
 					Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
 					channels[si][sj][4].setLatestRecord(socRecord);
 
+				powerCells[si][sj].setCurrent(current);
+				logger.info("I of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getCurrent());
+				powerCells[si][sj].setVoltage(voltage);
+				logger.info("V of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getVoltage());
+				powerCells[si][sj].setTemp(temp);
+				logger.info("T of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getTemp());
+				powerCells[si][sj].setResistance(resistance);
 
-					setLatestSoH(powerCells[si][sj]);
-					// logger.info("SoH of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
-					DoubleValue doubleSoHValue = new DoubleValue(Double.parseDouble(DF.format(powerCells[si][sj].getSoh())));
-					Record sohRecord = new Record(doubleSoHValue, now, Flag.VALID);
-					channels[si][sj][5].setLatestRecord(sohRecord);
+				setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);
+				if (isInitSoC0[si][sj] == false) {
+					isInitSoC0[si][sj] = true;
+				}
+				long now = System.currentTimeMillis();
+				// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1,
+				// powerCells[si][sj].getSoc());
+				DoubleValue doubleSoCValue = new DoubleValue(
+						Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
+				Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
+				channels[si][sj][4].setLatestRecord(socRecord);
+
+				setLatestSoH(powerCells[si][sj]);
+				// logger.info("SoH of string {}_cell{}: -----> {}",si+1, sj+1,
+				// powerCells[si][sj].getTemp());
+				DoubleValue doubleSoHValue = new DoubleValue(
+						Double.parseDouble(DF.format(powerCells[si][sj].getSoh())));
+				Record sohRecord = new Record(doubleSoHValue, now, Flag.VALID);
+				channels[si][sj][5].setLatestRecord(sohRecord);
 				// }catch(NullPointerException e) {
-				// 	logger.warn("----------------- MODBUS: There is no value yet with this channel at string {} cell {} --------------", si+1, sj+1);
+				// logger.warn("----------------- MODBUS: There is no value yet with this
+				// channel at string {} cell {} --------------", si+1, sj+1);
 				// }
 			}
 		}
@@ -368,39 +393,43 @@ public final class SimpleDemoApp
 
 		// logger.info("Updated latestSaveChannelNames: {}", latestSaveChannelNames);
 	}
-	
-	private void setFirstOverallStringValue(int stringCount){
-		for(int i = 0; i < stringCount; i++) {
-			for(String template: STRING_CHANNEL_TEMPLATES){
-				try{
-					String stringNameChannel = String.format(template, i+1);
-					// logger.info("First overall string name for string {}: {}", i+1, stringNameChannel);
-					Record record = dataAccessService.getChannel(stringNameChannel).getLatestRecord();
-					// logger.info("First overall string value for string {}: {}", i+1, record.getValue().toString());
 
-					if(record.getFlag() != Flag.VALID){
+	private void setFirstOverallStringValue(int stringCount) {
+		for (int i = 0; i < stringCount; i++) {
+			for (String template : STRING_CHANNEL_TEMPLATES) {
+				try {
+					String stringNameChannel = String.format(template, i + 1);
+					// logger.info("First overall string name for string {}: {}", i+1,
+					// stringNameChannel);
+					Record record = dataAccessService.getChannel(stringNameChannel).getLatestRecord();
+					// logger.info("First overall string value for string {}: {}", i+1,
+					// record.getValue().toString());
+
+					if (record.getFlag() != Flag.VALID) {
 						dataAccessService.getChannel(stringNameChannel).setLatestRecord(record);
 					}
-				}
-				catch(NullPointerException e){
-					logger.warn("There is no value yet with this channel at string {}: {}, skipping set first overall string name this cycle.", i+1, e.getMessage());
+				} catch (NullPointerException e) {
+					logger.warn(
+							"There is no value yet with this channel at string {}: {}, skipping set first overall string name this cycle.",
+							i + 1, e.getMessage());
 				}
 			}
 		}
 	}
 
 	private void checkInitCellDimensions() {
-		if(!isFirstInitAllDimension){
+		if (!isFirstInitAllDimension) {
 			isFirstInitAllDimension = true;
 			// for(int i = 0; i < stringNumber_1; i++) {
-			// 	if(!isInitCellDimensions[i]) {
-			// 		isFirstInitAllDimension = false;
-			// 	}
+			// if(!isInitCellDimensions[i]) {
+			// isFirstInitAllDimension = false;
+			// }
 			// }
 		}
-		if(isFirstInitAllDimension) {
-			if(!isFirstInitAllVariables){
-				logger.info("Initializing isInitSoC0 array: string number: {}, cell number: {}", stringNumber_1, maxCellNumber);
+		if (isFirstInitAllDimension) {
+			if (!isFirstInitAllVariables) {
+				logger.info("Initializing isInitSoC0 array: string number: {}, cell number: {}", stringNumber_1,
+						maxCellNumber);
 				isInitSoC0 = new boolean[stringNumber_1][maxCellNumber];
 				powerCells = new PowerCell[stringNumber_1][maxCellNumber];
 				isSetSoCEngine = new boolean[stringNumber_1];
@@ -413,9 +442,10 @@ public final class SimpleDemoApp
 				channels = initiateChannel();
 				initiatePowerCells();
 				isFirstInitAllVariables = true;
-			}
-			else {
-				// logger.info("Re-Initializing isInitSoC0 array if dimension changed: previous string number: {}, previous cell number: {}; new string number: {}, new cell number: {}", stringNumber, cellNumber, stringNumber_1, maxCellNumber);
+			} else {
+				// logger.info("Re-Initializing isInitSoC0 array if dimension changed: previous
+				// string number: {}, previous cell number: {}; new string number: {}, new cell
+				// number: {}", stringNumber, cellNumber, stringNumber_1, maxCellNumber);
 				if (stringNumber != stringNumber_1 || cellNumber != maxCellNumber) {
 					logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
 					isInitSoC0 = new boolean[stringNumber_1][maxCellNumber];
@@ -426,17 +456,16 @@ public final class SimpleDemoApp
 
 					isSetSoCEngine = new boolean[stringNumber_1];
 					socEngines = new SoCEngine[stringNumber_1];
-					
+
 					updateLatestSaveChannelNames(stringIds);
 					applyListeners();
-						// LatestValuesRestorer.restoreAll(dataAccessService, latestSaveChannelNames);
+					// LatestValuesRestorer.restoreAll(dataAccessService, latestSaveChannelNames);
 					// setFirstOverallStringValue(stringNumber_1);
 					// LatestValuesRestorer.restoreAll()
 					stringNumber = stringNumber_1;
 					cellNumber = maxCellNumber;
 					channels = initiateChannel();
-				}
-				else if (isCellNumberChanged){
+				} else if (isCellNumberChanged) {
 					// logger.info("No dimension change detected.");
 					logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
 					isInitSoC0 = new boolean[stringNumber_1][maxCellNumber];
@@ -447,12 +476,12 @@ public final class SimpleDemoApp
 
 					isSetSoCEngine = new boolean[stringNumber_1];
 					socEngines = new SoCEngine[stringNumber_1];
-					
+
 					updateLatestSaveChannelNames(stringIds);
 					applyListeners();
 					// LatestValuesRestorer.restoreAll(dataAccessService, latestSaveChannelNames);
-						// setFirstOverallStringValue(stringNumber_1);
-					
+					// setFirstOverallStringValue(stringNumber_1);
+
 					stringNumber = stringNumber_1;
 					cellNumber = maxCellNumber;
 					channels = initiateChannel();
@@ -460,7 +489,8 @@ public final class SimpleDemoApp
 				}
 				// initiatePowerCells();
 			}
-			logger.info("All cell dimensions are initialized: string number: {}, cell number: {}", stringNumber, cellNumber);
+			logger.info("All cell dimensions are initialized: string number: {}, cell number: {}", stringNumber,
+					cellNumber);
 		}
 	}
 
@@ -476,7 +506,7 @@ public final class SimpleDemoApp
 		int minTempIndex[] = new int[stringNumber];
 		double maxTemp[] = new double[stringNumber];
 		int maxTempIndex[] = new int[stringNumber];
-		double maxResistance[] = new double[stringNumber];	
+		double maxResistance[] = new double[stringNumber];
 		int maxResistanceIndex[] = new int[stringNumber];
 		int minResistanceIndex[] = new int[stringNumber];
 		double minResistance[] = new double[stringNumber];
@@ -485,8 +515,8 @@ public final class SimpleDemoApp
 		double averageVoltage[] = new double[stringNumber];
 		double strVoltage[] = Helper.calculateStringVoltage(stringNumber, cellNumber, powerCells);
 
-		for(int i = 0; i < stringNumber; i++) {
-			try{
+		for (int i = 0; i < stringNumber; i++) {
+			try {
 				int strId = stringIds[i];
 				String base = "str" + strId + "_";
 				Helper.Result result = Helper.getMaxVoltageBattery(i, cellNumbers, powerCells);
@@ -495,7 +525,7 @@ public final class SimpleDemoApp
 				result = Helper.getMinVoltageBattery(i, cellNumbers, powerCells);
 				minVoltageIndex[i] = result.index;
 				minVoltage[i] = result.value;
-				result = Helper.getMaxTemperatureBattery(i, cellNumbers, powerCells);	
+				result = Helper.getMaxTemperatureBattery(i, cellNumbers, powerCells);
 				maxTempIndex[i] = result.index;
 				maxTemp[i] = result.value;
 				result = Helper.getMinTemperatureBattery(i, cellNumbers, powerCells);
@@ -562,7 +592,8 @@ public final class SimpleDemoApp
 				record = new Record(doubleMinResistanceValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "min_rst_value").setLatestRecord(record);
 
-				DoubleValue doubleAverageResistanceValue = new DoubleValue(Double.parseDouble(DF.format(averageResistance[i])));
+				DoubleValue doubleAverageResistanceValue = new DoubleValue(
+						Double.parseDouble(DF.format(averageResistance[i])));
 				record = new Record(doubleAverageResistanceValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "average_rst").setLatestRecord(record);
 
@@ -570,11 +601,13 @@ public final class SimpleDemoApp
 				record = new Record(doubleAverageTempValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "average_temp").setLatestRecord(record);
 
-				DoubleValue doubleAverageVoltageValue = new DoubleValue(Double.parseDouble(DF.format(averageVoltage[i])));
+				DoubleValue doubleAverageVoltageValue = new DoubleValue(
+						Double.parseDouble(DF.format(averageVoltage[i])));
 				record = new Record(doubleAverageVoltageValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "average_vol").setLatestRecord(record);
 
-				DoubleValue doubleAverageRstValue = new DoubleValue(Double.parseDouble(DF.format(averageResistance[i])));
+				DoubleValue doubleAverageRstValue = new DoubleValue(
+						Double.parseDouble(DF.format(averageResistance[i])));
 				record = new Record(doubleAverageRstValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "average_rst").setLatestRecord(record);
 
@@ -586,13 +619,15 @@ public final class SimpleDemoApp
 				record = new Record(doubleStrSOCValue, now, Flag.VALID);
 				dataAccessService.getChannel(base + "string_SOC").setLatestRecord(record);
 
-			}catch(NullPointerException e) {
-				logger.warn("There is no value yet with this channel at string {}: {}, skipping push calculated data to channels this cycle.", i+1, e.getMessage());
+			} catch (NullPointerException e) {
+				logger.warn(
+						"There is no value yet with this channel at string {}: {}, skipping push calculated data to channels this cycle.",
+						i + 1, e.getMessage());
 			}
 		}
 
 	}
-	
+
 	private void initUpdateTimer() {
         updateTimer = new Timer("Modbus Update");
 	
@@ -635,11 +670,11 @@ public final class SimpleDemoApp
 					// }
 				}
 				// setFirstOverallStringValue(stringNumber);
-	        }
-	    };
-	    updateTimer.scheduleAtFixedRate(task, (long) 1 * 1000, (long) 1 * 1000);
+			}
+		};
+		updateTimer.scheduleAtFixedRate(task, (long) 1 * 1000, (long) 1 * 1000);
 	}
-	
+
 	private void getCellDimension() {
 		stringNumber_1 = 0;
 		List<String> allChannelId = dataAccessService.getAllIds();
@@ -655,41 +690,42 @@ public final class SimpleDemoApp
 		if(!isFirstInitAllDimension){
 			cellNumbers = new int[index];
 			isInitCellDimensions = new boolean[index];
-			for(int i = 0; i < index; i++) {
+			for (int i = 0; i < index; i++) {
 				isInitCellDimensions[i] = false;
 			}
 			stringNumber_1 = index;
-		}
-		else{
-			if(index != stringNumber_1) stringNumber_1 = index;
+		} else {
+			if (index != stringNumber_1)
+				stringNumber_1 = index;
 			cellNumbers = new int[index];
 		}
-		if(stringNumber_1 == 0) {
+		if (stringNumber_1 == 0) {
 			logger.warn("String number is zero, skipping get cell dimension this cycle.");
 			maxCellNumber = 0;
 			return;
 		}
 
 		logger.info("------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", stringNumber_1);
-		for(int i = 0; i < stringNumber_1; i++) {
+		for (int i = 0; i < stringNumber_1; i++) {
 			int strId = stringIds[i];
 			String cellNumberChannelName = "str" + strId + "_cell_qty";
 
-			try{
+			try {
 				Record cellNumberRecord = dataAccessService.getChannel(cellNumberChannelName).getLatestRecord();
 				cellNumbers[i] = cellNumberRecord.getValue().asInt();
 				// logger.info("String {} has cell number: {}", i+1, cellNumbers[i]);
-				if(maxCellNumber < cellNumbers[i]) {
+				if (maxCellNumber < cellNumbers[i]) {
 					maxCellNumber = cellNumbers[i];
 				}
-			}catch(NullPointerException e) {
-				logger.warn("There is no value yet with this channel: {}, skipping get cell dimension this cycle.", cellNumberChannelName);
-			}catch(IndexOutOfBoundsException e){
-				logger.warn("Index out of bound: {},error: {}", i, e.getMessage());	
+			} catch (NullPointerException e) {
+				logger.warn("There is no value yet with this channel: {}, skipping get cell dimension this cycle.",
+						cellNumberChannelName);
+			} catch (IndexOutOfBoundsException e) {
+				logger.warn("Index out of bound: {},error: {}", i, e.getMessage());
 			}
 		}
 	}
-	
+
 	private void initiate() {
 		// logger.info("Initiating {}", APP_NAME);
 		// logger.info("Getting the 1st cell dimension!!!!!");
@@ -697,10 +733,10 @@ public final class SimpleDemoApp
 	}
 
 	private void applyListeners() {
-    	// logger.info("Applying listeners for {}", APP_NAME);
+		// logger.info("Applying listeners for {}", APP_NAME);
 
-    // 1) Remove listeners for channels that are no longer in the list
-		for (Iterator<Map.Entry<String, RecordListener>> it = listeners.entrySet().iterator(); it.hasNext(); ) {
+		// 1) Remove listeners for channels that are no longer in the list
+		for (Iterator<Map.Entry<String, RecordListener>> it = listeners.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<String, RecordListener> entry = it.next();
 			String channelId = entry.getKey();
 			// logger.info("Checking listener for channel: {}", channelId);
@@ -725,7 +761,7 @@ public final class SimpleDemoApp
 					// setFirstOverallStringValue(stringNumber);
 					if((channelID.startsWith("str") && channelID.contains("_cell_qty")) || channelID.equals("dev_serial_comm_number") || (channelID.startsWith("str") && channelID.contains("_Cnominal")) || (channelID.startsWith("str") && channelID.contains("_Vcutoff")) || (channelID.startsWith("str") && channelID.contains("_Vfloat"))){
 						LatestValuesDao.updateDouble(id, record.getValue().asDouble());
-						if(channelID.startsWith("str") && channelID.contains("_cell_qty")){
+						if (channelID.startsWith("str") && channelID.contains("_cell_qty")) {
 							// getCellDimension();
 							// channels = initiateChannel();
 							isCellNumberChanged = true;
@@ -734,11 +770,12 @@ public final class SimpleDemoApp
 					else
 					    LatestValuesDao.updateString(id, record.getValue().asString());
 
-					// logger.info("Listener triggered for channel: {} latest value: {}", channelID, dataAccessService.getChannel(channelID).getLatestRecord().getValue().toString());
+					// logger.info("Listener triggered for channel: {} latest value: {}", channelID,
+					// dataAccessService.getChannel(channelID).getLatestRecord().getValue().toString());
 
 					// dataAccessService.getChannel(channelID).setLatestRecord(record);
 					// LatestValuesRestorer.restoreAll(dataAccessService, latestSaveChannelNames);
-					
+
 					isUpdatedOverall = true;
 				}
 			}));

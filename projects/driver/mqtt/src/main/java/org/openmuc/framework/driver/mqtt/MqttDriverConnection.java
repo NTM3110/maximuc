@@ -164,7 +164,7 @@ public class MqttDriverConnection implements Connection {
     private boolean recordIsOld(String channelId, Record record) {
         Long lastTimestamp = lastLoggedRecords.get(channelId);
 
-        if (lastTimestamp == null) {
+        if (lastTimestamp == null) {  
             lastLoggedRecords.put(channelId, record.getTimestamp());
             return false;
         }
