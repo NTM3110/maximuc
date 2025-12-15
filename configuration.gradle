@@ -70,6 +70,7 @@ project.ext {
                 it.getPath() == ":openmuc-lib-filePersistence" ||
                 it.getPath() == ":openmuc-lib-mqtt" ||
                 it.getPath() == ":openmuc-lib-osgi" ||
+                it.getPath() == ":openmuc-lib-parser-custom" ||
                 it.getPath() == ":openmuc-lib-parser-openmuc" ||
                 it.getPath() == ":openmuc-lib-rest1" ||
                 it.getPath() == ":openmuc-lib-ssl" ||

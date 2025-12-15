@@ -68,8 +68,9 @@ public class MqttWriterTest {
             return null;
         }).when(connection).addDisconnectedListener(any(MqttClientDisconnectedListener.class));
 
-        when(connection.getSettings()).thenReturn(new MqttSettings("localhost", 1883, null, null, false, 1, 1, 2, 5000,
-                10, DIRECTORY, "", "".getBytes(), false, "", "".getBytes(), 0, 0, false, false));
+        when(connection.getSettings())
+                .thenReturn(new MqttSettings("localhost", 1883, null, null, null, false, 1, 1, 2, 5000,
+                        10, DIRECTORY, "", "".getBytes(), false, "", "".getBytes(), 0, 0, false, false));
 
         mqttWriter = new MqttWriterStub(connection);
         connectedListener.onConnected(() -> null);
@@ -87,8 +88,7 @@ public class MqttWriterTest {
         for (File child : directory.listFiles()) {
             if (child.isDirectory()) {
                 deleteDirectory(child);
-            }
-            else {
+            } else {
                 child.delete();
             }
         }

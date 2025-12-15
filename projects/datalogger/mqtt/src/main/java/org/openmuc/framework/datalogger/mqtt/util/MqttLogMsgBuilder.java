@@ -49,8 +49,7 @@ public class MqttLogMsgBuilder {
     public List<MqttLogMsg> buildLogMsg(List<LoggingRecord> loggingRecordList, boolean isLogMultiple) {
         if (isLogMultiple) {
             return logMultiple(loggingRecordList);
-        }
-        else {
+        } else {
             return logSingle(loggingRecordList);
         }
     }
@@ -95,8 +94,13 @@ public class MqttLogMsgBuilder {
             // if isLogMultiple=true, then group channels per topic
             // or default: log warning and use logSingle instead
 
-        }
-        else {
+        } else {
+            // Check if loggingRecords is not empty before accessing
+            if (loggingRecords.isEmpty()) {
+                logger.warn("logMultiple called with empty loggingRecords list");
+                return logMessages;
+            }
+
             try {
                 // since all topics are the same, get the topic of
                 String topic = channelsToLog.get(loggingRecords.get(0).getChannelId()).topic;
@@ -117,7 +121,8 @@ public class MqttLogMsgBuilder {
 
     private boolean hasDifferentTopics() {
         long distinct = channelsToLog.values().stream().map(channel -> channel.topic).distinct().count();
-        // If the count of this stream is smaller or equal to 1, then all the elements are equal. so > 1 means unequal
+        // If the count of this stream is smaller or equal to 1, then all the elements
+        // are equal. so > 1 means unequal
         return distinct > 1;
     }
 

@@ -75,7 +75,8 @@ public class MqttLogger implements DataLoggerService, ManagedService {
 
     @Override
     public void setChannelsToLog(List<LogChannel> logChannels) {
-        // FIXME Datamanger should only pass logChannels which should be logged by MQTT Logger
+        // FIXME Datamanger should only pass logChannels which should be logged by MQTT
+        // Logger
         // right now all channels are passed to the data logger and dataloger has to
         // decide/parse which channels it hast to log
         channelsToLog.clear();
@@ -127,21 +128,28 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         }
 
         // logger.info("============================");
-        // loggingRecordList.stream().map(LoggingRecord::getChannelId).forEach(id -> logger.info(id));
+        // loggingRecordList.stream().map(LoggingRecord::getChannelId).forEach(id ->
+        // logger.info(id));
 
-        // FIXME refactor OpenMUC core - actually the datamanager should only call logger.log()
-        // with channels configured for this logger. If this is the case the containsKey check could be ignored
-        // The filter serves as WORKAROUND to process only channels which were configured for mqtt logger
+        // FIXME refactor OpenMUC core - actually the datamanager should only call
+        // logger.log()
+        // with channels configured for this logger. If this is the case the containsKey
+        // check could be ignored
+        // The filter serves as WORKAROUND to process only channels which were
+        // configured for mqtt logger
         List<LoggingRecord> logRecordsForMqttLogger = loggingRecordList.stream()
                 .filter(record -> channelsToLog.containsKey(record.getChannelId()))
                 .collect(Collectors.toList());
 
-        // channelsToLog.values().stream().map(channel -> channel.topic).distinct().count();
+        // channelsToLog.values().stream().map(channel ->
+        // channel.topic).distinct().count();
 
         // Concept of the MqttLogMsgBuilder:
         // 1. cleaner code
-        // 2. better testability: MqttLogMsgBuilder can be easily created in a test and the output of
-        // MqttLogMsgBuilder.build() can be verified. It takes the input from logger.log() method, processes it
+        // 2. better testability: MqttLogMsgBuilder can be easily created in a test and
+        // the output of
+        // MqttLogMsgBuilder.build() can be verified. It takes the input from
+        // logger.log() method, processes it
         // and creates ready to use messages for the mqttWriter
         MqttLogMsgBuilder logMsgBuilder = new MqttLogMsgBuilder(channelsToLog, availableParsers.get(parser));
         List<MqttLogMsg> logMessages = logMsgBuilder.buildLogMsg(logRecordsForMqttLogger, isLogMultiple);
@@ -191,12 +199,10 @@ public class MqttLogger implements DataLoggerService, ManagedService {
             if (isLoggerReady()) {
                 logger.info("Connecting to MQTT Broker");
                 mqttWriter.getConnection().connect();
-            }
-            else {
+            } else {
                 logger.info("Writer is not ready yet");
             }
-        }
-        else {
+        } else {
             logger.info("Connecting to MQTT Broker");
             mqttWriter.getConnection().connect();
         }
@@ -212,6 +218,7 @@ public class MqttLogger implements DataLoggerService, ManagedService {
                 propertyHandler.getInt(MqttLoggerSettings.PORT),
                 propertyHandler.getString(MqttLoggerSettings.USERNAME),
                 propertyHandler.getString(MqttLoggerSettings.PASSWORD),
+                propertyHandler.getString(MqttLoggerSettings.CLIENT_ID),
                 propertyHandler.getBoolean(MqttLoggerSettings.SSL),
                 propertyHandler.getInt(MqttLoggerSettings.MAX_BUFFER_SIZE),
                 propertyHandler.getInt(MqttLoggerSettings.MAX_FILE_SIZE),
@@ -251,7 +258,8 @@ public class MqttLogger implements DataLoggerService, ManagedService {
                 // tells us:
                 // 1. if we get till here then updated(dict) was processed without errors and
                 // 2. the values from cfg file are identical to the default values
-                // logger.info("new properties: changed={}, isDefault={}", propertyHandler.configChanged(),
+                // logger.info("new properties: changed={}, isDefault={}",
+                // propertyHandler.configChanged(),
                 // propertyHandler.isDefaultConfig());
                 applyConfigChanges();
             }

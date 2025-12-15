@@ -101,6 +101,7 @@ public class MqttLoggerTest {
         MqttSettings Mqttsettings = new MqttSettings(propertyHandler.getString(MqttLoggerSettings.HOST),
                 propertyHandler.getInt(MqttLoggerSettings.PORT), propertyHandler.getString(MqttLoggerSettings.USERNAME),
                 propertyHandler.getString(MqttLoggerSettings.PASSWORD),
+                propertyHandler.getString(MqttLoggerSettings.CLIENT_ID),
                 propertyHandler.getBoolean(MqttLoggerSettings.SSL),
                 propertyHandler.getInt(MqttLoggerSettings.MAX_BUFFER_SIZE),
                 propertyHandler.getInt(MqttLoggerSettings.MAX_FILE_SIZE),
@@ -117,9 +118,12 @@ public class MqttLoggerTest {
     /**
      * Complete test of file buffering from logger's point of view.
      * <p>
-     * Scenario: Logger connects to a broker, after some while connection to broker is interrupted. Now, logger should
-     * log into a file. After some time the connection to the broker is reestablished. Now logger should transfer all
-     * buffered messages to the broker and clear the file (buffer) afterwards. At the same time new live logs should be
+     * Scenario: Logger connects to a broker, after some while connection to broker
+     * is interrupted. Now, logger should
+     * log into a file. After some time the connection to the broker is
+     * reestablished. Now logger should transfer all
+     * buffered messages to the broker and clear the file (buffer) afterwards. At
+     * the same time new live logs should be
      * send to the broker as well (in parallel)
      */
     @Disabled
@@ -140,6 +144,7 @@ public class MqttLoggerTest {
 
         // 5. reconnect to the BrokerMock
 
-        // 6. empty file buffer and send (historical) messages to broker AND send live log messages to broker as well
+        // 6. empty file buffer and send (historical) messages to broker AND send live
+        // log messages to broker as well
     }
 }

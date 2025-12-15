@@ -67,7 +67,7 @@ public class MqttConnection {
      * A connection to a MQTT broker
      *
      * @param settings
-     *            connection details {@link MqttSettings}
+     *                 connection details {@link MqttSettings}
      */
     public MqttConnection(MqttSettings settings) {
         this.settings = settings;
@@ -84,8 +84,18 @@ public class MqttConnection {
     }
 
     private Mqtt3ClientBuilder getClientBuilder() {
+        // Use clientId from settings if provided, otherwise generate random short ID
+        String clientId;
+        if (settings.getClientId() != null && !settings.getClientId().isEmpty()) {
+            clientId = settings.getClientId();
+            logger.info("Using configured client ID: {}", clientId);
+        } else {
+            // Generate short random client ID (MQTT v3.1 has 23 char limit)
+            clientId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            logger.debug("Generated client ID: {}", clientId);
+        }
         Mqtt3ClientBuilder clientBuilder = Mqtt3Client.builder()
-                .identifier(UUID.randomUUID().toString())
+                .identifier(clientId)
                 .automaticReconnect()
                 .initialDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
                 .maxDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
@@ -125,13 +135,15 @@ public class MqttConnection {
         sslReady = true;
         client.disconnect().whenComplete((ack, e) -> {
             clientBuilder.sslConfig(getSslConfig());
-            clientBuilder.identifier(UUID.randomUUID().toString());
+            String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            clientBuilder.identifier(shortId);
             connect();
         });
     }
 
     private Mqtt3Connect getConnect() {
         Mqtt3ConnectBuilder connectBuilder = Mqtt3Connect.builder();
+        connectBuilder.cleanSession(true); // Don't maintain session state
         connectBuilder.keepAlive(settings.getConnectionAliveInterval());
         if (settings.isLastWillSet()) {
             connectBuilder.willPublish()
@@ -160,12 +172,10 @@ public class MqttConnection {
             if (e != null) {
                 if (uuid.equals(client.getConfig().getClientIdentifier().toString())) {
                     logger.error("Error with connection initiated at {}: {}", time, e.getMessage());
-                }
-                else {
+                } else {
                     logger.warn("Error with some old connection with UUID={}", uuid, e);
                 }
-            }
-            else {
+            } else {
                 logger.debug("connect successfully");
             }
         });
@@ -198,8 +208,7 @@ public class MqttConnection {
                 if (connectedOrReconnect) {
                     logger.debug("Is connectedOrReconnect");
                     disconnectedCount.set(0);
-                }
-                else {
+                } else {
                     int disconnectedSince = disconnectedCount.incrementAndGet();
                     logger.debug("Is now disconnected since {} runs", disconnectedSince);
                 }
@@ -210,8 +219,8 @@ public class MqttConnection {
                             "Was disconnected for more than {}ms. Starting manual reconnect by creating a new client, disconnecting old client",
                             periodMillis * disconnectedCnt);
                     client.disconnect();
-                    String newIdentifier = UUID.randomUUID().toString();
-                    clientBuilder.identifier(newIdentifier);
+                    String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+                    clientBuilder.identifier(shortId);
                     connect();
                 }
             }
@@ -237,8 +246,7 @@ public class MqttConnection {
                     .whenComplete((publish, e) -> {
                         client.disconnect();
                     });
-        }
-        else {
+        } else {
             client.disconnect();
         }
     }
@@ -247,8 +255,7 @@ public class MqttConnection {
         logger.trace("addConnectedListener ");
         if (clientBuilder == null) {
             connectedListeners.add(listener);
-        }
-        else {
+        } else {
             clientBuilder.addConnectedListener(listener);
             if (!connectedListeners.contains(listener)) {
                 connectedListeners.add(listener);
@@ -260,8 +267,7 @@ public class MqttConnection {
         logger.trace("addDisconnectedListener");
         if (clientBuilder == null) {
             disconnectedListeners.add(listener);
-        }
-        else {
+        } else {
             clientBuilder.addDisconnectedListener(listener);
             if (!disconnectedListeners.contains(listener)) {
                 disconnectedListeners.add(listener);
@@ -274,7 +280,8 @@ public class MqttConnection {
     }
 
     /**
-     * @return the settings {@link MqttSettings} this connection was constructed with
+     * @return the settings {@link MqttSettings} this connection was constructed
+     *         with
      */
     public MqttSettings getSettings() {
         return settings;
@@ -309,21 +316,22 @@ public class MqttConnection {
             if (!disconnectedClientId.equals(thisClientIdentifier)) {
                 logger.debug("Old client was disconnected. Preventing further reconnects.");
                 context.getReconnector().reconnect(false);
-            }
-            else if (context.getReconnector().getAttempts() >= 3) {
-                // if the reconnect was not successful for 3 times, then it probably will be never!
+            } else if (context.getReconnector().getAttempts() >= 3) {
+                // if the reconnect was not successful for 3 times, then it probably will be
+                // never!
                 // just create a new connection instead!
-                // this case is only interesting for ssl, did not without ssl according to martin
+                // this case is only interesting for ssl, did not without ssl according to
+                // martin
 
                 logger.debug("Shutting down old client");
                 context.getReconnector().reconnect(false);
                 client.disconnect();
                 logger.info("Disconnected old client {}, starting new client", thisClientIdentifier);
 
-                String newIdentifier = UUID.randomUUID().toString();
-                clientBuilder.identifier(newIdentifier);
+                String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+                clientBuilder.identifier(shortId);
                 connect();
-                logger.debug("Connected to new client {}", newIdentifier);
+                logger.debug("Connected to new client {}", shortId);
             }
         });
         client = buildClient();
