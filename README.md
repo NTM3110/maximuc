@@ -194,3 +194,5 @@ java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 -jar f
 *   **Port 5005** chỉ là cổng kết nối giữa IntelliJ và Java process, không ảnh hưởng logic ứng dụng.
 *   Bạn có thể thay đổi port bằng cách sửa tham số `-agentlib:jdwp=...address=*:PORT` trong script.
 *   Khi debug xong, nhấn **Stop** (hình vuông đỏ) trong IntelliJ và `Ctrl+C` trong Terminal để tắt OpenMUC.
+
+hello, tat cat moi ng bat dau dung git nhe
