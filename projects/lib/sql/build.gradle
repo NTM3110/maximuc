@@ -1,0 +1,38 @@
+def projectName = "Helper Library - JDBC API"
+def projectDescription = "
+def jdbcVersion =  '1.1.0'
+
+configurations.create('embed')
+
+dependencies {
+    implementation project(':openmuc-core-api')
+    implementation group: "commons-codec", name: "commons-codec", version: commonsCodecVersion
+
+    implementation group: 'org.apache.felix', name: 'org.apache.felix.http.servlet-api', version: apacheFelixServletVersion
+    implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+    embed group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+}
+
+jar {
+    bnd('Bundle-Name': projectName, 'Bundle-ClassPath': '.,lib/org.osgi.service.jdbc-'+jdbcVersion+'.jar',
+            'Export-Package': 'org.osgi.service.jdbc',
+            'Import-Package': 'org.postgresql,javax.sql,org.h2.tools,' +
+                    'org.openmuc.framework.*,' +
+                    'org.osgi.*,org.slf4j,!org.osgi.service.jdbc,' + jarDefaultImportPackageVersion)
+    into('lib') {
+        from configurations.embed
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = projectName
+                description = projectDescription
+            }
+        }
+    }
+}
+
+

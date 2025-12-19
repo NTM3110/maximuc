@@ -8973,4 +8973,11 @@
     </device>
   </driver>
 
+  <driver id="simpledriver">
+    <device id="simpledriver_device">
+      <description>Simple driver device</description>
+      <disabled>false</disabled>
+    </device>
+  </driver>
+
 </configuration>

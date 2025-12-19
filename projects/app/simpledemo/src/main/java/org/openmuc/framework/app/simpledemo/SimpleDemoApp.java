@@ -271,7 +271,7 @@ public final class SimpleDemoApp
 	private void setLatestSoH(PowerCell powerCell) {
 		double currentSoH = SoHEngine.updatedSoHRegular(powerCell.getResistance());
 		powerCell.setSoh(currentSoH*100);
-		logger.info("SetLatestSoH ----> currentSoH: {}", currentSoH*100);
+		// logger.info("SetLatestSoH ----> currentSoH: {}", currentSoH*100);
 	}
 	
 	private void calculateSoCSoH() {
@@ -309,11 +309,11 @@ public final class SimpleDemoApp
 					// logger.info("Value of of {}: -----> {}",channels[si][sj][0].getId(), resistance);
 
 					powerCells[si][sj].setCurrent(current);
-					logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
+					// logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
 					powerCells[si][sj].setVoltage(voltage);
-					logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
+					// logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
 					powerCells[si][sj].setTemp(temp);
-					logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
+					// logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
 					powerCells[si][sj].setResistance(resistance);
 					
 					setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);

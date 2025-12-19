@@ -12,9 +12,12 @@ dependencies {
 
 jar {
     bnd('Bundle-Name': projectName,
-        'Bundle-ClassPath': '.,lib/gson-' + gsonVersion + '.jar',
-        'Export-Package': 'org.openmuc.framework.lib.rest1.*,com.google.*')
-            
+        'Bundle-ClassPath': '.,lib/gson-' + gsonVersion + '.jar'+ ',lib/org.osgi.service.jdbc-'+jdbcVersion+'.jar',
+        'Export-Package': 'org.openmuc.framework.lib.rest1.*,com.google.*' + ',org.osgi.service.jdbc',
+        'Import-Package': 'org.postgresql,javax.sql,org.h2.tools,' +
+                    'org.openmuc.framework.*,' +
+                    'org.osgi.*,org.slf4j,!org.osgi.service.jdbc,' + jarDefaultImportPackageVersion
+        )
      into('lib') {
         from configurations.embed
     }

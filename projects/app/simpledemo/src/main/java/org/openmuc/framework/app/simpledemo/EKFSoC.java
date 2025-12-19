@@ -102,14 +102,14 @@ public class EKFSoC {
     // ---- One EKF iteration ----
     public Result step(double U_meas, double I, double T, double R0) {
         // Debug similar to Python prints
-        logger.info("voltage: {}, current: {}, temperature: {}", U_meas, I, T);
-        logger.info("SoC: {}, Vp: {}", SoC, Vp);
+        // logger.info("voltage: {}, current: {}, temperature: {}", U_meas, I, T);
+        // logger.info("SoC: {}, Vp: {}", SoC, Vp);
 
         // ---------- Predict ----------
         double SoC_pred = SoC - (I * dt) / Qn_As;
         double Vp_pred = Vp + dt * (-Vp / (R1 * C1) + I / C1);
 
-        logger.info("SoC_pred: {}", SoC_pred);
+        // logger.info("SoC_pred: {}", SoC_pred);
 
         // x_pred vector as 2x1
         Matrix x_pred = Matrix.col(SoC_pred, Vp_pred);

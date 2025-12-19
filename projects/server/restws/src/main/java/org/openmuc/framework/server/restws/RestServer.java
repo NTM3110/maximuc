@@ -57,6 +57,7 @@ public final class RestServer {
     private final DriverResourceServlet drvRServlet = new DriverResourceServlet();
     private final ConnectServlet connectServlet = new ConnectServlet();
     private final UserServlet userServlet = new UserServlet();
+    private final LatestValueResourceServlet latestValueServlet = new LatestValueResourceServlet();
     // private final ControlsServlet controlsServlet = new ControlsServlet();
 
     public static DataAccessService getDataAccessService() {
@@ -100,6 +101,7 @@ public final class RestServer {
         httpService.registerServlet(Const.ALIAS_DRIVERS, drvRServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_USERS, userServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_CONNECT, connectServlet, null, securityHandler);
+        httpService.registerServlet(Const.ALIAS_LATEST_VALUE, latestValueServlet, null, securityHandler);
         // httpService.registerServlet(Const.ALIAS_CONTROLS, controlsServlet, null, securityHandler);
     }
 
@@ -112,6 +114,9 @@ public final class RestServer {
         httpService.unregister(Const.ALIAS_DRIVERS);
         httpService.unregister(Const.ALIAS_USERS);
         httpService.unregister(Const.ALIAS_CONNECT);
+        httpService.unregister(Const.ALIAS_LATEST_VALUE);
+        httpService.unregister(Const.ALIAS_DEVICES_V2);
+        httpService.unregister(Const.ALIAS_NETWORK);
         // httpService.unregister(Const.ALIAS_CONTROLS);
     }
 

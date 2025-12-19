@@ -38,7 +38,7 @@ public class Helper {
 				}						
 			}
 			
-			logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOC[i], validCellCount);
+			// logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOC[i], validCellCount);
 			str_SOC[i] = str_SOC[i] / validCellCount;
 			validCellCount = 0;
 		}
@@ -57,7 +57,7 @@ public class Helper {
 			        validCellCount++;
 				}						
 			}
-			logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOH[i], validCellCount);
+			// logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOH[i], validCellCount);
 			str_SOH[i] = str_SOH[i] / validCellCount;
 			validCellCount = 0;
 		}

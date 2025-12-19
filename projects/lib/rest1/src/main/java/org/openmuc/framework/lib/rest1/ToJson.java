@@ -25,6 +25,7 @@ import static org.openmuc.framework.lib.rest1.Const.VALUE_STRING;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import org.openmuc.framework.config.ChannelConfig;
 import org.openmuc.framework.config.ChannelScanInfo;
@@ -58,6 +59,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import org.openmuc.framework.lib.rest1.domain.dto.StringDetailDTO;
+
 public class ToJson {
 
     private final Gson gson;
@@ -86,8 +89,17 @@ public class ToJson {
         return gson.toJson(jsonObject);
     }
 
-    public void addRecord(Record record, ValueType valueType) throws ClassCastException {
+    public void addMap(String propertyName, Map<String, String> map) {
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            jsonObject.addProperty(entry.getKey(), entry.getValue());
+        }
+    }
 
+    public void addObject(Object object) {
+        jsonObject.addProperty("data", gson.toJson(object));
+    }
+
+    public void addRecord(Record record, ValueType valueType) throws ClassCastException {
         jsonObject.add(Const.RECORD, getRecordAsJsonElement(record, valueType));
     }
 
@@ -307,6 +319,16 @@ public class ToJson {
         return jso;
     }
 
+    private JsonObject stringDetailToJson(StringDetailDTO stringDetailDTO) {
+        JsonObject data = new JsonObject();
+        data.addProperty("stringName",stringDetailDTO.getStringName());
+        data.addProperty("cellBrand",stringDetailDTO.getCellBrand());
+        data.addProperty("cellModel",stringDetailDTO.getCellModel());
+        data.addProperty("cellQty",stringDetailDTO.getCellQty());
+        data.addProperty("cnominal",stringDetailDTO.getCNominal());
+        data.addProperty("vnominal",stringDetailDTO.getVNominal());
+        return data;
+    }
     private JsonElement getRecordAsJsonElement(Record record, ValueType valueType) throws ClassCastException {
 
         return gson.toJsonTree(getRestRecord(record, valueType), RestRecord.class);

@@ -35,27 +35,15 @@ dependencies {
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-core-spi', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-core-datamanager', version: openmucVersion
 
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-datalogger-ascii', version: openmucVersion
-
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-spi', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-base', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-channelconfigurator', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-channelaccesstool', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-userconfigurator', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-dataexporter', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-dataplotter', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-mediaviewer', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-simpledemovisualisation', version: openmucVersion
-
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-lib-osgi', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-lib-ssl', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-lib-rest1', version: openmucVersion
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-restws', version: openmucVersion
-    osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-iec61850', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-server-modbus', version:openmucVersion
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-modbus', version: openmucVersion
+    osgibundles group: 'org.openmuc.framework', name: 'openmuc-driver-simpledriver', version: openmucVersion
 
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-app-simpledemo', version: openmucVersion
