@@ -90,9 +90,11 @@ public class ToJson {
     }
 
     public void addMap(String propertyName, Map<String, String> map) {
+        JsonObject jo = new JsonObject();
         for (Map.Entry<String, String> entry : map.entrySet()) {
-            jsonObject.addProperty(entry.getKey(), entry.getValue());
+            jo.addProperty(entry.getKey(), entry.getValue());
         }
+        jsonObject.add(propertyName, jo);
     }
 
     public void addObject(Object object) {

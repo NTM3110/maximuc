@@ -31,6 +31,7 @@ import org.openmuc.framework.server.restws.servlets.DeviceResourceServlet_v2;
 import org.openmuc.framework.server.restws.servlets.DriverResourceServlet;
 import org.openmuc.framework.server.restws.servlets.UserServlet;
 import org.openmuc.framework.server.restws.servlets.NetworkRestServlet;
+import org.openmuc.framework.server.restws.servlets.LatestValueResourceServlet;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;

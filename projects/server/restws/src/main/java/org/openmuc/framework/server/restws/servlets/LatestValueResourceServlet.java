@@ -29,7 +29,7 @@ public class LatestValueResourceServlet extends GenericServlet {
     private RootConfig rootConfig;
 
     private static final Logger logger = LoggerFactory.getLogger(LatestValueResourceServlet.class);
-    LatestValueService latestValueService;
+    public LatestValueService latestValueService;
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -40,37 +40,76 @@ public class LatestValueResourceServlet extends GenericServlet {
         if (pathAndQueryString != null) {
             // setConfigAccess();
             String pathInfo = pathAndQueryString[ServletLib.PATH_ARRAY_NR];
+            String[] pathInfoArray = ServletLib.getPathInfoArray(pathInfo);
 
             ToJson json = new ToJson();
-            if (pathInfo.equals("/dev")) {
+            if (pathInfoArray[0].replace("/", "").equals("dev")) {
                 Map<String, String> deviceMap = latestValueService.getDevValues();
                 if(deviceMap != null) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     json.addMap("data", deviceMap);
                 }
+                else{
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    json.addString("result","Dev values not found.");
+                }
             }
-            else if(pathInfo.equals("/site-name")) {
+            else if(pathInfoArray[0].replace("/","").equals("site-name")) {
                 String siteName = latestValueService.getSiteName();
                 if(siteName != null) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     json.addString("data", siteName);
                 }
-            }
-            else if(pathInfo.equals("/string")){
-                StringDetailDTO string = latestValueService.getString();
-                if(string != null) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    json.addObject(string);
+                else{
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    json.addString("result","Site name not found.");
                 }
             }
-            else if(pathInfo.equals("/account")){
-                Account account = latestValueService.getAccountDetails();
-                if(account != null) {
-                    response.setStatus(HttpServletResponse.SC_OK);
-                    json.addObject(account);
+            else if(pathInfoArray[0].replace("/","").equals("string")){
+                if(pathInfoArray.length != 2){
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    json.addString("result","Invalid URL. Please provide a string ID.");
+                }
+                else{
+                    String stringId = pathInfoArray[1].replace("/", "");
+                    StringDetailDTO string = latestValueService.getStringDetails(stringId);
+                    if(string != null) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        json.addObject(string);
+                    }
+                    else{
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        json.addString("result","String details not found for stringId: " + stringId);
+                    }
                 }
             }
-            sendJson(response, json);
+            else if(pathInfoArray[0].replace("/", "").equals("account")){
+                if(pathInfoArray.length != 2){
+                    response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    json.addString("result","Invalid URL. Please provide an account ID.");
+                }
+                else{
+                    int accountID;
+                    try {
+                        accountID = Integer.parseInt(pathInfoArray[1].replace("/", ""));
+                    } catch (NumberFormatException e) {
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        json.addString("result","Invalid account ID format. Please provide a numeric account ID.");
+                        sendJson(json, response);
+                        return;
+                    }
+                    Account account = latestValueService.getAccountDetails(accountID);
+                    if(account != null) {
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        json.addObject(account);
+                    }
+                    else{
+                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        json.addString("result","Account details not found for accountID: " + accountID);
+                    }
+                }
+            }
+            sendJson(json, response);
         }
     }
 
@@ -100,7 +139,7 @@ public class LatestValueResourceServlet extends GenericServlet {
                     }
                 }
             }
-            sendJson(response, json);
+            sendJson(json, response);
         }
     }
 

@@ -1,6 +1,6 @@
 def projectName = "OpenMUC Library - REST/JSON v1.0"
 def projectDescription = "Rest/JSON library for the OpenMUC framework"
-
+def jdbcVersion =  '1.1.0'
 configurations.create('embed')
 
 dependencies {
@@ -8,6 +8,15 @@ dependencies {
     
     implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
     embed group: 'com.google.code.gson', name: 'gson', version: gsonVersion
+    
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.5.0'
+
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.2'
+    implementation group: 'com.h2database', name: 'h2', version: '2.3.232'
+    embed group: 'org.osgi', name: 'org.osgi.service.jdbc', version: jdbcVersion
+    api group: 'org.osgi', name: 'org.osgi.service.jdbc', version: jdbcVersion
 }
 
 jar {

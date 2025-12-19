@@ -1,4 +1,4 @@
-package org.openmuc.framework.server.restws.service.impl;
+package org.openmuc.framework.lib.rest1.service.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -10,14 +10,16 @@ import org.openmuc.framework.lib.rest1.domain.dto.StringDetailDTO;
 import org.openmuc.framework.lib.rest1.domain.model.LatestValue;
 import org.openmuc.framework.lib.rest1.sql.LatestValueRepoImpl;
 
+import org.openmuc.framework.lib.rest1.service.LatestValueService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LatestValueServiceImpl {
+public class LatestValueServiceImpl implements LatestValueService{
 
-    private static final Logger logger = LoggerFactory.getLogger(LatestValueRepoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(LatestValueServiceImpl.class);
 
-    Map<String, String> getDevValues() {
+    public Map<String, String> getDevValues() {
         List<LatestValue> devValues = LatestValueRepoImpl.findByChannelIdStartingWith("dev_");
         Map<String, String> devValueMap = parseValues(devValues);
         if (devValueMap.isEmpty()) {
@@ -28,7 +30,7 @@ public class LatestValueServiceImpl {
         return devValueMap;
     }
 
-    String getSiteName() {
+    public String getSiteName() {
         List<LatestValue> siteNames = LatestValueRepoImpl.findByChannelIdStartingWith("site_name");
         if (siteNames.isEmpty()) {
             logger.warn("Site name not found.");
@@ -40,7 +42,7 @@ public class LatestValueServiceImpl {
         return siteNames.get(0).getValueString();
     }
 
-    StringDetailDTO getStringDetails(String stringId) {
+    public StringDetailDTO getStringDetails(String stringId) {
         String prefixKey = "str" + stringId;
         List<LatestValue> stringDetails = LatestValueRepoImpl.findByChannelIdStartingWith(prefixKey);
         Map<String, String> stringValueMap = parseValues(stringDetails);
@@ -71,7 +73,7 @@ public class LatestValueServiceImpl {
         return account;
     }
 
-    boolean deleteString(String stringId) {
+    public boolean deleteString(String stringId) {
         String prefixKey = "str" + stringId;
         List<LatestValue> latestValues = LatestValueRepoImpl.findByChannelIdStartingWith(prefixKey);
         if (latestValues.isEmpty()) {

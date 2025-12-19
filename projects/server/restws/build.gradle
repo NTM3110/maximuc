@@ -9,6 +9,11 @@ dependencies {
     implementation project(':openmuc-lib-rest1')
     implementation group: "commons-codec", name: "commons-codec", version: commonsCodecVersion
 
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.5.0'
+
+
     implementation group: 'org.apache.felix', name: 'org.apache.felix.http.servlet-api', version: apacheFelixServletVersion
     implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
     embed group: 'com.google.code.gson', name: 'gson', version: gsonVersion
