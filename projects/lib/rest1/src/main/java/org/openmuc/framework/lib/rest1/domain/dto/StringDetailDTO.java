@@ -1,5 +1,7 @@
 package org.openmuc.framework.lib.rest1.domain.dto;
 
+
+
 public class StringDetailDTO {
     String stringName;
     String cellBrand;
@@ -7,6 +9,7 @@ public class StringDetailDTO {
     Double cellQty;
     Double cNominal;
     Double vNominal;
+
     // Getters and Setters
     public String getStringName() {
         return stringName;

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class LatestValuesRestorer {
 
-    private static final String url      = "jdbc:postgresql://postgres:5432/openmuc";
+    private static final String url      = "jdbc:postgresql://localhost:5432/openmuc";
     private static final String user     = "openmuc_user";
     private static final String password = "openmuc";
 

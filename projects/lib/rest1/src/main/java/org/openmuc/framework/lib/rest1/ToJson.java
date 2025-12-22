@@ -98,7 +98,18 @@ public class ToJson {
     }
 
     public void addObject(Object object) {
-        jsonObject.addProperty("data", gson.toJson(object));
+        JsonElement jo = gson.toJsonTree(object);
+        jsonObject.add("data", jo);
+    }
+
+    public void addObjectList(String propertyName, List<?> objectList) {
+        JsonArray jsa = new JsonArray();
+        if (objectList != null) {
+            for (Object object : objectList) {
+                jsa.add(gson.toJsonTree(object));
+            }
+        }
+        jsonObject.add(propertyName, jsa);
     }
 
     public void addRecord(Record record, ValueType valueType) throws ClassCastException {

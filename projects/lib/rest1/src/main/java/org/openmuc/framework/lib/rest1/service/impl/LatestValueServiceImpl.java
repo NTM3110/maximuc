@@ -19,6 +19,7 @@ public class LatestValueServiceImpl implements LatestValueService{
 
     private static final Logger logger = LoggerFactory.getLogger(LatestValueServiceImpl.class);
 
+    @Override
     public Map<String, String> getDevValues() {
         List<LatestValue> devValues = LatestValueRepoImpl.findByChannelIdStartingWith("dev_");
         Map<String, String> devValueMap = parseValues(devValues);
@@ -30,6 +31,7 @@ public class LatestValueServiceImpl implements LatestValueService{
         return devValueMap;
     }
 
+    @Override
     public String getSiteName() {
         List<LatestValue> siteNames = LatestValueRepoImpl.findByChannelIdStartingWith("site_name");
         if (siteNames.isEmpty()) {
@@ -42,6 +44,7 @@ public class LatestValueServiceImpl implements LatestValueService{
         return siteNames.get(0).getValueString();
     }
 
+    @Override
     public StringDetailDTO getStringDetails(String stringId) {
         String prefixKey = "str" + stringId;
         List<LatestValue> stringDetails = LatestValueRepoImpl.findByChannelIdStartingWith(prefixKey);
@@ -60,6 +63,7 @@ public class LatestValueServiceImpl implements LatestValueService{
         return stringDetailDTO;
     } 
     
+    @Override
     public Account getAccountDetails(int accountID) {
         List<LatestValue> latestValues = LatestValueRepoImpl.findByChannelIdStartingWith("account_" + accountID);
         Map<String, String> accountValueMap = parseValues(latestValues);
@@ -73,6 +77,7 @@ public class LatestValueServiceImpl implements LatestValueService{
         return account;
     }
 
+    @Override
     public boolean deleteString(String stringId) {
         String prefixKey = "str" + stringId;
         List<LatestValue> latestValues = LatestValueRepoImpl.findByChannelIdStartingWith(prefixKey);

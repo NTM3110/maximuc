@@ -5,7 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LatestValuesDao {
-    private final static String url      = "jdbc:postgresql://postgres:5432/openmuc";
+    private final static String url      = "jdbc:postgresql://localhost:5432/openmuc";
     private final static String user     = "openmuc_user";
     private final static String password = "openmuc";
     private static final Logger logger = LoggerFactory.getLogger(LatestValuesDao.class);

@@ -28,8 +28,6 @@ public class LatestValueResourceServletTest {
     @BeforeEach
     public void setUp() {
         servlet = new LatestValueResourceServlet();
-        latestValueService = new LatestValueServiceImpl();
-        servlet.latestValueService = latestValueService; // package-private field
     }
 
     @Test
@@ -93,8 +91,9 @@ public class LatestValueResourceServletTest {
     public void testGetStringDetailsReturnsJson() throws Exception {
         HttpServletRequest req = mock(HttpServletRequest.class);
         HttpServletResponse resp = mock(HttpServletResponse.class);
-        when(req.getPathInfo()).thenReturn("/string/2");
-        when(req.getQueryString()).thenReturn(null);
+        when(req.getPathInfo()).thenReturn("/string");
+        when(req.getQueryString()).thenReturn("stringId=1");
+        when(req.getParameter("stringId")).thenReturn("1"); 
         // when(resp.isCommitted()).thenReturn(false);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
