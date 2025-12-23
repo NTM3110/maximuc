@@ -32,6 +32,7 @@ import org.openmuc.framework.server.restws.servlets.DriverResourceServlet;
 import org.openmuc.framework.server.restws.servlets.UserServlet;
 import org.openmuc.framework.server.restws.servlets.NetworkRestServlet;
 import org.openmuc.framework.server.restws.servlets.LatestValueResourceServlet;
+import org.openmuc.framework.server.restws.servlets.SoHScheduleResourceServlet;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -40,6 +41,23 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+
+import org.openmuc.framework.lib.rest1.sql.SoHScheduleRepoImpl;
+import org.openmuc.framework.lib.rest1.sql.EntityRepoImpl;
+import org.openmuc.framework.lib.rest1.service.impl.ASyncServiceImpl;
+import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;
+import org.openmuc.framework.lib.rest1.common.enums.DischargeState;
+import org.openmuc.framework.lib.rest1.common.enums.Status;
+
+import java.util.Objects;
+import java.time.LocalDateTime;
+import java.util.List;
+
+
 
 @Component
 public final class RestServer {
@@ -51,6 +69,11 @@ public final class RestServer {
     private static ConfigService configService;
     private static HttpService httpService;
 
+    private Timer updateTimer;
+    private SoHScheduleRepoImpl sohScheduleRepoImpl = new SoHScheduleRepoImpl();
+    private EntityRepoImpl entityRepoImpl = new EntityRepoImpl();
+    private ASyncServiceImpl asyncService = new ASyncServiceImpl();
+
     private final ChannelResourceServlet chRServlet = new ChannelResourceServlet();
     private final DeviceResourceServlet devRServlet = new DeviceResourceServlet();
     private final DeviceResourceServlet_v2 devRServlet_v2 = new DeviceResourceServlet_v2();
@@ -59,6 +82,7 @@ public final class RestServer {
     private final ConnectServlet connectServlet = new ConnectServlet();
     private final UserServlet userServlet = new UserServlet();
     private final LatestValueResourceServlet latestValueServlet = new LatestValueResourceServlet();
+    private final SoHScheduleResourceServlet sohScheduleServlet = new SoHScheduleResourceServlet();
     // private final ControlsServlet controlsServlet = new ControlsServlet();
 
     public static DataAccessService getDataAccessService() {
@@ -88,6 +112,57 @@ public final class RestServer {
         RestServer.authenticationService = authenticationService;
     }
 
+    private void initUpdateTimer() {
+        updateTimer = new Timer("Update SoH Schedule", true); // daemon thread
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    System.out.println("\n[" + LocalDateTime.now() + "] Timer task running to update SoH Schedule");
+                    LocalDateTime now = LocalDateTime.now();
+                    List<SoHSchedule> qualifiedSchedules = sohScheduleRepoImpl
+                            .findByStartDatetimeBeforeAndStateAndStatus(now, DischargeState.PENDING, Status.ACTIVE);
+
+                    System.out.println("Found " + qualifiedSchedules.size() + " pending schedules");
+
+                    for (SoHSchedule schedule : qualifiedSchedules) {
+                        System.out.println("\n>>> Starting SoH calculation for Schedule ID: " + schedule.getId()
+                                + ", String ID: " + schedule.getStrId());
+
+                        Double socValue = entityRepoImpl.getSocValue(schedule.getStrId());
+                        System.out.println("    Current SoC value: " + socValue);
+
+                        if (Objects.isNull(socValue)) {
+                            schedule.setSocBefore(100D);
+                            System.out.println("    Set SoC before to default: 100.0");
+                        } else {
+                            schedule.setSocBefore(socValue);
+                            System.out.println("    Set SoC before to: " + socValue);
+                        }
+
+                        schedule.setState(DischargeState.RUNNING);
+                        schedule.setUpdateDatetime(LocalDateTime.now());
+                        sohScheduleRepoImpl.save(schedule);
+                        System.out.println("    Schedule state updated to RUNNING");
+
+                        // Trigger async calculation
+                        System.out.println("    Triggering async SoH calculation...");
+                        asyncService.calculateSoh(schedule.getId(), schedule.getStrId());
+                    }
+
+                } catch (Exception e) {
+                    System.err.println("Error in timer task: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        // Schedule at fixed rate: initial delay 1 second, repeat every 1 second
+        updateTimer.scheduleAtFixedRate(task, 1000, 1000);
+        System.out.println("Timer initialized and scheduled at fixed rate (1 second interval)");
+    }
+
     @Activate
     protected void activate(ComponentContext context) throws Exception {
         logger.info("Activating REST Server");
@@ -103,7 +178,9 @@ public final class RestServer {
         httpService.registerServlet(Const.ALIAS_USERS, userServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_CONNECT, connectServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_LATEST_VALUE, latestValueServlet, null, securityHandler);
+        httpService.registerServlet(Const.ALIAS_SOH_SCHEDULE, sohScheduleServlet, null, securityHandler);
         // httpService.registerServlet(Const.ALIAS_CONTROLS, controlsServlet, null, securityHandler);
+        initUpdateTimer();
     }
 
     @Deactivate
@@ -118,7 +195,11 @@ public final class RestServer {
         httpService.unregister(Const.ALIAS_LATEST_VALUE);
         httpService.unregister(Const.ALIAS_DEVICES_V2);
         httpService.unregister(Const.ALIAS_NETWORK);
+        httpService.unregister(Const.ALIAS_SOH_SCHEDULE);
         // httpService.unregister(Const.ALIAS_CONTROLS);
+
+        updateTimer.cancel();
+        updateTimer.purge();
     }
 
     protected void unsetConfigService(ConfigService configService) {

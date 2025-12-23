@@ -43,23 +43,37 @@ public class SoHScheduleResourceServlet extends GenericServlet {
 
             // Implement SoH Schedule related GET handling here
             ToJson json = new ToJson();
-
-            if(pathInfoArray[0].replace("/", "").equals("get-list")){
-                try{
-                    List<ScheduleDTO> schedules = sohService.getListSchedule();
-                    if(schedules != null && !schedules.isEmpty()) {
-                        response.setStatus(HttpServletResponse.SC_OK);
-                        json.addObjectList("data", schedules);
-                    }
-                    else{
-                        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                        json.addString("result","No SoH schedules found.");
-                    }
-                }catch (Exception e) {
+            if(pathInfoArray.length == 0){
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                json.addString("result","Invalid SoH schedule request.");
+            }
+            else{
+                if(pathInfoArray[0].replace("/", "").equals("get-list")){
+                    // try{
+                        List<ScheduleDTO> schedules = sohService.getListSchedule();
+                        for(ScheduleDTO schedule : schedules){
+                            System.out.println("Schedule ID: " + schedule.getId() + ", String ID: " + schedule.getStrId() + ", State: " + schedule.getState());
+                        }
+                        if(schedules != null && !schedules.isEmpty()) {
+                            System.out.println("\nFound schedules!!\n");
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            json.addObjectList("data", schedules);
+                        }
+                        else{
+                            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                            json.addString("result","No SoH schedules found.");
+                        }
+                    // }catch (Exception e) {
+                    //     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    //     json.addString("result",e.getMessage());
+                    // }
+                }
+                else{
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    json.addString("result",e.getMessage());
+                    json.addString("result","Invalid SoH schedule request.");
                 }
             }
+            sendJson(json, response);
         }
     }
 
@@ -75,30 +89,100 @@ public class SoHScheduleResourceServlet extends GenericServlet {
 
             // Implement SoH Schedule related POST handling here
             ToJson json = new ToJson();
+            if(pathInfoArray.length == 0){
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                json.addString("result","Invalid SoH schedule request.");
+            }
+            else{
+                if(pathInfoArray[0].replace("/", "").equals("create")){
+                    try{
+                        // Extract parameters from request (e.g., stringId, startTime, current)
+                        String stringId = request.getParameter("stringId");
+                        String startTimeStr = request.getParameter("startTime");
+                        String currentStr = request.getParameter("current");
 
-            if(pathInfoArray[0].replace("/", "").equals("create")){
-                try{
-                    // Extract parameters from request (e.g., stringId, startTime, current)
-                    String stringId = request.getParameter("stringId");
-                    String startTimeStr = request.getParameter("startTime");
-                    String currentStr = request.getParameter("current");
+                        if(stringId == null || startTimeStr == null || currentStr == null){
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            json.addString("result","Missing required parameters.");
+                        } else {
+                            Double current = Double.parseDouble(currentStr);
+                            LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
 
-                    if(stringId == null || startTimeStr == null || currentStr == null){
+                            sohService.createSchedule(stringId, startTime, current);
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            json.addString("result","SoH schedule created successfully.");
+                        }
+                    }catch (Exception e) {
                         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                        json.addString("result","Missing required parameters.");
-                    } else {
-                        Double current = Double.parseDouble(currentStr);
-                        LocalDateTime startTime = LocalDateTime.parse(startTimeStr);
-
-                        sohService.createSchedule(stringId, startTime, current);
-                        response.setStatus(HttpServletResponse.SC_OK);
-                        json.addString("result","SoH schedule created successfully.");
+                        json.addString("result",e.getMessage());
                     }
-                }catch (Exception e) {
+                }
+
+
+                else if(pathInfoArray[0].replace("/", "").equals("update")){
+                    try{
+                        String idStr = request.getParameter("id");
+                        String startTimeStr = request.getParameter("startTime");
+                        if(idStr == null || startTimeStr == null){
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            json.addString("result","Missing required parameters.");
+                        }
+                        else{
+                            Long id = Long.parseLong(idStr);
+                            sohService.updateSchedule(id, LocalDateTime.parse(startTimeStr));
+                            
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            json.addString("result","SoH schedule updated successfully");
+                            
+                        }
+                    }catch(Exception e){
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        json.addString("result",e.getMessage());
+                    }
+
+                }
+                else if(pathInfoArray[0].replace("/", "").equals("stop")){
+                    try{
+                        String idStr = request.getParameter("id");
+                        if(idStr == null){
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            json.addString("result","Missing required parameter: id.");
+                        }
+                        else{
+                            Long id = Long.parseLong(idStr);
+                            sohService.stopSchedule(id);
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            json.addString("result","SoH schedule stopped successfully");
+                        }
+                    }catch(Exception e){
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        json.addString("result",e.getMessage());
+                    }
+                }
+                else if(pathInfoArray[0].replace("/", "").equals("delete")){
+                    try{
+                        String idStr = request.getParameter("id");
+                        if(idStr == null){
+                            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                            json.addString("result","Missing required parameter: id.");
+                        }
+                        else{
+                            Long id = Long.parseLong(idStr);
+                            sohService.removeSchedule(id);
+                            response.setStatus(HttpServletResponse.SC_OK);
+                            json.addString("result","SoH schedule removed successfully");
+                        }
+                    }catch(Exception e){
+                        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        json.addString("result",e.getMessage());
+                    }
+                }
+                else{
                     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    json.addString("result",e.getMessage());
+                    json.addString("result","Invalid SoH schedule request.");
                 }
             }
+            sendJson(json, response);
         }
     }
 }

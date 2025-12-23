@@ -91,6 +91,7 @@ public class SoHScheduleRepoImpl {
 
     public SoHSchedule findByIdAndStateInAndStatus(Long id, List<DischargeState> states, Status status) {
         if (id == null || states == null || states.isEmpty() || status == null) {
+            System.out.println("findByIdAndStateInAndStatus: Invalid parameters provided.");
             return null;
         }
 
@@ -108,7 +109,11 @@ public class SoHScheduleRepoImpl {
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    System.out.println("SoHSchedule found with ID: " + id);
                     return mapRow(rs);
+                }
+                else{
+                    System.out.println("No SoHSchedule found with ID: " + id + " in specified states and status.");
                 }
             }
         }

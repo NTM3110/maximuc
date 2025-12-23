@@ -13,6 +13,13 @@ import org.openmuc.framework.lib.rest1.domain.dto.ScheduleDTO;
 import org.openmuc.framework.lib.rest1.service.SoHService;
 import org.openmuc.framework.lib.rest1.service.impl.SoHServiceImpl;
 
+import org.openmuc.framework.lib.rest1.sql.SoHScheduleRepoImpl;
+import static org.openmuc.framework.lib.rest1.common.enums.Status.ACTIVE;
+import static org.openmuc.framework.lib.rest1.common.enums.DischargeState.RUNNING;;
+import static org.openmuc.framework.lib.rest1.common.enums.DischargeState.STOPPED;
+import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;
+import java.util.Arrays;    
+
 public class SoHServiceImplTest {
 
     private SoHService service;
@@ -63,6 +70,16 @@ public class SoHServiceImplTest {
         }
         // System.out.println("testGetListSchedule -> " + schedules);
         assertNotNull(schedules);
+    }
+
+    @Test 
+    public void testGetSoHSchedule(){
+        SoHScheduleRepoImpl sohScheduleRepoImpl = new SoHScheduleRepoImpl();
+        Long id = 9L;
+        System.out.println("testGetSoHSchedule -> Fetching schedule with id 9");
+        SoHSchedule schedule = sohScheduleRepoImpl.findByIdAndStateInAndStatus(id, Arrays.asList(RUNNING,STOPPED),ACTIVE);
+        System.out.println("testGetSoHSchedule:socBefore: -> " + schedule.getSocBefore());
+        assertNotNull(schedule);
     }
 
 }

@@ -65,6 +65,12 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
 
+import com.google.gson.TypeAdapter;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+
 public class FromJson {
 
     private final Gson gson;
@@ -73,6 +79,29 @@ public class FromJson {
     public FromJson(String jsonString) {
 
         GsonBuilder gsonBuilder = new GsonBuilder().serializeSpecialFloatingPointValues();
+
+        // register ServerMapping adapter to construct via the existing constructor
+        gsonBuilder.registerTypeAdapter(org.openmuc.framework.config.ServerMapping.class, new TypeAdapter<org.openmuc.framework.config.ServerMapping>() {
+            @Override
+            public void write(JsonWriter out, org.openmuc.framework.config.ServerMapping value) throws IOException {
+                out.beginObject();
+                out.name("id").value(value.getId());
+                out.name("serverAddress").value(value.getServerAddress());
+                out.endObject();
+            }
+
+            @Override
+            public org.openmuc.framework.config.ServerMapping read(JsonReader in) throws IOException {
+                JsonElement el = JsonParser.parseReader(in);
+                if (el == null || el.isJsonNull()) {
+                    return null;
+                }
+                JsonObject obj = el.getAsJsonObject();
+                String id = obj.has("id") && !obj.get("id").isJsonNull() ? obj.get("id").getAsString() : null;
+                String addr = obj.has("serverAddress") && !obj.get("serverAddress").isJsonNull() ? obj.get("serverAddress").getAsString() : null;
+                return new org.openmuc.framework.config.ServerMapping(id, addr);
+            }
+        });
         gson = gsonBuilder.create();
         jsonObject = gson.fromJson(jsonString, JsonObject.class);
     }

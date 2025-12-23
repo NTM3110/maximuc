@@ -1,5 +1,5 @@
 def projectName = "Helper Library - JDBC API"
-def projectDescription = "
+def projectDescription = "This library provides an OSGi JDBC API implementation."
 def jdbcVersion =  '1.1.0'
 
 configurations.create('embed')

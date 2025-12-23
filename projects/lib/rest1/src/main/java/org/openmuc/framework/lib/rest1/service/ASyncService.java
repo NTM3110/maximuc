@@ -1,6 +1,7 @@
 package org.openmuc.framework.lib.rest1.service;
 
+import java.util.concurrent.CompletableFuture;
 
 public interface ASyncService {
-    void calculateSoh(Long id, String strId);
+    public CompletableFuture<String> calculateSoh(Long id, String strId);
 }

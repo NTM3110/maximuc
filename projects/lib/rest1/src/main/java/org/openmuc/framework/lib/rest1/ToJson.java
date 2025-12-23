@@ -59,6 +59,11 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import com.google.gson.JsonPrimitive;
+
 import org.openmuc.framework.lib.rest1.domain.dto.StringDetailDTO;
 
 public class ToJson {
@@ -68,9 +73,18 @@ public class ToJson {
 
     public ToJson() {
 
-        gson = new GsonBuilder().serializeSpecialFloatingPointValues()
-                .registerTypeAdapter(byte[].class, new ByteArraySerializer())
-                .create();
+        gson = new GsonBuilder()
+        .serializeSpecialFloatingPointValues()
+        .registerTypeAdapter(byte[].class, new ByteArraySerializer())
+        .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> {
+        return src == null ? JsonNull.INSTANCE : new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        })
+        .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) -> {
+        return src == null ? JsonNull.INSTANCE : new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        })
+        .create();
+
+
         jsonObject = new JsonObject();
     }
 
