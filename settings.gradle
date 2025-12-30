@@ -44,3 +44,6 @@ project(":openmuc-webui-mediaviewer").projectDir = file("projects/webui/mediavie
 project(":openmuc-webui-simpledemovisualisation").projectDir = file("projects/webui/simpledemovisualisation")
 project(":openmuc-webui-spi").projectDir = file("projects/webui/spi")
 project(":openmuc-webui-userconfigurator").projectDir = file("projects/webui/userconfigurator")
+
+include "openmuc-webui-maxicom-bms"
+project(":openmuc-webui-maxicom-bms").projectDir = file("projects/webui/maxicom-bms")

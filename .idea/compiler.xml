@@ -5,6 +5,51 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="openmuc-at.openmuc-app-simpledemo.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-core-api.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-core-datamanager.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-core-spi.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-datalogger-amqp.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-datalogger-ascii.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-datalogger-mqtt.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-datalogger-slotsdb.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-datalogger-sql.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-aggregator.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-amqp.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-csv.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-ehz.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-iec60870.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-iec61850.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-iec62056p21.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-knx.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-math.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-mbus.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-modbus.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-mqtt.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-rest.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-simpledriver.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-snmp.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-driver-wmbus.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-amqp.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-filePersistence.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-mqtt.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-osgi.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-parser-openmuc.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-rest1.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-ssl.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-server-iec61850.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-server-modbus.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-server-restws.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-base.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-channelaccesstool.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-channelconfigurator.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-dataexporter.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-dataplotter.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-maxicom-bms.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-mediaviewer.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-simpledemovisualisation.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-spi.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-webui-userconfigurator.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc.openmuc-app-simpledemo.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc.openmuc-core-api.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc.openmuc-core-datamanager.main" options="-Xlint:unchecked -Xlint:deprecation" />

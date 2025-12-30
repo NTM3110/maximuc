@@ -1,4 +1,3 @@
-
 #!/usr/bin/env bash
 # netcfg.sh — toggle DHCP or set static IPv4 on a Linux interface
 # Usage:

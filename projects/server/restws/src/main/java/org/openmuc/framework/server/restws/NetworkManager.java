@@ -47,10 +47,14 @@ public class NetworkManager {
         String script = "./scripts/netcfg.sh";
         String command;
 
-        if ("dhcp".equalsIgnoreCase(cfg.mode)) {
+        if (cfg.mode == null) {
+            throw new IllegalArgumentException("mode must be 'dhcp' or 'static'");
+        }
+
+        if (cfg.mode.equalsIgnoreCase("dhcp")) {
             command = String.format("%s %s dhcp", script, shellEscape(cfg.iface));
         }
-        else if ("static".equalsIgnoreCase(cfg.mode)) {
+        else{
             StringBuilder sb = new StringBuilder();
             sb.append(script).append(" ")
               .append(shellEscape(cfg.iface)).append(" ")
@@ -69,9 +73,6 @@ public class NetworkManager {
             }
 
             command = sb.toString();
-        }
-        else {
-            throw new IllegalArgumentException("mode must be 'dhcp' or 'static'");
         }
 
         ProcessBuilder pb = new ProcessBuilder("bash", "-c", command);

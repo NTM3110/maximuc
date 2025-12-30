@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="GradleMigrationSettings" migrationVersion="1" />
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
@@ -29,6 +30,7 @@
             <option value="$PROJECT_DIR$/projects/driver/modbus" />
             <option value="$PROJECT_DIR$/projects/driver/mqtt" />
             <option value="$PROJECT_DIR$/projects/driver/rest" />
+            <option value="$PROJECT_DIR$/projects/driver/simple-driver" />
             <option value="$PROJECT_DIR$/projects/driver/snmp" />
             <option value="$PROJECT_DIR$/projects/driver/wmbus" />
             <option value="$PROJECT_DIR$/projects/lib/amqp" />
@@ -46,6 +48,7 @@
             <option value="$PROJECT_DIR$/projects/webui/channelconfigurator" />
             <option value="$PROJECT_DIR$/projects/webui/dataexporter" />
             <option value="$PROJECT_DIR$/projects/webui/dataplotter" />
+            <option value="$PROJECT_DIR$/projects/webui/maxicom-bms" />
             <option value="$PROJECT_DIR$/projects/webui/mediaviewer" />
             <option value="$PROJECT_DIR$/projects/webui/simpledemovisualisation" />
             <option value="$PROJECT_DIR$/projects/webui/spi" />

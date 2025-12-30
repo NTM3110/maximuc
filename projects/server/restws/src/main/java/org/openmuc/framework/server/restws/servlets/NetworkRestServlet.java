@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 public class NetworkRestServlet extends GenericServlet {
@@ -30,10 +31,14 @@ public class NetworkRestServlet extends GenericServlet {
     private static final Logger logger = LoggerFactory.getLogger(NetworkRestServlet.class);
     private final NetworkManager networkManager = new NetworkManager();
 
+    Map<String, String> interfaceMap = Map.of(
+            "eth1", "WAN 0",
+            "eth0", "WAN 1");
+
         // ---- nmcli helper for IPv4 info ----------------------------------------
 
     private static class NmIpInfo {
-        String mode = "unknown";          // "dhcp", "static", or "unknown"
+        String mode= "unknown";          // "dhcp", "static", or "unknown"
         String ipAddress;                 // e.g. "192.168.4.50"
         String subnetMask;                // e.g. "255.255.255.0"
         String gateway;                   // e.g. "192.168.101.1"
@@ -106,7 +111,7 @@ public class NetworkRestServlet extends GenericServlet {
                                 info.mode = "static";
                             }
                             else {
-                                info.mode = v;  // some other NM mode
+                                info.mode = null;  // some other NM mode
                             }
                         }
                     }
@@ -222,53 +227,27 @@ public class NetworkRestServlet extends GenericServlet {
 
         StringBuilder sb = new StringBuilder();
         sb.append("{");
-        sb.append("\"name\":\"").append(escapeJson(ni.getName())).append("\",");
-        sb.append("\"displayName\":\"").append(escapeJson(String.valueOf(ni.getDisplayName()))).append("\",");
-        sb.append("\"up\":").append(ni.isUp()).append(",");
-        // operstate (similar to `state DOWN`)
-        String operState = readSysfs("/sys/class/net/" + ni.getName() + "/operstate");
-
-            // carrier (0 = no link, 1 = link)
-        String carrier = readSysfs("/sys/class/net/" + ni.getName() + "/carrier");
-
-        sb.append(",\"state\":\"").append(escapeJson(operState)).append("\"");
-        sb.append(",\"carrier\":").append("\"").append(escapeJson(carrier)).append("\",");
-
-        sb.append("\"mac\":\"").append(escapeJson(formatMac(ni.getHardwareAddress()))).append("\",");
-
-        // From nmcli
-        sb.append("\"mode\":\"").append(escapeJson(nmInfo.mode)).append("\",");
-        sb.append("\"ipAddress\":").append(
-                nmInfo.ipAddress == null ? "null" : "\"" + escapeJson(nmInfo.ipAddress) + "\""
-        ).append(",");
-        sb.append("\"subnetMask\":").append(
-                nmInfo.subnetMask == null ? "null" : "\"" + escapeJson(nmInfo.subnetMask) + "\""
-        ).append(",");
+        sb.append("\"mode\":\"").append(nmInfo.mode == null ? "null" : escapeJson(nmInfo.mode)).append("\",");
+        sb.append("\"dns\":\"");
+        for (int i = 0; i < nmInfo.dns.size(); i++) {
+           if (i > 0) {
+               sb.append(",");
+           }
+           sb.append(escapeJson(nmInfo.dns.get(i)));
+        }
+        sb.append("\",");
         sb.append("\"gateway\":").append(
                 nmInfo.gateway == null ? "null" : "\"" + escapeJson(nmInfo.gateway) + "\""
         ).append(",");
-
-        sb.append("\"dns\":[");
-        for (int i = 0; i < nmInfo.dns.size(); i++) {
-            if (i > 0) {
-                sb.append(",");
-            }
-            sb.append("\"").append(escapeJson(nmInfo.dns.get(i))).append("\"");
-        }
-        sb.append("],");
-
-        // Original addresses[] from java.net.NetworkInterface (IPv4 + IPv6)
-        sb.append("\"addresses\":[");
-        boolean firstAddr = true;
-        java.util.Enumeration<java.net.InetAddress> addrs = ni.getInetAddresses();
-        while (addrs.hasMoreElements()) {
-            if (!firstAddr) {
-                sb.append(",");
-            }
-            firstAddr = false;
-            sb.append("\"").append(escapeJson(addrs.nextElement().getHostAddress())).append("\"");
-        }
-        sb.append("]");
+        sb.append("\"id\":\"").append(escapeJson(ni.getName())).append("\",");
+        sb.append("\"ipAddress\":").append(
+                nmInfo.ipAddress == null ? "null" : "\"" + escapeJson(nmInfo.ipAddress) + "\""
+        ).append(",");
+        sb.append("\"name\":\"").append(escapeJson(interfaceMap.get(ni.getName()))).append("\",");
+       sb.append("\"subnetMask\":").append(
+               nmInfo.subnetMask == null ? "null" : "\"" + escapeJson(nmInfo.subnetMask) + "\""
+       );
+//        sb.append("\"up\":").append(ni.isUp()).append(",");
 
         sb.append("}");
         return sb.toString();
@@ -279,11 +258,12 @@ public class NetworkRestServlet extends GenericServlet {
                 java.net.NetworkInterface.getNetworkInterfaces();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("{\"interfaces\":[");
+        sb.append("[");
 
         boolean first = true;
         while (ifaces.hasMoreElements()) {
             java.net.NetworkInterface ni = ifaces.nextElement();
+
 
             // Skip loopback or others if you want
             if (ni.isLoopback()) {
@@ -293,12 +273,13 @@ public class NetworkRestServlet extends GenericServlet {
             if (!first) {
                 sb.append(",");
             }
-            first = false;
-
-            sb.append(buildInterfaceJson(ni));
+            if(interfaceMap.containsKey(ni.getName())) {
+                first = false;
+                sb.append(buildInterfaceJson(ni));
+            }
         }
 
-        sb.append("]}");
+        sb.append("]");
 
         response.setStatus(HttpServletResponse.SC_OK);
         response.getWriter().write(sb.toString());
@@ -395,7 +376,7 @@ public class NetworkRestServlet extends GenericServlet {
         String dns1 = null;
         String dns2 = null;
 
-        if ("static".equalsIgnoreCase(mode)) {
+        if (mode.equalsIgnoreCase("static")) {
             ip   = getOptString(obj, "ipAddress");
             mask = getOptString(obj, "subnetMask");
             gw   = getOptString(obj, "gateway");
@@ -423,16 +404,6 @@ public class NetworkRestServlet extends GenericServlet {
                 }
             }
         }
-        else if (!"dhcp".equalsIgnoreCase(mode)) {
-            ServletLib.sendHTTPErrorAndLogDebug(
-                    response,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    logger,
-                    "mode must be 'dhcp' or 'static'",
-                    "",
-                    "");
-            return;
-        }
 
         // Build config for NetworkManager
         NetworkConfig cfg = new NetworkConfig(
@@ -447,21 +418,14 @@ public class NetworkRestServlet extends GenericServlet {
 
         try {
             ExecResult exec = networkManager.apply(cfg);
+            java.net.NetworkInterface ni = java.net.NetworkInterface.getByName(iface);
+            if (ni == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"error\":\"Interface not found: " + escapeJson(iface) + "\"}");
+                return;
+            }
 
-            String body = "{"
-                    + "\"ok\":" + (exec.exitCode == 0 ? "true" : "false") + ","
-                    + "\"interface\":\"" + escapeJson(iface) + "\","
-                    + "\"mode\":\"" + escapeJson(mode) + "\","
-                    + "\"applied\":{"
-                        + "\"ipAddress\":" + (ip == null ? "null" : "\"" + escapeJson(ip) + "\"") + ","
-                        + "\"subnetMask\":" + (mask == null ? "null" : "\"" + escapeJson(mask) + "\"") + ","
-                        + "\"gateway\":" + (gw == null ? "null" : "\"" + escapeJson(gw) + "\"") + ","
-                        + "\"dns\":" + (dnsRaw == null ? "null" : "\"" + escapeJson(dnsRaw) + "\"")
-                    + "},"
-                    + "\"exitCode\":" + exec.exitCode + ","
-                    + "\"stdout\":\"" + escapeJson(exec.stdout) + "\","
-                    + "\"stderr\":\"" + escapeJson(exec.stderr) + "\""
-                    + "}";
+            String body = buildInterfaceJson(ni);
 
             response.setStatus(exec.exitCode == 0
                     ? HttpServletResponse.SC_OK
@@ -490,6 +454,17 @@ public class NetworkRestServlet extends GenericServlet {
             return null;
         }
         return el.getAsString();
+    }
+
+    private static Boolean getOptBoolean(JsonObject obj, String key){
+        if(obj == null){
+            return null;
+        }
+        JsonElement el = obj.get(key);
+        if(el == null || el.isJsonNull()){
+            return null;
+        }
+        return el.getAsBoolean();
     }
 
     private static String escapeJson(String s) {
