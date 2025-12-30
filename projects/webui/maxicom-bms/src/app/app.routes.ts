@@ -49,6 +49,14 @@ export const routes: Routes = [
             (m) => m.NetworkComponent
           ),
       },
+      // Maintenance (Import/Export, Reset, Reboot)
+      {
+        path: 'setting/maintenance',
+        loadComponent: () =>
+          import('./pages/settings/maintenance/maintenance.component').then(
+            (m) => m.SettingsMaintenanceComponent
+          ),
+      },
       // Route đổi mật khẩu mới
       {
         path: 'setting/account',

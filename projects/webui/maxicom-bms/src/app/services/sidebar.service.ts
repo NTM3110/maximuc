@@ -42,7 +42,11 @@ export class SidebarService {
             icon: 'wifi',
             route: '/setting/network',
           },
-          // THÊM MỤC NÀY
+          {
+            label: 'Maintenance',
+            icon: 'build',
+            route: '/setting/maintenance',
+          },
           {
             label: 'Account',
             icon: 'person',

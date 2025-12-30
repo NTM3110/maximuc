@@ -9,7 +9,8 @@ export interface BatteryString {
   cellModel: string;
   cellQty: number;
   ratedCapacity: number; // Cnominal
-  nominalVoltage: number; // Vnominal
+  cutoffVoltage: number; // Vcutoff
+  floatVoltage: number;
   serialPortId: string; // ID của port (ví dụ: 'serial0')
 }
 

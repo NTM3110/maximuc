@@ -53,7 +53,9 @@ public final class SimpleDemoApp
         "str%d_string_name",
         "str%d_cell_brand",
         "str%d_cell_model",
-        "str%d_Vnominal"
+        "str%d_Vcutoff",
+		"str%d_Vfloat",
+        "str%d_serial_port_id"
 );
 	private static final int DATA_OPTION_NUM = 6;
 	private static final DecimalFormatSymbols DFS = DecimalFormatSymbols.getInstance(Locale.US);
@@ -189,18 +191,23 @@ public final class SimpleDemoApp
 		}
 	}
 	private int setSoCEngine(int stringNumber) {
-		double vCutoff = -1.0;
-		double vFloat = -1.0;
 		for (int i = 0; i < stringNumber; i++) {
 			int strId = stringIds[i];
 			try{
-				Record VnominalRecord = dataAccessService.getChannel("str" + strId + "_Vnominal").getLatestRecord();
-				double Vnominal = VnominalRecord.getValue().asDouble();
-				if (Vnominal > 0.0) {
-					// logger.info("SETSOCENGINE: Vnominal is 2.0V for string {}. Using default Vcutoff 1.75V and Vfloat 2.4V", i+1);
-					vCutoff = Vnominal - 0.2;
-					vFloat = Vnominal + 0.25;
+				Record VcutoffRecord = dataAccessService.getChannel("str" + strId + "_Vcutoff").getLatestRecord();
+				if(VcutoffRecord == null){
+					logger.warn("There is no record of channel str%d_Vcutoff", strId);
+					return 0;
 				}
+				double vCutoff = VcutoffRecord.getValue().asDouble();
+
+				Record VfloatRecord = dataAccessService.getChannel("str" + strId + "_Vfloat").getLatestRecord();
+                if(VfloatRecord == null){
+                    logger.warn("There is no record of channel str%d_Vfloat", strId);
+                    return 0;
+                }
+                double vFloat = VfloatRecord.getValue().asDouble();
+
 				if(vCutoff < 0 || vFloat < 0) {
 					// logger.warn("Vcutoff or Vfloat is not set properly yet for string {}. Skipping set SoC engine this cycle.", i+1);
 					continue;
@@ -247,7 +254,7 @@ public final class SimpleDemoApp
 					// logger.info("Set SoC engine for string {} with Cnominal: {}, Vcutoff: {}, Vfloat: {}", i+1, Cnominal, vCutoff, vFloat);
 				}
 			}catch(NullPointerException e) {
-				// logger.warn("There is no value yet with this channel at string {}: {}, skipping set SoC engine this cycle.", i+1, e.getMessage());
+				logger.warn("There is no value yet with this channel at string {}: {}, skipping set SoC engine this cycle.", i+1, e.getMessage());
 				return 0;
 			}
 		}
@@ -593,7 +600,7 @@ public final class SimpleDemoApp
 	        @Override
 	        public void run() {
 				
-				if(isRestored == false) {
+				if(!isRestored) {
 					List<String> allChannelId = dataAccessService.getAllIds();
 					stringIds = detectStringIds(allChannelId);
 					updateLatestSaveChannelNames(stringIds);
@@ -642,9 +649,9 @@ public final class SimpleDemoApp
 		logger.info("logger.info(\"------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", index);
 		// stringNumber_1 = index;
 
-		if(stringNumber != index){
-			// logger.info("String number changed from {} to {}, re-initializing cell dimensions.", stringNumber, index);
-		}
+//		if(stringNumber != index){
+//			// logger.info("String number changed from {} to {}, re-initializing cell dimensions.", stringNumber, index);
+//		}
 		if(!isFirstInitAllDimension){
 			cellNumbers = new int[index];
 			isInitCellDimensions = new boolean[index];
@@ -716,7 +723,7 @@ public final class SimpleDemoApp
 			RecordListener listener = listeners.computeIfAbsent(channelID, id -> (record -> {
 				if (record.getValue() != null) {
 					// setFirstOverallStringValue(stringNumber);
-					if((channelID.startsWith("str") && channelID.contains("_cell_qty")) || channelID.equals("dev_serial_comm_number") || (channelID.startsWith("str") && channelID.contains("_Cnominal")) || (channelID.startsWith("str") && channelID.contains("_Vnominal"))){
+					if((channelID.startsWith("str") && channelID.contains("_cell_qty")) || channelID.equals("dev_serial_comm_number") || (channelID.startsWith("str") && channelID.contains("_Cnominal")) || (channelID.startsWith("str") && channelID.contains("_Vcutoff")) || (channelID.startsWith("str") && channelID.contains("_Vfloat"))){
 						LatestValuesDao.updateDouble(id, record.getValue().asDouble());
 						if(channelID.startsWith("str") && channelID.contains("_cell_qty")){
 							// getCellDimension();
@@ -725,7 +732,7 @@ public final class SimpleDemoApp
 						}
 					}
 					else
-					LatestValuesDao.updateString(id, record.getValue().asString());
+					    LatestValuesDao.updateString(id, record.getValue().asString());
 
 					// logger.info("Listener triggered for channel: {} latest value: {}", channelID, dataAccessService.getChannel(channelID).getLatestRecord().getValue().toString());
 

@@ -1,0 +1,61 @@
+<div class="maintenance-page">
+  <div class="title-row">
+    <mat-icon class="title-icon" color="primary">build</mat-icon>
+    <h1>Maintenance</h1>
+  </div>
+  <p class="subtitle">System maintenance actions. These actions are UI-only placeholders for now.</p>
+
+  <div class="cards">
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-icon>import_export</mat-icon>
+        <div class="title">Import / Export Configuration</div>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Import an existing configuration file or export the current configuration for backup.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="primary" disabled>
+          <mat-icon>file_upload</mat-icon>
+          Import Config
+        </button>
+        <button mat-stroked-button color="primary" disabled>
+          <mat-icon>file_download</mat-icon>
+          Export Config
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-icon>settings_backup_restore</mat-icon>
+        <div class="title">Reset Configuration</div>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Reset all settings to factory defaults. This will not perform any action yet.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="warn" disabled>
+          <mat-icon>restore</mat-icon>
+          Reset to Default
+        </button>
+      </mat-card-actions>
+    </mat-card>
+
+    <mat-card class="action-card">
+      <mat-card-header>
+        <mat-icon>restart_alt</mat-icon>
+        <div class="title">Reboot Device</div>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Reboot the device. This is only a placeholder button for now.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-flat-button color="accent" disabled>
+          <mat-icon>power_settings_new</mat-icon>
+          Reboot
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

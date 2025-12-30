@@ -1,0 +1,62 @@
+.maintenance-page {
+  padding: 16px;
+}
+
+.title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.title-icon {
+  font-size: 28px;
+  height: 28px;
+  width: 28px;
+}
+
+.subtitle {
+  color: rgba(0, 0, 0, 0.6);
+  margin: 8px 0 16px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(280px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+/* If viewport is too narrow, allow horizontal scroll to keep cards on one line */
+@media (max-width: 900px) {
+  .cards {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .action-card {
+    min-width: 320px;
+    flex: 0 0 auto;
+  }
+}
+
+.action-card {
+  display: flex;
+  flex-direction: column;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+mat-card-header .title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 8px;
+}

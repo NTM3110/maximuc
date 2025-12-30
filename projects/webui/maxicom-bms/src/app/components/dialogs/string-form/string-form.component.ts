@@ -69,9 +69,13 @@ export class StringFormComponent implements OnInit {
         currentString?.ratedCapacity || 100,
         [Validators.required, Validators.min(1)],
       ],
-      nominalVoltage: [
-        currentString?.nominalVoltage || 3.2,
+      cutoffVoltage: [
+        currentString?.cutoffVoltage || 1.85,
         [Validators.required, Validators.min(1)],
+      ],
+      floatVoltage: [
+        currentString?.floatVoltage || 2.25,
+        [Validators.required, Validators.min(1)]
       ],
       serialPortId: [
         currentString?.serialPortId || null,

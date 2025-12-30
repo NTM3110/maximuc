@@ -8,7 +8,9 @@ public class StringDetailDTO {
     String cellModel;
     Double cellQty;
     Double cNominal;
-    Double vNominal;
+    Double vCutoff;
+    Double vFloat;
+    String serialPortId;
 
     // Getters and Setters
     public String getStringName() {
@@ -41,10 +43,12 @@ public class StringDetailDTO {
     public void setCNominal(Double cNominal) {
         this.cNominal = cNominal;
     }
-    public Double getVNominal() {
-        return vNominal;
+    public Double getVCutoff() { return vCutoff;}
+    public void setVCutoff(Double vCutoff) {
+        this.vCutoff = vCutoff;
     }
-    public void setVNominal(Double vNominal) {
-        this.vNominal = vNominal;
-    }
+    public Double getVFloat() { return vFloat; }
+    public void setVFloat(Double vFloat) { this.vFloat = vFloat; }
+    public String getSerialPortId() { return serialPortId; }
+    public void setSerialPortId(String serialPortId) { this.serialPortId = serialPortId;}
 }

@@ -19,9 +19,6 @@ import org.openmuc.framework.lib.rest1.service.LatestValueService;
 import org.openmuc.framework.lib.rest1.service.impl.LatestValueServiceImpl;
 
 
-import com.google.gson.JsonObject;
-
-
 public class LatestValueResourceServlet extends GenericServlet {
 
 

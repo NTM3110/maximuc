@@ -353,7 +353,9 @@ public class ToJson {
         data.addProperty("cellModel",stringDetailDTO.getCellModel());
         data.addProperty("cellQty",stringDetailDTO.getCellQty());
         data.addProperty("cnominal",stringDetailDTO.getCNominal());
-        data.addProperty("vnominal",stringDetailDTO.getVNominal());
+        data.addProperty("vcutoff",stringDetailDTO.getVCutoff());
+        data.addProperty("vfloat", stringDetailDTO.getVFloat());
+        data.addProperty("serialPortId", stringDetailDTO.getSerialPortId());
         return data;
     }
     private JsonElement getRecordAsJsonElement(Record record, ValueType valueType) throws ClassCastException {

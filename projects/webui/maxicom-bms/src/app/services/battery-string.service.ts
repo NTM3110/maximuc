@@ -18,7 +18,9 @@ interface LatestStringDetailDto {
   cellModel?: string;
   cellQty?: number;
   cNominal?: number;
-  vNominal?: number;
+  vCutoff?: number;
+  vFloat?: number;
+  serialPortId?: string;
 }
 
 @Injectable({
@@ -98,7 +100,8 @@ export class BatteryStringService {
     if (dto.cellModel && dto.cellModel.trim().length > 0) return true;
     if (typeof dto.cellQty === 'number') return true;
     if (typeof dto.cNominal === 'number') return true;
-    if (typeof dto.vNominal === 'number') return true;
+    if (typeof dto.vCutoff === 'number') return true;
+    if (typeof dto.vFloat === 'number') return true;
     return false;
   }
 
@@ -124,8 +127,9 @@ export class BatteryStringService {
       cellBrand: dto.cellBrand ?? existing?.cellBrand ?? '',
       cellModel: dto.cellModel ?? existing?.cellModel ?? '',
       ratedCapacity: normalize(dto.cNominal, existing?.ratedCapacity),
-      nominalVoltage: normalize(dto.vNominal, existing?.nominalVoltage),
-      serialPortId: existing?.serialPortId || '',
+      cutoffVoltage: normalize(dto.vCutoff, existing?.cutoffVoltage),
+      floatVoltage: normalize(dto.vFloat, existing?.floatVoltage),
+      serialPortId: dto.serialPortId ?? existing?.serialPortId ?? ''
     };
   }
 
@@ -316,9 +320,14 @@ export class BatteryStringService {
               dto.cellModel = String(value);
             } else if (channel.includes('Cnominal')) {
               dto.cNominal = Number(value);
-            } else if (channel.includes('Vnominal')) {
-              dto.vNominal = Number(value);
+            } else if (channel.includes('Vcutoff')) {
+              dto.vCutoff = Number(value);
+            } else if (channel.includes('Vfloat')) {
+              dto.vFloat = Number(value);
+            } else if (channel.includes('serial_port_id')) {
+              dto.serialPortId = String(value);
             }
+
           }
         });
         return this.hasStringDetail(dto) ? dto : null;
@@ -543,7 +552,9 @@ export class BatteryStringService {
           this.apiPutChannel(`str${s}_cell_brand`, formData.cellBrand),
           this.apiPutChannel(`str${s}_cell_model`, formData.cellModel),
           this.apiPutChannel(`str${s}_Cnominal`, formData.ratedCapacity),
-          this.apiPutChannel(`str${s}_Vnominal`, formData.nominalVoltage),
+          this.apiPutChannel(`str${s}_Vcutoff`, formData.cutoffVoltage),
+          this.apiPutChannel(`str${s}_Vfloat`, formData.floatVoltage),
+          this.apiPutChannel(`str${s}_serial_port_id`, formData.serialPortId)
         ];
         return forkJoin(putCalls);
       })
@@ -584,7 +595,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_R`,
         description: `Cell (R) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:0:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:1:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -599,7 +610,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_V`,
         description: `Cell (V) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:1:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:2:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -614,7 +625,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_T`,
         description: `Cell (T) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:2:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:3:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -749,7 +760,9 @@ export class BatteryStringService {
     pushOverview(`str${s}_string_name`, 'STRING', 'String name', undefined, 64);
     pushOverview(`str${s}_cell_brand`, 'STRING', 'Cell Brand', undefined, 64);
     pushOverview(`str${s}_cell_model`, 'STRING', 'Cell Model', undefined, 64);
-    pushOverview(`str${s}_Vnominal`, 'DOUBLE', 'V nominal', 'V');
+    pushOverview(`str${s}_Vcutoff`, 'DOUBLE', 'V cutoff', 'V');
+    pushOverview(`str${s}_Vfloat`, 'DOUBLE', 'V cutoff', 'V');
+    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port ID', undefined, 64);
 
     // String stats channels
     const stats: Array<[string, string, string, string | undefined]> = [

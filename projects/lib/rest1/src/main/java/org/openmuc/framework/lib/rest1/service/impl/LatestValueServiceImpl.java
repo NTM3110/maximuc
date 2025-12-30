@@ -59,7 +59,9 @@ public class LatestValueServiceImpl implements LatestValueService{
         stringDetailDTO.setCellModel(stringValueMap.get(prefixKey + "_cell_model"));
         stringDetailDTO.setCellQty(Double.parseDouble(stringValueMap.get(prefixKey + "_cell_qty")));
         stringDetailDTO.setCNominal(Double.parseDouble(stringValueMap.get(prefixKey + "_Cnominal")));
-        stringDetailDTO.setVNominal(Double.parseDouble(stringValueMap.get(prefixKey + "_Vnominal")));
+        stringDetailDTO.setVCutoff(Double.parseDouble(stringValueMap.get(prefixKey + "_Vcutoff")));
+        stringDetailDTO.setVFloat((Double.parseDouble(stringValueMap.get(prefixKey + "_Vfloat"))));
+        stringDetailDTO.setSerialPortId(stringValueMap.get(prefixKey + "_serial_port_id"));
         return stringDetailDTO;
     } 
     

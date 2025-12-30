@@ -23,27 +23,25 @@ package org.openmuc.framework.server.restws;
 import org.openmuc.framework.authentication.AuthenticationService;
 import org.openmuc.framework.config.ConfigService;
 import org.openmuc.framework.dataaccess.DataAccessService;
+import org.openmuc.framework.datalogger.sql.SqlLoggerService;
 import org.openmuc.framework.lib.rest1.Const;
-import org.openmuc.framework.server.restws.servlets.ChannelResourceServlet;
-import org.openmuc.framework.server.restws.servlets.ConnectServlet;
-import org.openmuc.framework.server.restws.servlets.DeviceResourceServlet;
-import org.openmuc.framework.server.restws.servlets.DeviceResourceServlet_v2;
-import org.openmuc.framework.server.restws.servlets.DriverResourceServlet;
-import org.openmuc.framework.server.restws.servlets.UserServlet;
-import org.openmuc.framework.server.restws.servlets.NetworkRestServlet;
-import org.openmuc.framework.server.restws.servlets.LatestValueResourceServlet;
-import org.openmuc.framework.server.restws.servlets.SoHScheduleResourceServlet;
+import org.openmuc.framework.lib.rest1.service.impl.OsgiJdbcUtil;
+import org.openmuc.framework.server.restws.servlets.*;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.http.HttpService;
+import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Timer;
-import java.util.TimerTask;
+
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.openmuc.framework.lib.rest1.sql.SoHScheduleRepoImpl;
@@ -53,9 +51,8 @@ import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;
 import org.openmuc.framework.lib.rest1.common.enums.DischargeState;
 import org.openmuc.framework.lib.rest1.common.enums.Status;
 
-import java.util.Objects;
+import javax.sql.DataSource;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 
@@ -84,6 +81,9 @@ public final class RestServer {
     private final LatestValueResourceServlet latestValueServlet = new LatestValueResourceServlet();
     private final SoHScheduleResourceServlet sohScheduleServlet = new SoHScheduleResourceServlet();
     // private final ControlsServlet controlsServlet = new ControlsServlet();
+
+    @Reference
+    private DataSourceFactory dataSourceFactory;
 
     public static DataAccessService getDataAccessService() {
         return RestServer.dataAccessService;
@@ -166,7 +166,24 @@ public final class RestServer {
     @Activate
     protected void activate(ComponentContext context) throws Exception {
         logger.info("Activating REST Server");
-
+//        BundleContext bc = context.getBundleContext();
+        BundleContext bc = FrameworkUtil.getBundle(SqlLoggerService.class).getBundleContext();
+        for (Bundle bundle : bc.getBundles()) {
+            if (bundle.getSymbolicName() == null) {
+                continue;
+            }
+            if (bundle.getSymbolicName().equals("org.postgresql.jdbc")) {
+                dataSourceFactory = (DataSourceFactory) bundle.loadClass("org.postgresql.osgi.PGDataSourceFactory")
+                        .getDeclaredConstructors()[0].newInstance();
+            }
+        }
+        Properties properties = new Properties();
+        properties.setProperty("url", "jdbc:postgresql://localhost:5432/openmuc");
+        properties.setProperty("password", "openmuc");
+        properties.setProperty("user", "openmuc_user");
+        DataSource ds = dataSourceFactory.createDataSource(properties);
+//
+        ExportLatestValuesCsvServlet exportLatestValuesCsvServlet = new ExportLatestValuesCsvServlet(ds);
         SecurityHandler securityHandler = new SecurityHandler(context.getBundleContext().getBundle(),
                 authenticationService);
 
@@ -179,6 +196,7 @@ public final class RestServer {
         httpService.registerServlet(Const.ALIAS_CONNECT, connectServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_LATEST_VALUE, latestValueServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_SOH_SCHEDULE, sohScheduleServlet, null, securityHandler);
+        httpService.registerServlet(Const.ALIAS_CSV_EXPORT, exportLatestValuesCsvServlet, null, securityHandler);
         // httpService.registerServlet(Const.ALIAS_CONTROLS, controlsServlet, null, securityHandler);
         initUpdateTimer();
     }

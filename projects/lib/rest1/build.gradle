@@ -8,7 +8,7 @@ dependencies {
     
     implementation group: 'com.google.code.gson', name: 'gson', version: gsonVersion
     embed group: 'com.google.code.gson', name: 'gson', version: gsonVersion
-    
+    implementation group: 'org.apache.felix', name: 'org.apache.felix.http.servlet-api', version: apacheFelixServletVersion
     // testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
     // testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
     // testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.5.0'
@@ -26,7 +26,8 @@ jar {
     bnd('Bundle-Name': projectName,
         'Bundle-ClassPath': '.,lib/gson-' + gsonVersion + '.jar'+ ',lib/org.osgi.service.jdbc-'+jdbcVersion+'.jar',
         'Export-Package': 'org.openmuc.framework.lib.rest1.*,com.google.*' + ',org.osgi.service.jdbc',
-        'Import-Package': 'org.postgresql,javax.sql,org.h2.tools,' +
+        'Import-Package': 'javax.servlet,javax.servlet.http,'+
+                    'org.postgresql,javax.sql,org.h2.tools,' +
                     'org.openmuc.framework.*,' +
                     'org.osgi.*,org.slf4j,!org.osgi.service.jdbc,' + jarDefaultImportPackageVersion
         )
