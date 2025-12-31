@@ -143,7 +143,7 @@ export class OpenmucService {
 
   private getAsAmps(map: RecordMap, key: string): number | null {
     const val = this.getValue(map, key); // str*_total_I (ví dụ 4998)
-    return typeof val === 'number' ? val / 100 : null; // -> 4.998
+    return typeof val === 'number' ? val / 10 : null; // -> 4.998
   }
 
   private getAsCelsius(map: RecordMap, key: string): number | null {
@@ -151,7 +151,7 @@ export class OpenmucService {
     // Dữ liệu từ _virtual (avg, max, min) đã là float, không cần chia
     // Dữ liệu từ _modbus (cell T) là int (ví dụ 2781), cần chia 100
     if (typeof val === 'number') {
-      return key.includes('_cell') ? val / 100 : val; // -> 27.81
+      return key.includes('_cell') ? val / 10 : val; // -> 27.81
     }
     return null;
   }
@@ -179,7 +179,7 @@ export class OpenmucService {
 
         // Lấy giá trị Avg Rst (Ohm) và convert sang µΩ theo yêu cầu
         const avgRstOhm = this.getValue(virtual, `${baseStringName}_average_rst`);
-        const avgRstMicroOhm = (avgRstOhm !== null) ? avgRstOhm * 100000 : null; // * 10^5
+        const avgRstMicroOhm = (avgRstOhm !== null) ? avgRstOhm : null; // * 10^5
 
         const summary: StringSummaryData = {
           // Header Info (Từ _virtual)

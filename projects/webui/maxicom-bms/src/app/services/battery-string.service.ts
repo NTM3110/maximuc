@@ -571,13 +571,14 @@ export class BatteryStringService {
   ): any {
     const settings = this.buildModbusSettings(portConfig);
     const channels = [];
-    const STRING_REGISTER_OFFSET = 10000;
+    const STRING_REGISTER_OFFSET = 1000;
 
-    const offsetFor = (slave: number, stepMs: number = 50): number => {
-      return ((slave - 1) % 20) * stepMs;
+    const offsetFor = (slave: number, stepMs: number = 100): number => {
+      return ((slave - 1)) * stepMs;
     };
 
     for (let c = 1; c <= cells; c++) {
+      if(c == 64 && s == 1) continue;
       const base = `str${s}_cell${c}`;
       const sg = `str${s}_sg_slave_${c}`;
       const off = offsetFor(c);
@@ -585,7 +586,7 @@ export class BatteryStringService {
       // CẤU HÌNH CELL DETAIL (R, V, T) -> TUYỆT ĐỐI KHÔNG LOG
       // Không khai báo loggingInterval/loggingSettings ở đây
       const cellProps = {
-        samplingInterval: 12000, // Chỉ đọc 8s để hiển thị
+        samplingInterval: 14000, // Chỉ đọc 8s để hiển thị
         samplingGroup: sg,
         samplingTimeOffset: off,
         disabled: false,
@@ -595,7 +596,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_R`,
         description: `Cell (R) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:1:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:3:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -610,7 +611,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_V`,
         description: `Cell (V) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:2:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:1:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -625,7 +626,7 @@ export class BatteryStringService {
       channels.push({
         id: `${base}_T`,
         description: `Cell (T) (${base})`,
-        channelAddress: `${c}:HOLDING_REGISTERS:3:INT16`,
+        channelAddress: `${c}:HOLDING_REGISTERS:2:INT16`,
         valueType: 'INTEGER',
         serverMappings: [
           {
@@ -637,44 +638,88 @@ export class BatteryStringService {
       });
     }
 
-    // Total Current - CÓ LOG 8s
-    channels.push({
-      id: `str${s}_total_I`,
-      description: `String ${s} (I)`,
-      channelAddress: '206:HOLDING_REGISTERS:0:INT16',
-      valueType: 'INTEGER',
-      serverMappings: [
-        {
-          id: 'modbus',
-          serverAddress: `HOLDING_REGISTERS:${1900 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
-        }
-      ],
-      samplingInterval: 8000,
-      loggingInterval: 8000, // <--- GIỮ
-      loggingSettings: 'sqllogger:',
-      samplingGroup: `str${s}_sg_pack`,
-      samplingTimeOffset: offsetFor(206),
-      disabled: false,
-    });
+    if(s == 1){
+      // Total Current - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_total_I`,
+        description: `String ${s} (I)`,
+        channelAddress: '113:HOLDING_REGISTERS:3:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `HOLDING_REGISTERS:${1900 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+          }
+        ],
+        samplingInterval: 14000,
+        loggingInterval: 14000, // <--- GIỮ
+        loggingSettings: 'sqllogger:',
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        disabled: false,
+      });
 
-    // Ambient Temperature - CÓ LOG 8s
-    channels.push({
-      id: `str${s}_ambient_T`,
-      description: `String ${s} (T ambient)`,
-      channelAddress: '1:HOLDING_REGISTERS:2:INT16',
-      valueType: 'INTEGER',
-      serverMappings: [
-        {
-          id: 'modbus',
-          serverAddress: `HOLDING_REGISTERS:${2100 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
-        }
-      ],
-      samplingInterval: 8000,
-      loggingInterval: 8000, // <--- GIỮ
-      loggingSettings: 'sqllogger:',
-      samplingTimeOffset: offsetFor(106),
-      disabled: false,
-    });
+      // Ambient Temperature - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_ambient_T`,
+        description: `String ${s} (T ambient)`,
+        channelAddress: '113:HOLDING_REGISTERS:4:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `HOLDING_REGISTERS:${2100 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+          }
+        ],
+        samplingInterval: 14000,
+        loggingInterval: 14000, // <--- GIỮ
+        loggingSettings: 'sqllogger:',
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        disabled: false,
+      });
+    }
+    else{
+      // Total Current - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_total_I`,
+        description: `String ${s} (I)`,
+        channelAddress: '111:HOLDING_REGISTERS:3:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `HOLDING_REGISTERS:${1900 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+          }
+        ],
+        samplingInterval: 14000,
+        loggingInterval: 14000, // <--- GIỮ
+        loggingSettings: 'sqllogger:',
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(111),
+        disabled: false,
+      });
+
+      // Ambient Temperature - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_ambient_T`,
+        description: `String ${s} (T ambient)`,
+        channelAddress: '111:HOLDING_REGISTERS:4:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `HOLDING_REGISTERS:${2100 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+          }
+        ],
+        samplingInterval: 14000,
+        loggingInterval: 14000, // <--- GIỮ
+        loggingSettings: 'sqllogger:',
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(111),
+        disabled: false,
+      });
+    }
 
     return {
       driver: 'modbus',
@@ -683,8 +728,8 @@ export class BatteryStringService {
         description: `String ${s} Modbus RTU`,
         deviceAddress: portConfig.port,
         settings: settings,
-        samplingTimeout: 15000,
-        connectRetryInterval: 15000,
+        samplingTimeout: 14000,
+        connectRetryInterval: 14000,
         disabled: false,
       },
       channels: channels,

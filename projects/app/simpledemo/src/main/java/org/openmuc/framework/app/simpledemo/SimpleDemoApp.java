@@ -303,16 +303,16 @@ public final class SimpleDemoApp
 						continue;
 					}
 					
-					double current = channels[si][sj][3].getLatestRecord().getValue().asDouble() / 100;
+					double current = channels[si][sj][3].getLatestRecord().getValue().asDouble() / 10;
 					// logger.info("Value of of {}: -----> {}",channels[si][sj][3].getId(), current);
 	            	double voltage = channels[si][sj][1].getLatestRecord().getValue().asDouble() / 1000;
-					double temp = channels[si][sj][2].getLatestRecord().getValue().asDouble() / 100;
+					double temp = channels[si][sj][2].getLatestRecord().getValue().asDouble() / 10;
 					// logger.info("OLD value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
 					// logger.info("NEW value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, voltage);
 					if((voltage - powerCells[si][sj].getVoltage()) > 0) {
 	            		current *= -1;
 					}
-					double resistance = channels[si][sj][0].getLatestRecord().getValue().asDouble() / 10000;
+					double resistance = channels[si][sj][0].getLatestRecord().getValue().asDouble();
 					// logger.info("Value of of {}: -----> {}",channels[si][sj][0].getId(), resistance);
 
 					powerCells[si][sj].setCurrent(current);
@@ -509,7 +509,7 @@ public final class SimpleDemoApp
 				minResistance[i] = result.value;
 				averageResistance[i] = Helper.getAverageResistanceBattery(i, cellNumbers, powerCells);
 				averageTemp[i] = Helper.getAverageTemperatureBattery(i, cellNumbers, powerCells);
-				averageVoltage[i] = strVoltage[i] / cellNumbers[i];
+				averageVoltage[i] = Helper.getAverageVoltageBattery(i, cellNumbers, powerCells);
 				long now = System.currentTimeMillis();
 				DoubleValue doubleStrVolValue = new DoubleValue(Double.parseDouble(DF.format(strVoltage[i])));
 				Record record = new Record(doubleStrVolValue, now, Flag.VALID);
