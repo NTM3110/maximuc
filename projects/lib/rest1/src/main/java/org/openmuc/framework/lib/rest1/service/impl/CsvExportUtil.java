@@ -35,21 +35,44 @@ public final class CsvExportUtil {
                         "  ORDER BY channelid" +
                         ") TO STDOUT WITH (FORMAT csv, HEADER true)";
 
-        try (Connection conn = dataSource.getConnection();
-             OutputStream out = resp.getOutputStream()) {
+        try (Connection conn = dataSource.getConnection()) {
 
-//            PGConnection pgConn = conn.unwrap(PGConnection.class);
-//            CopyManager copyManager = pgConn.getCopyAPI();
-//
-//            copyManager.copyOut(copySql, out); // stream DB -> HTTP response
-            out.write("Hello World".getBytes(StandardCharsets.UTF_8));
-            out.flush();
+           PGConnection pgConn = conn.unwrap(PGConnection.class);
+           CopyManager cm = pgConn.getCopyAPI();
+
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            long rows = cm.copyOut(copySql, baos);
+
+            byte[] bytes = baos.toByteArray();
+
+            // Debug: if bytes.length == 0, you know DB/COPY produced nothing (or failed earlier)
+            // You can temporarily log these:
+            System.out.println("copyOut rows=" + rows + " bytes=" + bytes.length);
+
+            resp.setContentLength(bytes.length);
+            resp.getOutputStream().write(bytes);
+            resp.getOutputStream().flush();
 
         } catch (Exception e) {
-            // If we already started writing bytes, reset may fail; still try to return a clean error.
-            safeWriteError(resp, e);
-            System.err.println("Error at export latest value csv: " + e.getMessage());
+            // Don't swallow it—return the error so you can see it in Postman
+        try {
+            resp.reset();
+            resp.setStatus(500);
+            resp.setContentType("text/plain; charset=UTF-8");
+            resp.getWriter().write("Export failed: " + e.getClass().getName() + ": " + e.getMessage());
+        } catch (Exception ignored) {}
+            e.printStackTrace();
         }
+    }
+
+    private static PGConnection unwrapPg(Connection conn) throws Exception {
+        if (conn.isWrapperFor(PGConnection.class)) {
+            return conn.unwrap(PGConnection.class);
+        }
+        if (conn instanceof PGConnection) {
+            return (PGConnection) conn;
+        }
+        throw new IllegalStateException("Connection is not a PostgreSQL connection. Actual type: " + conn.getClass());
     }
 
     private static String sanitizeFileName(String name) {
