@@ -290,69 +290,67 @@ public final class SimpleDemoApp {
 				final int si = i; // final copies for capture
 				final int sj = j;
 				// try{
-					if(channels[si][sj][3] == null || 
-					   channels[si][sj][1] == null ||
-					   channels[si][sj][2] == null ||
-					   channels[si][sj][0] == null) {
-						// logger.warn("----------------- MODBUS: There is no channel yet at string {} cell {} --------------", si+1, sj+1);
-						channels = initiateChannel();
-						continue;
-					}
-					if(channels[si][sj][3].getLatestRecord().getValue() == null ||
-					   channels[si][sj][1].getLatestRecord().getValue() == null ||
-					   channels[si][sj][2].getLatestRecord().getValue() == null ||
-					   channels[si][sj][0].getLatestRecord().getValue() == null) {
-						// logger.warn("----------------- MODBUS: There is no value yet with this channel at string {} cell {} --------------", si+1, sj+1);
-						continue;
-					}
-					
-					double current = channels[si][sj][3].getLatestRecord().getValue().asDouble() / 10;
-					// logger.info("Value of of {}: -----> {}",channels[si][sj][3].getId(), current);
-	            	double voltage = channels[si][sj][1].getLatestRecord().getValue().asDouble() / 1000;
-					double temp = channels[si][sj][2].getLatestRecord().getValue().asDouble() / 10;
-					// logger.info("OLD value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
-					// logger.info("NEW value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, voltage);
-					if((voltage - powerCells[si][sj].getVoltage()) > 0) {
-	            		current *= -1;
-					}
-					double resistance = channels[si][sj][0].getLatestRecord().getValue().asDouble();
-					// logger.info("Value of of {}: -----> {}",channels[si][sj][0].getId(), resistance);
-
-					powerCells[si][sj].setCurrent(current);
-					// logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
-					powerCells[si][sj].setVoltage(voltage);
-					// logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
-					powerCells[si][sj].setTemp(temp);
-					// logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
-					powerCells[si][sj].setResistance(resistance);
-					
-					setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);
-					if(isInitSoC0[si][sj] == false) {
-						isInitSoC0[si][sj] = true;
-					}
-					long now = System.currentTimeMillis();
-					// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getSoc());
-					DoubleValue doubleSoCValue = new DoubleValue(Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
-					Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
-					channels[si][sj][4].setLatestRecord(socRecord);
+				if(channels[si][sj][3] == null || 
+					channels[si][sj][1] == null ||
+					channels[si][sj][2] == null ||
+					channels[si][sj][0] == null) {
+					// logger.warn("----------------- MODBUS: There is no channel yet at string {} cell {} --------------", si+1, sj+1);
+					channels = initiateChannel();
+					continue;
+				}
+				if(channels[si][sj][3].getLatestRecord().getValue() == null ||
+					channels[si][sj][1].getLatestRecord().getValue() == null ||
+					channels[si][sj][2].getLatestRecord().getValue() == null ||
+					channels[si][sj][0].getLatestRecord().getValue() == null) {
+					// logger.warn("----------------- MODBUS: There is no value yet with this channel at string {} cell {} --------------", si+1, sj+1);
+					continue;
+				}
+				
+				double current = channels[si][sj][3].getLatestRecord().getValue().asDouble() / 10;
+				// logger.info("Value of of {}: -----> {}",channels[si][sj][3].getId(), current);
+				double voltage = channels[si][sj][1].getLatestRecord().getValue().asDouble() / 1000;
+				double temp = channels[si][sj][2].getLatestRecord().getValue().asDouble() / 10;
+				// logger.info("OLD value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
+				// logger.info("NEW value of voltage of string {}_cell{}: -----> {}",si+1, sj+1, voltage);
+				if((voltage - powerCells[si][sj].getVoltage()) > 0) {
+					current *= -1;
+				}
+				double resistance = channels[si][sj][0].getLatestRecord().getValue().asDouble();
+				// logger.info("Value of of {}: -----> {}",channels[si][sj][0].getId(), resistance);
 
 				powerCells[si][sj].setCurrent(current);
-				logger.info("I of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getCurrent());
+				// logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
 				powerCells[si][sj].setVoltage(voltage);
-				logger.info("V of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getVoltage());
+				// logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
 				powerCells[si][sj].setTemp(temp);
-				logger.info("T of string {}_cell{}: -----> {}", si + 1, sj + 1, powerCells[si][sj].getTemp());
+				// logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
 				powerCells[si][sj].setResistance(resistance);
-
+				
 				setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);
-				if (isInitSoC0[si][sj] == false) {
+				if(isInitSoC0[si][sj] == false) {
 					isInitSoC0[si][sj] = true;
 				}
 				long now = System.currentTimeMillis();
-				// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1,
-				// powerCells[si][sj].getSoc());
-				DoubleValue doubleSoCValue = new DoubleValue(
-						Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
+				// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getSoc());
+				DoubleValue doubleSoCValue = new DoubleValue(Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
+				Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
+				channels[si][sj][4].setLatestRecord(socRecord);
+
+				powerCells[si][sj].setCurrent(current);
+				// logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
+				powerCells[si][sj].setVoltage(voltage);
+				// logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
+				powerCells[si][sj].setTemp(temp);
+				// logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
+				powerCells[si][sj].setResistance(resistance);
+				
+				setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);
+				if(isInitSoC0[si][sj] == false) {
+					isInitSoC0[si][sj] = true;
+				}
+				long now = System.currentTimeMillis();
+				// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getSoc());
+				DoubleValue doubleSoCValue = new DoubleValue(Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
 				Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
 				channels[si][sj][4].setLatestRecord(socRecord);
 

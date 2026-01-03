@@ -38,6 +38,7 @@ dependencies {
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-datalogger-ascii', version: openmucVersion
     osgibundles group: "org.openmuc.framework", name: "openmuc-datalogger-mqtt",  version: openmucVersion
+    osgibundles group: "org.openmuc.framework", name: "openmuc-datalogger-sql",  version: openmucVersion
 
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-spi', version: openmucVersion
     osgibundles group: 'org.openmuc.framework', name: 'openmuc-webui-base', version: openmucVersion

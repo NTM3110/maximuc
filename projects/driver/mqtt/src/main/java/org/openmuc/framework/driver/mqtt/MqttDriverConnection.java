@@ -89,6 +89,7 @@ public class MqttDriverConnection implements Connection {
         int port = Integer.parseInt(this.settings.getProperty("port"));
         String username = this.settings.getProperty("username");
         String password = this.settings.getProperty("password");
+        String clientId = this.settings.getProperty("clientID");
         boolean ssl = Boolean.parseBoolean(this.settings.getProperty("ssl"));
         long maxBufferSize = Long.parseLong(this.settings.getProperty("maxBufferSize", "0"));
         long maxFileSize = Long.parseLong(this.settings.getProperty("maxFileSize", "0"));
@@ -104,7 +105,7 @@ public class MqttDriverConnection implements Connection {
         boolean webSocket = Boolean.parseBoolean(this.settings.getProperty("webSocket", "false"));
         boolean retainedMessages = Boolean.parseBoolean(this.settings.getProperty("retainedMessages", "false"));
 
-        return new MqttSettings(host, port, username, password, ssl, maxBufferSize, maxFileSize, maxFileCount,
+        return new MqttSettings(host, port, username, password, clientId, ssl, maxBufferSize, maxFileSize, maxFileCount,
                 connectionRetryInterval, connectionAliveInterval, persistenceDirectory, lastWillTopic, lastWillPayload,
                 lastWillAlways, firstWillTopic, firstWillPayload, 0, 0, webSocket, retainedMessages);
     }
