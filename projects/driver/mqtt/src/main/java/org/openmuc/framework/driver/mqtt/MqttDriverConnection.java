@@ -89,7 +89,7 @@ public class MqttDriverConnection implements Connection {
         int port = Integer.parseInt(this.settings.getProperty("port"));
         String username = this.settings.getProperty("username");
         String password = this.settings.getProperty("password");
-        String clientId = this.settings.getProperty("clientID");
+        String clientId = this.settings.getProperty("clientId");
         boolean ssl = Boolean.parseBoolean(this.settings.getProperty("ssl"));
         long maxBufferSize = Long.parseLong(this.settings.getProperty("maxBufferSize", "0"));
         long maxFileSize = Long.parseLong(this.settings.getProperty("maxFileSize", "0"));

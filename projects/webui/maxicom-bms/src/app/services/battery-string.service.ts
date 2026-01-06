@@ -571,25 +571,26 @@ export class BatteryStringService {
   ): any {
     const settings = this.buildModbusSettings(portConfig);
     const channels = [];
-    const STRING_REGISTER_OFFSET = 1000;
+    // const STRING_REGISTER_OFFSET = 1000;
 
     const offsetFor = (slave: number, stepMs: number = 100): number => {
       return ((slave - 1)) * stepMs;
     };
 
     for (let c = 1; c <= cells; c++) {
-      if(c == 64 && s == 1) continue;
+      if (c == 64 && s == 1) continue;
       const base = `str${s}_cell${c}`;
       const sg = `str${s}_sg_slave_${c}`;
       const off = offsetFor(c);
 
-      // CẤU HÌNH CELL DETAIL (R, V, T) -> TUYỆT ĐỐI KHÔNG LOG
-      // Không khai báo loggingInterval/loggingSettings ở đây
+      // CẤU HÌNH CELL DETAIL (R, V, T)
       const cellProps = {
-        samplingInterval: 14000, // Chỉ đọc 8s để hiển thị
+        samplingInterval: 12000, // Chỉ đọc 8s để hiển thị
         samplingGroup: sg,
         samplingTimeOffset: off,
-        disabled: false,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        disabled: false
       };
 
       // R channel
@@ -601,7 +602,7 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${1000 + (s - 1) * STRING_REGISTER_OFFSET + c * 2}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${1000 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
           }
         ],
         ...cellProps
@@ -616,7 +617,7 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${1300 + (s - 1) * STRING_REGISTER_OFFSET + c * 2}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${1300 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
           }
         ],
         ...cellProps
@@ -631,14 +632,14 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${1600 + (s - 1) * STRING_REGISTER_OFFSET + c * 2}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${1600 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
           }
         ],
         ...cellProps
       });
     }
 
-    if(s == 1){
+    if (s == 1) {
       // Total Current - CÓ LOG 8s
       channels.push({
         id: `str${s}_total_I`,
@@ -648,14 +649,14 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${1900 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${3000 + (s - 1) * 10000}:INTEGER`,
           }
         ],
-        samplingInterval: 14000,
-        loggingInterval: 14000, // <--- GIỮ
-        loggingSettings: 'sqllogger:',
+        samplingInterval: 12000,
         samplingGroup: `str${s}_sg_pack`,
         samplingTimeOffset: offsetFor(113),
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
         disabled: false,
       });
 
@@ -668,18 +669,18 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${2100 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${3100 + (s - 1) * 10000}:INTEGER`,
           }
         ],
-        samplingInterval: 14000,
-        loggingInterval: 14000, // <--- GIỮ
-        loggingSettings: 'sqllogger:',
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
         samplingGroup: `str${s}_sg_pack`,
         samplingTimeOffset: offsetFor(113),
         disabled: false,
       });
     }
-    else{
+    else {
       // Total Current - CÓ LOG 8s
       channels.push({
         id: `str${s}_total_I`,
@@ -689,14 +690,14 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${1900 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${3000 + (s - 1) * 10000}:INTEGER`,
           }
         ],
-        samplingInterval: 14000,
-        loggingInterval: 14000, // <--- GIỮ
-        loggingSettings: 'sqllogger:',
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
         samplingGroup: `str${s}_sg_pack`,
-        samplingTimeOffset: offsetFor(111),
+        samplingTimeOffset: offsetFor(113),
         disabled: false,
       });
 
@@ -709,14 +710,14 @@ export class BatteryStringService {
         serverMappings: [
           {
             id: 'modbus',
-            serverAddress: `HOLDING_REGISTERS:${2100 + (s - 1) * STRING_REGISTER_OFFSET + s}:INTEGER`,
+            serverAddress: `INPUT_REGISTERS:${3100 + (s - 1) * 10000}:INTEGER`,
           }
         ],
-        samplingInterval: 14000,
-        loggingInterval: 14000, // <--- GIỮ
-        loggingSettings: 'sqllogger:',
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
         samplingGroup: `str${s}_sg_pack`,
-        samplingTimeOffset: offsetFor(111),
+        samplingTimeOffset: offsetFor(113),
         disabled: false,
       });
     }
@@ -728,8 +729,8 @@ export class BatteryStringService {
         description: `String ${s} Modbus RTU`,
         deviceAddress: portConfig.port,
         settings: settings,
-        samplingTimeout: 14000,
-        connectRetryInterval: 14000,
+        samplingTimeout: 12000,
+        connectRetryInterval: 1000,
         disabled: false,
       },
       channels: channels,
@@ -751,11 +752,13 @@ export class BatteryStringService {
       };
       if (unit) item.unit = unit;
       if (valueType.toUpperCase() === 'STRING') item.valueTypeLength = valueTypeLength || 64;
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
       channels.push(item);
     };
 
     // Helper cho STATS
-    const pushStats = (id: string, valueType: string, description: string, unit?: string) => {
+    const pushStats = (id: string, valueType: string, description: string, unit?: string, reg_d?: number) => {
       const item: any = {
         id: id,
         description: description,
@@ -764,30 +767,22 @@ export class BatteryStringService {
       };
       if (unit) item.unit = unit;
 
-      const upperId = id.toUpperCase();
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
 
-      // 1. String SOC/SOH -> Log 1 phút (60000)
-      if (upperId.includes('STRING_SOC') || upperId.includes('STRING_SOH')) {
-        item.loggingInterval = 60000;
-        item.loggingSettings = 'sqllogger:';
-      }
-      // 2. Cell SOC/SOH (nhưng không phải String) -> KHÔNG LOG
-      else if (upperId.includes('_SOC') || upperId.includes('_SOH')) {
-        // Do nothing = No log
-      }
-      // 3. Các Stats còn lại (Max/Min/Avg) -> KHÔNG LOG
-      else {
-        // Trước đây để 600000, giờ xóa đi để TẮT LOG theo yêu cầu mới nhất của bạn
-        // Nếu bạn muốn bật lại log 10p cho các biến này thì uncomment 2 dòng dưới:
-        // item.loggingInterval = 600000;
-        // item.loggingSettings = 'sqllogger:';
+      if (reg_d !== undefined && reg_d !== null) {
+        const valueTypeStr = valueType === 'DOUBLE' ? 'FLOAT' : 'INTEGER';
+        item.serverMappings = [{
+          id: 'modbus',
+          serverAddress: `INPUT_REGISTERS:${reg_d + (s - 1) * 10000}:${valueTypeStr}`,
+        }];
       }
 
       channels.push(item);
     };
 
     // Helper đặc biệt cho Cell SOC/SOH (đảm bảo không log)
-    const pushCellSocSoh = (id: string, valueType: string, description: string, unit?: string) => {
+    const pushCellSocSoh = (id: string, valueType: string, description: string, unit?: string, serverAddress?: string) => {
       const item: any = {
         id: id,
         description: description,
@@ -796,6 +791,16 @@ export class BatteryStringService {
         // No loggingInterval
       };
       if (unit) item.unit = unit;
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
+
+      if (serverAddress) {
+        item.serverMappings = [{
+          id: 'modbus',
+          serverAddress: serverAddress,
+        }];
+      }
+
       channels.push(item);
     };
 
@@ -806,40 +811,53 @@ export class BatteryStringService {
     pushOverview(`str${s}_cell_brand`, 'STRING', 'Cell Brand', undefined, 64);
     pushOverview(`str${s}_cell_model`, 'STRING', 'Cell Model', undefined, 64);
     pushOverview(`str${s}_Vcutoff`, 'DOUBLE', 'V cutoff', 'V');
-    pushOverview(`str${s}_Vfloat`, 'DOUBLE', 'V cutoff', 'V');
-    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port ID', undefined, 64);
+    pushOverview(`str${s}_Vfloat`, 'DOUBLE', 'V float', 'V');
+    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port id', 'ID', 64);
 
     // String stats channels
-    const stats: Array<[string, string, string, string | undefined]> = [
-      [`str${s}_string_vol`, 'DOUBLE', 'String Voltage', 'V'],
-      [`str${s}_max_voltage_cell_id`, 'INTEGER', 'Max V Cell ID', undefined],
-      [`str${s}_min_voltage_cell_id`, 'INTEGER', 'Min V Cell ID', undefined],
-      [`str${s}_max_temp_cell_id`, 'INTEGER', 'Max T Cell ID', undefined],
-      [`str${s}_min_temp_cell_id`, 'INTEGER', 'Min T Cell ID', undefined],
-      [`str${s}_max_rst_cell_id`, 'INTEGER', 'Max R Cell ID', undefined],
-      [`str${s}_min_rst_cell_id`, 'INTEGER', 'Min R Cell ID', undefined],
-      [`str${s}_average_vol`, 'DOUBLE', 'Average Cell Voltage', 'V'],
-      [`str${s}_average_temp`, 'DOUBLE', 'Average Cell Temperature', 'C'],
-      [`str${s}_average_rst`, 'DOUBLE', 'Average Cell R', 'miliOhm'],
-      [`str${s}_max_voltage_value`, 'DOUBLE', 'Max Cell Voltage', 'V'],
-      [`str${s}_min_voltage_value`, 'DOUBLE', 'Min Cell Voltage', 'V'],
-      [`str${s}_max_temp_value`, 'DOUBLE', 'Max Cell Temperature', 'C'],
-      [`str${s}_min_temp_value`, 'DOUBLE', 'Min Cell Temperature', 'C'],
-      [`str${s}_max_rst_value`, 'DOUBLE', 'Max Cell Internal Resistance', 'miliOhm'],
-      [`str${s}_min_rst_value`, 'DOUBLE', 'Min Cell Internal Resistance', 'miliOhm'],
-      [`str${s}_string_SOC`, 'DOUBLE', 'String SoC', '%'], // -> Log 60s
-      [`str${s}_string_SOH`, 'DOUBLE', 'String SoH', '%'], // -> Log 60s
+    const stats: Array<[string, string, string, string | undefined, number | undefined]> = [
+      [`str${s}_string_SOC`, 'DOUBLE', 'Total SoC', '%', 3200],
+      [`str${s}_string_SOH`, 'DOUBLE', 'Total SoH', '%', 3300],
+      [`str${s}_string_vol`, 'DOUBLE', 'String Voltage', 'V', 3400],
+
+      [`str${s}_max_voltage_cell_id`, 'INTEGER', 'Max V Cell ID', undefined, 3500],
+      [`str${s}_min_voltage_cell_id`, 'INTEGER', 'Min V Cell ID', undefined, 3600],
+      [`str${s}_max_temp_cell_id`, 'INTEGER', 'Max T Cell ID', undefined, 3700],
+      [`str${s}_min_temp_cell_id`, 'INTEGER', 'Min T Cell ID', undefined, 3800],
+      [`str${s}_max_rst_cell_id`, 'INTEGER', 'Max R Cell ID', undefined, 3900],
+      [`str${s}_min_rst_cell_id`, 'INTEGER', 'Min R Cell ID', undefined, 4000],
+      [`str${s}_average_vol`, 'DOUBLE', 'Average Cell Voltage', 'V', 4100],
+      [`str${s}_average_temp`, 'DOUBLE', 'Average Cell Temperature', 'C', 4200],
+      [`str${s}_average_rst`, 'DOUBLE', 'Average Cell R', 'miliOhm', 4300],
+      [`str${s}_max_voltage_value`, 'DOUBLE', 'Max Cell Voltage', 'V', 4400],
+      [`str${s}_min_voltage_value`, 'DOUBLE', 'Min Cell Voltage', 'V', 4500],
+      [`str${s}_max_temp_value`, 'DOUBLE', 'Max Cell Temperature', 'C', 4600],
+      [`str${s}_min_temp_value`, 'DOUBLE', 'Min Cell Temperature', 'C', 4700],
+      [`str${s}_max_rst_value`, 'DOUBLE', 'Max Cell Internal Resistance', 'miliOhm', 4800],
+      [`str${s}_min_rst_value`, 'DOUBLE', 'Min Cell Internal Resistance', 'miliOhm', 4900],
     ];
 
-    for (const [id, valueType, description, unit] of stats) {
-      pushStats(id, valueType, description, unit);
+    for (const [id, valueType, description, unit, reg_d] of stats) {
+      pushStats(id, valueType, description, unit, reg_d);
     }
 
     // Per-cell SOC/SOH channels (No log)
     for (let c = 1; c <= cells; c++) {
       const base = `str${s}_cell${c}`;
-      pushCellSocSoh(`${base}_SOC`, 'DOUBLE', 'State of Charge', '%');
-      pushCellSocSoh(`${base}_SOH`, 'DOUBLE', 'State of Health', '%');
+      pushCellSocSoh(
+        `${base}_SOC`,
+        'DOUBLE',
+        'State of Charge',
+        '%',
+        `INPUT_REGISTERS:${1900 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`
+      );
+      pushCellSocSoh(
+        `${base}_SOH`,
+        'DOUBLE',
+        'State of Health',
+        '%',
+        `INPUT_REGISTERS:${2200 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`
+      );
     }
 
     return {

@@ -27,19 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
+import java.nio.file.*;
+import java.util.*;
 
 @Component(service = {})
 public final class SimpleDemoApp {
@@ -84,6 +73,7 @@ public final class SimpleDemoApp {
 	private PowerCell[][] powerCells;
 	private Channel[][][] channels;
 	private Timer updateTimer;
+    private Timer updateDbTimer;
 	private SoCEngine socEngine;
 	private SoCEngine[] socEngines;
 	// private SoHEngine sohEngine;
@@ -95,8 +85,9 @@ public final class SimpleDemoApp {
 
 	@Activate
 	private void activate() {
-		// logger.info("Activating {}", APP_NAME);
-		initiate();
+		logger.info("Activating {}", APP_NAME);
+        initiate();
+        initDbUpdateTimer();
 	}
 
 	@Deactivate
@@ -104,6 +95,8 @@ public final class SimpleDemoApp {
 		// logger.info("Deactivating {}", APP_NAME);
 		updateTimer.cancel();
 		updateTimer.purge();
+        updateDbTimer.cancel();
+        updateDbTimer.purge();
 	}
 
 	private void initiatePowerCells() {
@@ -118,8 +111,19 @@ public final class SimpleDemoApp {
 	 * Detects all existing string IDs from channel IDs.
 	 * Works with IDs like "str2_cell1_V", "str10_Cnominal", "str3_string_SOC", etc.
 	 */
-	private int[] detectStringIds(List<String> allChannelIds) {
-		java.util.Set<Integer> ids = new java.util.TreeSet<>(); // sorted, unique
+
+    private List<String> detectChannelIdWithCurrentAndAmbientTempAndStringSOCSOH(List<String> allChannelIds){
+        List<String> channelIds = new ArrayList<>(List.of());
+        for (String id : allChannelIds){
+            if ((id.startsWith("str") && id.endsWith("total_I")) || (id.startsWith("str") && id.endsWith("ambient_T")) || (id.startsWith("str") && id.endsWith("string_SOC")) || (id.startsWith("str") && id.endsWith("string_SOH"))) {
+                channelIds.add(id);
+            }
+        }
+        return  channelIds;
+    }
+
+	private int[] detectStringIdsWithCellQty(List<String> allChannelIds) {
+		Set<Integer> ids = new TreeSet<>(); // sorted, unique
 
 		for (String id : allChannelIds) {
 			if (!(id.startsWith("str") && id.endsWith("cell_qty"))) {
@@ -336,27 +340,7 @@ public final class SimpleDemoApp {
 				Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
 				channels[si][sj][4].setLatestRecord(socRecord);
 
-				powerCells[si][sj].setCurrent(current);
-				// logger.info("I of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getCurrent());
-				powerCells[si][sj].setVoltage(voltage);
-				// logger.info("V of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getVoltage());
-				powerCells[si][sj].setTemp(temp);
-				// logger.info("T of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getTemp());
-				powerCells[si][sj].setResistance(resistance);
-				
-				setLatestSoC(powerCells[si][sj], 1, isInitSoC0[si][sj], si);
-				if(isInitSoC0[si][sj] == false) {
-					isInitSoC0[si][sj] = true;
-				}
-				long now = System.currentTimeMillis();
-				// logger.info("SoC of string {}_cell{}: -----> {}",si+1, sj+1, powerCells[si][sj].getSoc());
-				DoubleValue doubleSoCValue = new DoubleValue(Double.parseDouble(DF.format(powerCells[si][sj].getSoc())));
-				Record socRecord = new Record(doubleSoCValue, now, Flag.VALID);
-				channels[si][sj][4].setLatestRecord(socRecord);
-
-				setLatestSoH(powerCells[si][sj]);
-				// logger.info("SoH of string {}_cell{}: -----> {}",si+1, sj+1,
-				// powerCells[si][sj].getTemp());
+                setLatestSoH(powerCells[si][sj]);
 				DoubleValue doubleSoHValue = new DoubleValue(
 						Double.parseDouble(DF.format(powerCells[si][sj].getSoh())));
 				Record sohRecord = new Record(doubleSoHValue, now, Flag.VALID);
@@ -626,16 +610,36 @@ public final class SimpleDemoApp {
 
 	}
 
+    private void initDbUpdateTimer(){
+        logger.info("Init DB Update Timer");
+        updateDbTimer = new Timer("Database update");
+        int interval = SoHSchedulePrepare.getInterval();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                logger.info("---------------- << Pushing data to DB >> ------------------");
+                List<String> allChannelId = dataAccessService.getAllIds();
+                List<String> channelIds = detectChannelIdWithCurrentAndAmbientTempAndStringSOCSOH(allChannelId);
+				for(String channelId : channelIds){
+                    logger.info("Channel found to publish to DB: {}", channelId);
+                }
+                SoHSchedulePrepare.implement(dataAccessService, channelIds);
+            }
+        };
+        updateDbTimer.scheduleAtFixedRate(task, (long) interval * 1000, (long) interval * 1000);
+
+    }
 	private void initUpdateTimer() {
         updateTimer = new Timer("Modbus Update");
+		logger.info("------------------ INit update TImer------------------");
 	
 	    TimerTask task = new TimerTask() {
 	        @Override
 	        public void run() {
-				
+				logger.info("-------------------- Run Update Task for MODBUS-------------------");
 				if(!isRestored) {
 					List<String> allChannelId = dataAccessService.getAllIds();
-					stringIds = detectStringIds(allChannelId);
+					stringIds = detectStringIdsWithCellQty(allChannelId);
 					updateLatestSaveChannelNames(stringIds);
 					if(LatestValuesRestorer.restoreAll(dataAccessService, latestSaveChannelNames) > 0) {
 						isRestored = true;
@@ -676,7 +680,7 @@ public final class SimpleDemoApp {
 	private void getCellDimension() {
 		stringNumber_1 = 0;
 		List<String> allChannelId = dataAccessService.getAllIds();
-		stringIds = detectStringIds(allChannelId);
+		stringIds = detectStringIdsWithCellQty(allChannelId);
 		int index = stringIds.length;
 
 		logger.info("logger.info(\"------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", index);
@@ -719,7 +723,7 @@ public final class SimpleDemoApp {
 				logger.warn("There is no value yet with this channel: {}, skipping get cell dimension this cycle.",
 						cellNumberChannelName);
 			} catch (IndexOutOfBoundsException e) {
-				logger.warn("Index out of bound: {},error: {}", i, e.getMessage());
+				logger.warn("Index out of bound: {}, error: {}", i, e.getMessage());
 			}
 		}
 	}
