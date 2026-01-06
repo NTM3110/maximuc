@@ -812,7 +812,7 @@ export class BatteryStringService {
     pushOverview(`str${s}_cell_model`, 'STRING', 'Cell Model', undefined, 64);
     pushOverview(`str${s}_Vcutoff`, 'DOUBLE', 'V cutoff', 'V');
     pushOverview(`str${s}_Vfloat`, 'DOUBLE', 'V float', 'V');
-    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port id', 'ID', 64);
+    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port id', 'ID', 64); 
 
     // String stats channels
     const stats: Array<[string, string, string, string | undefined, number | undefined]> = [
