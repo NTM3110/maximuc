@@ -203,7 +203,7 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         if (settings.isSsl()) {
             if (isLoggerReady()) {
                 logger.info("Connecting to MQTT Broker");
-                .getConnection().connect();
+                mqttWriter.getConnection().connect();
             } else {
                 logger.info("Writer is not ready yet");
             }
