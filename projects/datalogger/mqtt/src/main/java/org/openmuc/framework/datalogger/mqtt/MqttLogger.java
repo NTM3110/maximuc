@@ -139,6 +139,11 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         // configured for mqtt logger
         List<LoggingRecord> logRecordsForMqttLogger = loggingRecordList.stream()
                 .filter(record -> channelsToLog.containsKey(record.getChannelId()))
+                .map(record -> {
+                    Record r = record.getRecord();
+                    Record newRecord = new Record(r.getValue(), timestamp, r.getFlag());
+                    return new LoggingRecord(record.getChannelId(), newRecord);
+                })
                 .collect(Collectors.toList());
 
         // channelsToLog.values().stream().map(channel ->
@@ -198,7 +203,7 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         if (settings.isSsl()) {
             if (isLoggerReady()) {
                 logger.info("Connecting to MQTT Broker");
-                mqttWriter.getConnection().connect();
+                .getConnection().connect();
             } else {
                 logger.info("Writer is not ready yet");
             }

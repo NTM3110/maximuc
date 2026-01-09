@@ -43,13 +43,17 @@ public class SecurityHandler implements HttpContext {
 
     @Override
     public boolean handleSecurity(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (!authenticated(request)) {
-            response.setHeader("WWW-Authenticate", "BASIC realm=\"private area\"");
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
-        }
-
+        // Authentication disabled to prevent browser popup
         return true;
+        /*
+         * if (!authenticated(request)) {
+         * response.setHeader("WWW-Authenticate", "BASIC realm=\"private area\"");
+         * response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+         * return false;
+         * }
+         * 
+         * return true;
+         */
     }
 
     private boolean authenticated(HttpServletRequest request) {

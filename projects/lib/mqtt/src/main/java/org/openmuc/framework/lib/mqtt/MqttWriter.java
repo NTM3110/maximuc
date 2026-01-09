@@ -214,6 +214,7 @@ public class MqttWriter {
     public void write(String topic, byte[] message) {
         if (connected) {
             startPublishing(topic, message);
+            logger.info("----------------- Published message to topic {} -------------------", topic);
         }
         else {
             warn("No connection to broker - adding message to buffer");

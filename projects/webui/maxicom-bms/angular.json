@@ -19,7 +19,7 @@
           "options": {
             "outputPath": "dist/maxicom-bms",
             "index": "src/index.html",
-            "baseHref": "/maxicom-bms/html/",
+            "baseHref": "/",
             "browser": "src/main.ts",
             "polyfills": [
               "zone.js"

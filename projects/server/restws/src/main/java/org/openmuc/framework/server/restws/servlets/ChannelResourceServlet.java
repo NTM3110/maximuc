@@ -66,7 +66,7 @@ public class ChannelResourceServlet extends GenericServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType(APPLICATION_JSON);
-        logger.info("ChannelResourceServlet: doGet called");
+        // logger.info("ChannelResourceServlet: doGet called");
         String[] pathAndQueryString = checkIfItIsACorrectRest(request, response, logger);
 
         if (pathAndQueryString == null) {
