@@ -10,6 +10,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.io.ByteArrayOutputStream;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public final class CsvExportUtil {
 
@@ -28,27 +30,40 @@ public final class CsvExportUtil {
         // Optional: prevent caching
         resp.setHeader("Cache-Control", "no-store");
 
-        String copySql =
-                "COPY (" +
-                        "  SELECT channelid, value_type, value_double, value_string, value_boolean, updated_at " +
-                        "  FROM latest_values " +
-                        "  ORDER BY channelid" +
-                        ") TO STDOUT WITH (FORMAT csv, HEADER true)";
-
         try (Connection conn = dataSource.getConnection();
-             OutputStream out = resp.getOutputStream()) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                "SELECT channelid, value_type, value_double, value_string, value_boolean, updated_at " +
+                "FROM latest_values ORDER BY channelid");
+            OutputStream out = resp.getOutputStream()) {
 
-//            PGConnection pgConn = conn.unwrap(PGConnection.class);
-//            CopyManager copyManager = pgConn.getCopyAPI();
-//
-//            copyManager.copyOut(copySql, out); // stream DB -> HTTP response
-            out.write("Hello World".getBytes(StandardCharsets.UTF_8));
+            out.write("channelid,value_type,value_double,value_string,value_boolean,updated_at\n"
+                    .getBytes(StandardCharsets.UTF_8));
+
+            while (rs.next()) {
+                out.write((
+                    rs.getString(1) + "," +
+                    rs.getString(2) + "," +
+                    rs.getObject(3) + "," +
+                    rs.getString(4) + "," +
+                    rs.getObject(5) + "," +
+                    rs.getTimestamp(6) + "\n"
+                ).getBytes(StandardCharsets.UTF_8));
+            }
+
             out.flush();
-
-        } catch (Exception e) {
+        }catch (Exception e) {
             // If we already started writing bytes, reset may fail; still try to return a clean error.
             safeWriteError(resp, e);
-            System.err.println("Error at export latest value csv: " + e.getMessage());
+            System.out.println("Error at export latest value csv: " + e.getMessage());
+        }
+    }
+
+    public static void importLatestValuesCsv(DataSource dataSource, ByteArrayOutputStream csvData, Charset charset) throws Exception {
+        try (Connection conn = dataSource.getConnection()) {
+            CopyManager copyManager = conn.unwrap(PGConnection.class).getCopyAPI();
+            String copyCommand = "COPY latest_values (channelid, value_type, value_double, value_string, value_boolean, updated_at) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',', NULL '')";
+            copyManager.copyIn(copyCommand, new java.io.ByteArrayInputStream(csvData.toByteArray()));
         }
     }
 

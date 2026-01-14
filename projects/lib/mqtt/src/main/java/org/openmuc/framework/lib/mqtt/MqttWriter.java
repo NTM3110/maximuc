@@ -41,8 +41,8 @@ import com.hivemq.client.mqtt.mqtt3.message.publish.Mqtt3Publish;
 public class MqttWriter {
     private static final Logger logger = LoggerFactory.getLogger(MqttWriter.class);
 
-    private final MqttConnection connection;
-    private boolean connected = false;
+    private volatile MqttConnection connection;
+    private volatile boolean connected = false;
     private final AtomicBoolean cancelReconnect = new AtomicBoolean(false);
     private LocalDateTime timeOfConnectionLoss;
     private final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -58,6 +58,10 @@ public class MqttWriter {
         buffer = new MqttBufferHandler(s.getMaxBufferSize(), s.getMaxFileCount(), s.getMaxFileSize(),
                 s.getPersistenceDirectory());
         this.pid = pid;
+    }
+    public void markConnected() {
+        this.connected = true;
+        // this.connection.setConnected(true);
     }
 
     private void emptyFileBuffer() {
@@ -99,6 +103,7 @@ public class MqttWriter {
 
     private void addConnectedListener() {
         connection.addConnectedListener(context -> {
+            logger.warn("[WRITER] connected listener fired");
 
             // FIXME null checks currently workaround for MqttWriterTest, it is not set there
             String serverHost = "UNKNOWN";
@@ -212,6 +217,11 @@ public class MqttWriter {
      *            the message to be published
      */
     public void write(String topic, byte[] message) {
+        logger.warn(
+            "[MQTT-WRITER] write() called, connected={}, topic={}",
+            connected,
+            topic
+        );
         if (connected) {
             startPublishing(topic, message);
             logger.info("----------------- Published message to topic {} -------------------", topic);
@@ -220,6 +230,13 @@ public class MqttWriter {
             warn("No connection to broker - adding message to buffer");
             buffer.add(topic, message);
         }
+    }
+
+    public synchronized void updateConnection(MqttConnection newConnection) {
+        this.connection = newConnection;
+        this.connected = false;
+        // addConnectedListener();
+        // addDisconnectedListener();
     }
 
     private void startPublishing(String topic, byte[] message) {

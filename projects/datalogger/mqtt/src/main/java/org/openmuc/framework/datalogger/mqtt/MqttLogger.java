@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
+// import com.hivemq.client.mqtt.lifecycle.MqttClientDisconnectedListener;
 import org.openmuc.framework.data.Record;
 import org.openmuc.framework.datalogger.mqtt.dto.MqttLogChannel;
 import org.openmuc.framework.datalogger.mqtt.dto.MqttLogMsg;
@@ -45,6 +46,12 @@ import org.openmuc.framework.security.SslManagerInterface;
 import org.osgi.service.cm.ManagedService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.atomic.AtomicBoolean;   
 
 public class MqttLogger implements DataLoggerService, ManagedService {
 
@@ -55,9 +62,15 @@ public class MqttLogger implements DataLoggerService, ManagedService {
     private final PropertyHandler propertyHandler;
     private String parser;
     private boolean isLogMultiple;
-    private MqttWriter mqttWriter;
+    private  volatile MqttWriter mqttWriter;
     private SslManagerInterface sslManager;
     private boolean configLoaded = false;
+    private final ScheduledExecutorService reconnectExecutor =
+        Executors.newSingleThreadScheduledExecutor(r ->
+                new Thread(r, "mqtt-reconnect"));
+    private final AtomicBoolean reconnectScheduled = new AtomicBoolean(false);
+    private ScheduledFuture<?> reconnectFuture;
+
 
     public MqttLogger() {
         String pid = MqttLogger.class.getName();
@@ -121,6 +134,17 @@ public class MqttLogger implements DataLoggerService, ManagedService {
 
     @Override
     public void log(List<LoggingRecord> loggingRecordList, long timestamp) {
+        logger.warn(
+            "[MQTT-LOGGER] log() called: records={}, ts={}",
+            loggingRecordList != null ? loggingRecordList.size() : -1,
+            timestamp
+        );
+
+        logger.warn(
+            "[MQTT-LOGGER] NEW mqttWriter instance id={}",
+            System.identityHashCode(mqttWriter)
+        );
+
 
         if (!isLoggerReady()) {
             logger.warn("Skipped logging values, still loading");
@@ -192,6 +216,85 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         throw new UnsupportedOperationException();
     }
 
+    private synchronized void reconnect() {
+        logger.warn("Reconnecting MQTT logger");
+        logger.warn(
+            "[MQTT-LOGGER] NEW mqttWriter instance id={}",
+            System.identityHashCode(mqttWriter)
+        );
+
+        shutdown();
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {}
+
+        connect();
+    }
+
+    private synchronized void reconnectMqttOnly() {
+        logger.warn("Reconnecting MQTT connection");
+
+        // DO NOT touch DataLoggerService state
+        // DO NOT reset config
+        // DO NOT remove writer reference from DataManager
+
+        try {
+            mqttWriter.getConnection().shutdown();
+        } catch (Exception e) {
+            logger.warn("Error shutting down MQTT connection", e);
+        }
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {}
+
+        MqttSettings settings = createMqttSettings();
+        MqttConnection newConnection = new MqttConnection(settings);
+        newConnection.setSslManager(sslManager);
+
+        // IMPORTANT: reuse SAME writer reference
+        mqttWriter.updateConnection(newConnection);
+        newConnection.setOnConnectedCallback(() -> {
+            logger.warn("MQTT connected → marking writer connected");
+            mqttWriter.markConnected();
+        });
+        newConnection.setOnConnected(() -> {
+            logger.warn("MQTT connected — stopping reconnect loop");
+            stopReconnectLoop();
+        });
+
+        newConnection.connect();
+    }
+    
+    private synchronized void stopReconnectLoop() {
+        if (reconnectFuture != null) {
+            reconnectFuture.cancel(false);
+            reconnectFuture = null;
+            logger.warn("Reconnect loop stopped");
+        }
+    }
+
+
+    private void scheduleReconnect() {
+        if (reconnectFuture != null && !reconnectFuture.isDone()) {
+            return;
+        }
+
+        logger.warn("Scheduling MQTT reconnect");
+
+        reconnectFuture = reconnectExecutor.scheduleWithFixedDelay(() -> {
+            try {
+                logger.warn("Attempting MQTT reconnect...");
+                reconnectMqttOnly();
+
+            } catch (Exception e) {
+                logger.warn("MQTT reconnect failed: {}", e.getMessage());
+            }
+        }, 0, 10, TimeUnit.SECONDS);
+    }
+
+
     /**
      * Connect to MQTT broker
      */
@@ -200,6 +303,14 @@ public class MqttLogger implements DataLoggerService, ManagedService {
         MqttConnection connection = new MqttConnection(settings);
         connection.setSslManager(sslManager);
         mqttWriter = new MqttWriter(connection, getId());
+
+        connection.addConnectionListener(cause -> {
+            logger.warn(
+                "MQTT disconnected, triggering reconnect. Cause: {}",
+                cause != null ? cause.getMessage() : "unknown"
+            );
+            scheduleReconnect();
+        });
         if (settings.isSsl()) {
             if (isLoggerReady()) {
                 logger.info("Connecting to MQTT Broker");
@@ -288,19 +399,27 @@ public class MqttLogger implements DataLoggerService, ManagedService {
     }
 
     public void shutdown() {
-        // Saves RAM buffer to file and terminates running reconnects
-        mqttWriter.shutdown();
 
-        if (!mqttWriter.isConnected() && mqttWriter.isInitialConnect()) {
+        if (mqttWriter == null) {
             return;
         }
 
-        logger.info("closing MQTT connection");
-        if (mqttWriter.isConnected()) {
-            mqttWriter.getConnection().disconnect();
+        logger.info("Shutting down MQTT logger");
+
+        mqttWriter.shutdown();
+
+        try {
+            MqttConnection connection = mqttWriter.getConnection();
+            if (connection != null) {
+                connection.shutdown(); // <-- this MUST call client.close()
+            }
+        } catch (Exception e) {
+            logger.warn("Error during MQTT shutdown", e);
         }
 
+        mqttWriter = null;
     }
+
 
     public void addParser(String parserId, ParserService parserService) {
         logger.info("put parserID {} to PARSERS", parserId);

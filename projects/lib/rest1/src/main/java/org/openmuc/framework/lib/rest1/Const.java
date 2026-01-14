@@ -41,6 +41,7 @@ public class Const {
     public static final String ALIAS_LATEST_VALUE = "/rest/latest-value";
     public static final String ALIAS_SOH_SCHEDULE = "/rest/soh-schedule";
     public static final String ALIAS_CSV_EXPORT = "/rest/csv_export";
+    public static final String ALIAS_STRING = "/rest/string";
 
     public static final String RUNNING = "running";
     public static final String STATE = "state";

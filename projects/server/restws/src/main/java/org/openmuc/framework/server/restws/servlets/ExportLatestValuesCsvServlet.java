@@ -18,4 +18,9 @@ public class ExportLatestValuesCsvServlet extends GenericServlet{
         String fileName = request.getParameter("fileName");
         CsvExportUtil.exportLatestValuesCsv(response, dataSource, fileName);
     }
+
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "POST method is not supported for this endpoint.");
+    }
 }
