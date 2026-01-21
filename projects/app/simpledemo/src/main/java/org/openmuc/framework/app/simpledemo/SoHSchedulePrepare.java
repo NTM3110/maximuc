@@ -26,10 +26,10 @@ public class SoHSchedulePrepare {
         Path path = Path.of("./conf/custom/sql.cfg");
         try{
             Map<String, String> cfg = ConfigExtract.parseConfigFile(path);
-            logger.info("URL: {}", cfg.get("url"));
-            logger.info("User: {}", cfg.get("user"));
-            logger.info("password: {}", cfg.get("password"));
-            logger.info("Interval: {}", cfg.get("interval"));
+            // logger.info("URL: {}", cfg.get("url"));
+            // logger.info("User: {}", cfg.get("user"));
+            // logger.info("password: {}", cfg.get("password"));
+            // logger.info("Interval: {}", cfg.get("interval"));
             String url = cfg.get("url");
             String user = cfg.get("user");
             String password = cfg.get("password");

@@ -129,7 +129,7 @@ public final class SimpleDemoApp {
 			if (!(id.startsWith("str") && id.endsWith("cell_qty"))) {
 				continue;
 			}
-			logger.info("Detect = {}", id);
+			// logger.info("Detect = {}", id);
 			// extract digits immediately after "str"
 			int start = 3;
 			int end = start;
@@ -429,7 +429,7 @@ public final class SimpleDemoApp {
 				// string number: {}, previous cell number: {}; new string number: {}, new cell
 				// number: {}", stringNumber, cellNumber, stringNumber_1, maxCellNumber);
 				if (stringNumber != stringNumber_1 || cellNumber != maxCellNumber) {
-					logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
+					// logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
 					isInitSoC0 = new boolean[stringNumber_1][maxCellNumber];
 
 					powerCells = new PowerCell[stringNumber_1][maxCellNumber];
@@ -449,7 +449,7 @@ public final class SimpleDemoApp {
 					channels = initiateChannel();
 				} else if (isCellNumberChanged) {
 					// logger.info("No dimension change detected.");
-					logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
+					// logger.info("Dimensions changed, re-initializing isInitSoC0 array.");
 					isInitSoC0 = new boolean[stringNumber_1][maxCellNumber];
 
 					powerCells = new PowerCell[stringNumber_1][maxCellNumber];
@@ -471,13 +471,13 @@ public final class SimpleDemoApp {
 				}
 				// initiatePowerCells();
 			}
-			logger.info("All cell dimensions are initialized: string number: {}, cell number: {}", stringNumber,
-					cellNumber);
+			// logger.info("All cell dimensions are initialized: string number: {}, cell number: {}", stringNumber,
+					// cellNumber);
 		}
 	}
 
 	private void pushCalculatedDatatoChannels() {
-		logger.info("Pushing calculated data to channels. stringNumber: {}, cellNumber: {}");
+		// logger.info("Pushing calculated data to channels. stringNumber: {}, cellNumber: {}");
 		double strSOC[] = Helper.calculateStringSOC(stringNumber, cellNumber, powerCells);
 		double strSOH[] = Helper.calculateStringSOH(stringNumber, cellNumber, powerCells);
 		double maxVoltage[] = new double[stringNumber];
@@ -617,11 +617,11 @@ public final class SimpleDemoApp {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                logger.info("---------------- << Pushing data to DB >> ------------------");
+                // logger.info("---------------- << Pushing data to DB >> ------------------");
                 List<String> allChannelId = dataAccessService.getAllIds();
                 List<String> channelIds = detectChannelIdWithCurrentAndAmbientTempAndStringSOCSOH(allChannelId);
 				for(String channelId : channelIds){
-                    logger.info("Channel found to publish to DB: {}", channelId);
+                    // logger.info("Channel found to publish to DB: {}", channelId);
                 }
                 SoHSchedulePrepare.implement(dataAccessService, channelIds);
             }
@@ -631,12 +631,12 @@ public final class SimpleDemoApp {
     }
 	private void initUpdateTimer() {
         updateTimer = new Timer("Modbus Update");
-		logger.info("------------------ INit update TImer------------------");
+		// logger.info("------------------ INit update TImer------------------");
 	
 	    TimerTask task = new TimerTask() {
 	        @Override
 	        public void run() {
-				logger.info("-------------------- Run Update Task for MODBUS-------------------");
+				// logger.info("-------------------- Run Update Task for MODBUS-------------------");
 				if(!isRestored) {
 					List<String> allChannelId = dataAccessService.getAllIds();
 					stringIds = detectStringIdsWithCellQty(allChannelId);
@@ -683,7 +683,7 @@ public final class SimpleDemoApp {
 		stringIds = detectStringIdsWithCellQty(allChannelId);
 		int index = stringIds.length;
 
-		logger.info("logger.info(\"------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", index);
+		// logger.info("logger.info(\"------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", index);
 		// stringNumber_1 = index;
 
 //		if(stringNumber != index){
@@ -707,7 +707,7 @@ public final class SimpleDemoApp {
 			return;
 		}
 
-		logger.info("------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", stringNumber_1);
+		// logger.info("------------- GETCELLDIMESION: stringNumber_1 {}----------------\n", stringNumber_1);
 		for (int i = 0; i < stringNumber_1; i++) {
 			int strId = stringIds[i];
 			String cellNumberChannelName = "str" + strId + "_cell_qty";

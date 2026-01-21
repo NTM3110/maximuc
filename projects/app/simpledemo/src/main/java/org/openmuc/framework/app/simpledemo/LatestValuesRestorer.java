@@ -35,7 +35,7 @@ public class LatestValuesRestorer {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
-            logger.info("CONNECTED TO LATEST_VALUES DB AND RESTORING VALUES");
+            // logger.info("CONNECTED TO LATEST_VALUES DB AND RESTORING VALUES");
 
             while (rs.next()) {
                 String channelId  = rs.getString("channelid");
@@ -58,7 +58,7 @@ public class LatestValuesRestorer {
                     continue; // invalid row, skip
                 }
                 if(!restoredChannelIds.contains(channelId)) continue;
-                logger.info("Restoring channel {}: value: {}", channelId, v);
+                // logger.info("Restoring channel {}: value: {}", channelId, v);
                 long now = System.currentTimeMillis();
                 Record r = new Record(v, now, Flag.VALID); // no time, just value
                 dataAccessService.getChannel(channelId).setLatestRecord(r);

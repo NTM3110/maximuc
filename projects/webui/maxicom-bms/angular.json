@@ -17,6 +17,8 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
+            "buildOptimizer": false,
+            "vendorChunk": true,
             "outputPath": "dist/maxicom-bms",
             "index": "src/index.html",
             "baseHref": "/",

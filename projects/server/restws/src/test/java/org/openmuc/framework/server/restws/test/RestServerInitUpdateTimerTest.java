@@ -48,7 +48,7 @@ public class RestServerInitUpdateTimerTest {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                System.out.println("Timer task running to update SoH Schedule");
+                // System.out.println("Timer task running to update SoH Schedule");
                 LocalDateTime now = LocalDateTime.now();
                 List<SoHSchedule> qualifiedSchedules = sohScheduleRepoImpl
                         .findByStartDatetimeBeforeAndStateAndStatus(now, DischargeState.PENDING, Status.ACTIVE);

@@ -218,10 +218,10 @@ public class MqttLogger implements DataLoggerService, ManagedService {
 
     private synchronized void reconnect() {
         logger.warn("Reconnecting MQTT logger");
-        logger.warn(
-            "[MQTT-LOGGER] NEW mqttWriter instance id={}",
-            System.identityHashCode(mqttWriter)
-        );
+        // logger.warn(
+        //     "[MQTT-LOGGER] NEW mqttWriter instance id={}",
+        //     System.identityHashCode(mqttWriter)
+        // );
 
         shutdown();
 
@@ -285,11 +285,11 @@ public class MqttLogger implements DataLoggerService, ManagedService {
 
         reconnectFuture = reconnectExecutor.scheduleWithFixedDelay(() -> {
             try {
-                logger.warn("Attempting MQTT reconnect...");
+                // logger.warn("Attempting MQTT reconnect...");
                 reconnectMqttOnly();
 
             } catch (Exception e) {
-                logger.warn("MQTT reconnect failed: {}", e.getMessage());
+                // logger.warn("MQTT reconnect failed: {}", e.getMessage());
             }
         }, 0, 10, TimeUnit.SECONDS);
     }

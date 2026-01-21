@@ -1,7 +1,7 @@
 package org.openmuc.framework.lib.rest1.service.impl;
 
 import org.openmuc.framework.lib.rest1.service.ASyncService;
-import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;;
+import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;
 import org.openmuc.framework.lib.rest1.common.enums.DischargeState;
 
 import java.util.concurrent.CompletableFuture;

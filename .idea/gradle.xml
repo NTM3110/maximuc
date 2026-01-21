@@ -30,13 +30,13 @@
             <option value="$PROJECT_DIR$/projects/driver/modbus" />
             <option value="$PROJECT_DIR$/projects/driver/mqtt" />
             <option value="$PROJECT_DIR$/projects/driver/rest" />
-            <option value="$PROJECT_DIR$/projects/driver/simple-driver" />
             <option value="$PROJECT_DIR$/projects/driver/snmp" />
             <option value="$PROJECT_DIR$/projects/driver/wmbus" />
             <option value="$PROJECT_DIR$/projects/lib/amqp" />
             <option value="$PROJECT_DIR$/projects/lib/filePersistence" />
             <option value="$PROJECT_DIR$/projects/lib/mqtt" />
             <option value="$PROJECT_DIR$/projects/lib/osgi" />
+            <option value="$PROJECT_DIR$/projects/lib/parser/custom" />
             <option value="$PROJECT_DIR$/projects/lib/parser/openmuc" />
             <option value="$PROJECT_DIR$/projects/lib/rest1" />
             <option value="$PROJECT_DIR$/projects/lib/ssl" />

@@ -59,7 +59,7 @@ public class RestServerInitUpdateTimerRealDBTest {
                 }
 
                 try {
-                    System.out.println("\n[" + LocalDateTime.now() + "] Timer task running to update SoH Schedule");
+                    // System.out.println("\n[" + LocalDateTime.now() + "] Timer task running to update SoH Schedule");
                     LocalDateTime now = LocalDateTime.now();
                     List<SoHSchedule> qualifiedSchedules = sohScheduleRepoImpl
                             .findByStartDatetimeBeforeAndStateAndStatus(now, DischargeState.PENDING, Status.ACTIVE);

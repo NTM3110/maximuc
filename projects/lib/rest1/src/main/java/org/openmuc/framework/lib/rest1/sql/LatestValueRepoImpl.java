@@ -24,7 +24,7 @@ public class LatestValueRepoImpl{
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(SELECT_PREFIX_SQL)){
 
-            logger.info("Connected to DB: Finding latest values with channelId starting with {}", prefix);
+            // logger.info("Connected to DB: Finding latest values with channelId starting with {}", prefix);
 
             ps.setString(1, prefix + "%");
 

@@ -5,11 +5,11 @@ export const BAUD_RATES = [9600, 19200, 38400, 57600, 115200] as const;
 export const DATA_BITS = [5, 6, 7, 8] as const;
 export const STOP_BITS = [1, 1.5, 2] as const;
 export const PARITIES = [
-  'PARITY_NONE',
-  'PARITY_EVEN',
-  'PARITY_ODD',
-  'PARITY_MARK',
-  'PARITY_SPACE',
+  'NONE',
+  'EVEN',
+  'ODD',
+  'MARK',
+  'SPACE',
 ] as const;
 
 export type BaudRate = (typeof BAUD_RATES)[number];

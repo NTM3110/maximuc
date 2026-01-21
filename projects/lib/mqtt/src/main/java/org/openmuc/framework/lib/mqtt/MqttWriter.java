@@ -217,14 +217,14 @@ public class MqttWriter {
      *            the message to be published
      */
     public void write(String topic, byte[] message) {
-        logger.warn(
-            "[MQTT-WRITER] write() called, connected={}, topic={}",
-            connected,
-            topic
-        );
+        // logger.warn(
+            // "[MQTT-WRITER] write() called, connected={}, topic={}",
+        //     connected,
+        //     topic
+        // );
         if (connected) {
             startPublishing(topic, message);
-            logger.info("----------------- Published message to topic {} -------------------", topic);
+            // logger.info("----------------- Published message to topic {} -------------------", topic);
         }
         else {
             warn("No connection to broker - adding message to buffer");

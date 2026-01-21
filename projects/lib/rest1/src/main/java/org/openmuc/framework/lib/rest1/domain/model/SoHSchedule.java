@@ -3,7 +3,7 @@ package org.openmuc.framework.lib.rest1.domain.model;
 import org.openmuc.framework.lib.rest1.common.enums.DischargeState;
 import java.time.LocalDateTime;
 import static org.openmuc.framework.lib.rest1.common.enums.DischargeState.PENDING;
-import static org.openmuc.framework.lib.rest1.common.enums.Status.ACTIVE;;
+import static org.openmuc.framework.lib.rest1.common.enums.Status.ACTIVE;
 import org.openmuc.framework.lib.rest1.common.enums.Status;
 
 public class SoHSchedule{

@@ -80,6 +80,7 @@ public final class RestServer {
     private final UserServlet userServlet = new UserServlet();
     private final LatestValueResourceServlet latestValueServlet = new LatestValueResourceServlet();
     private final SoHScheduleResourceServlet sohScheduleServlet = new SoHScheduleResourceServlet();
+    private final BatteryStringResourceServlet batteryStringResourceServlet = new BatteryStringResourceServlet();
     // private final ControlsServlet controlsServlet = new ControlsServlet();
 
     @Reference
@@ -119,23 +120,23 @@ public final class RestServer {
             @Override
             public void run() {
                 try {
-                    System.out.println("\n[" + LocalDateTime.now() + "] Timer task running to update SoH Schedule");
+                    // System.out.println("\n[" + LocalDateTime.now() + "] Timer task running to update SoH Schedule");
                     LocalDateTime now = LocalDateTime.now();
                     List<SoHSchedule> qualifiedSchedules = sohScheduleRepoImpl
                             .findByStartDatetimeBeforeAndStateAndStatus(now, DischargeState.PENDING, Status.ACTIVE);
 
-                    System.out.println("Found " + qualifiedSchedules.size() + " pending schedules");
+                    // System.out.println("Found " + qualifiedSchedules.size() + " pending schedules");
 
                     for (SoHSchedule schedule : qualifiedSchedules) {
-                        System.out.println("\n>>> Starting SoH calculation for Schedule ID: " + schedule.getId()
-                                + ", String ID: " + schedule.getStrId());
+                        // System.out.println("\n>>> Starting SoH calculation for Schedule ID: " + schedule.getId()
+                        //         + ", String ID: " + schedule.getStrId());
 
                         Double socValue = entityRepoImpl.getSocValue(schedule.getStrId());
-                        System.out.println("    Current SoC value: " + socValue);
+                        // System.out.println("    Current SoC value: " + socValue);
 
                         if (Objects.isNull(socValue)) {
                             schedule.setSocBefore(100D);
-                            System.out.println("    Set SoC before to default: 100.0");
+                            // System.out.println("    Set SoC before to default: 100.0");
                         } else {
                             schedule.setSocBefore(socValue);
                             System.out.println("    Set SoC before to: " + socValue);
@@ -144,10 +145,10 @@ public final class RestServer {
                         schedule.setState(DischargeState.RUNNING);
                         schedule.setUpdateDatetime(LocalDateTime.now());
                         sohScheduleRepoImpl.save(schedule);
-                        System.out.println("    Schedule state updated to RUNNING");
+                        // System.out.println("    Schedule state updated to RUNNING");
 
                         // Trigger async calculation
-                        System.out.println("    Triggering async SoH calculation...");
+                        // System.out.println("    Triggering async SoH calculation...");
                         asyncService.calculateSoh(schedule.getId(), schedule.getStrId());
                     }
 
@@ -197,6 +198,7 @@ public final class RestServer {
         httpService.registerServlet(Const.ALIAS_LATEST_VALUE, latestValueServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_SOH_SCHEDULE, sohScheduleServlet, null, securityHandler);
         httpService.registerServlet(Const.ALIAS_CSV_EXPORT, exportLatestValuesCsvServlet, null, securityHandler);
+        httpService.registerServlet(Const.ALIAS_STRING, batteryStringResourceServlet, null, securityHandler);
         // httpService.registerServlet(Const.ALIAS_CONTROLS, controlsServlet, null, securityHandler);
         initUpdateTimer();
     }

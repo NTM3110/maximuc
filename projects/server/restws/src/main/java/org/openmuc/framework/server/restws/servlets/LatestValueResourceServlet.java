@@ -94,7 +94,7 @@ public class LatestValueResourceServlet extends GenericServlet {
                             CommonResponse.toExceptionResult("Missing required parameter: stringID", json);
                         }
                         else{
-                            System.out.println("Fetching details for stringId: " + stringId);
+                            // System.out.println("Fetching details for stringId: " + stringId);
                             StringDetailDTO stringDetail = latestValueService.getStringDetails(stringId);
                             if(stringDetail != null) {
                                 response.setStatus(HttpServletResponse.SC_OK);

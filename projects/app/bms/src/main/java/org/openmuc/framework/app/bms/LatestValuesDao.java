@@ -24,7 +24,7 @@ public class LatestValuesDao {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(UPSERT_SQL)) {
 
-            logger.info("Connected to DB: Updating double value for channel {}: {}", channelId, value);
+//            logger.info("Connected to DB: Updating double value for channel {}: {}", channelId, value);
 
             ps.setString(1, channelId);   // channelid
             ps.setString(2, "D");         // value_type
@@ -43,7 +43,7 @@ public class LatestValuesDao {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(UPSERT_SQL)) {
 
-            logger.info("Connected to DB: Updating string value for channel {}: {}", channelId, value);
+//            logger.info("Connected to DB: Updating string value for channel {}: {}", channelId, value);
 
             ps.setString(1, channelId);
             ps.setString(2, "S");
@@ -62,7 +62,7 @@ public class LatestValuesDao {
         try (Connection conn = DriverManager.getConnection(url, user, password);
              PreparedStatement ps = conn.prepareStatement(UPSERT_SQL)) {
 
-            logger.info("Connected to DB: Updating boolean value for channel {}: {}", channelId, value);
+            // logger.info("Connected to DB: Updating boolean value for channel {}: {}", channelId, value);
 
             ps.setString(1, channelId);
             ps.setString(2, "B");

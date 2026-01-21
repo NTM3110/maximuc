@@ -8,13 +8,21 @@ import org.openmuc.framework.config.DeviceConfig;
 import org.openmuc.framework.config.DriverConfig;
 import org.openmuc.framework.config.IdCollisionException;
 import org.openmuc.framework.config.RootConfig;
+import org.openmuc.framework.data.*;
+import org.openmuc.framework.data.Record;
+import org.openmuc.framework.dataaccess.Channel;
+import org.openmuc.framework.dataaccess.DataAccessService;
 import org.openmuc.framework.lib.rest1.Const;
 import org.openmuc.framework.lib.rest1.FromJson;
+import org.openmuc.framework.lib.rest1.service.impl.BatteryStringPayloadBuilder;
+import org.openmuc.framework.lib.rest1.service.impl.BatteryStringPayloadBuilderDemo;
 import org.openmuc.framework.lib.rest1.exceptions.MissingJsonObjectException;
 import org.openmuc.framework.lib.rest1.exceptions.RestConfigIsNotCorrectException;
+import org.openmuc.framework.lib.rest1.service.impl.BatteryStringPayloadBuilderDemo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.openmuc.framework.lib.rest1.ToJson;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,6 +32,7 @@ public class BatteryStringResourceServlet extends GenericServlet {
 
     private ConfigService configService;
     private RootConfig rootConfig;
+    private DataAccessService dataAccess;
     private static final Logger logger = LoggerFactory.getLogger(BatteryStringResourceServlet.class);
 
     @Override
@@ -44,6 +53,7 @@ public class BatteryStringResourceServlet extends GenericServlet {
             return;
         }
         JsonObject req = smallJson.getJsonObject();
+        ToJson json = new ToJson();
 
         int s = req.get("stringIndex").getAsInt();
         int cells = req.get("cellQty").getAsInt();
@@ -60,28 +70,110 @@ public class BatteryStringResourceServlet extends GenericServlet {
         String virtualId = "str" + s + "_virtual";
 
         // 2) build the BIG payloads (same structure FE builds today)
-        JsonObject modbusPayload = buildModbusPayload(s, cells, portConfig);
-        JsonObject virtualPayload = buildVirtualPayload(s, cells);
+        //TODO: change back to no Demo when deploy to real-world system
+        JsonObject modbusPayload = BatteryStringPayloadBuilderDemo.buildModbusPayload(s, cells, portConfig);
+        JsonObject virtualPayload = BatteryStringPayloadBuilderDemo.buildVirtualPayload(s, cells);
 
         // 3) apply them using the same logic as DeviceResourceServlet_v2 does in POST
         // (driverConfig.addDevice + FromJson.setDeviceConfigV2 + write config)
         boolean ok1 = createDeviceFromPayload(modbusId, modbusPayload, response);
-        if (!ok1) return;
+        if (!ok1){
+            json.addString("status", "NOT ok");
+            json.addString("stringIndex", Integer.toString(s));
+            json.addString("error", "Cannot create device from modbus payload!!!!");
+            return;
+        }
 
         boolean ok2 = createDeviceFromPayload(virtualId, virtualPayload, response);
-        if (!ok2) return;
+        if (!ok2){
+            json.addString("status", "NOT ok");
+            json.addString("stringIndex", Integer.toString(s));
+            json.addString("error", "Cannot create device from virtual payload!!!!");
+            return;
+        }
+
+//        boolean ok3 = writeOverviewValues(s, cells, req, response);
+//        if(!ok3) {
+//            json.addString("status", "NOT ok");
+//            json.addString("stringIndex", Integer.toString(s));
+//            json.addString("error", "Cannot create device from modbus payload!!!!");
+//            return;
+//        }
 
         // 4) respond success
-        JsonObject out = new JsonObject();
-        out.addProperty("status", "ok");
-        out.addProperty("stringIndex", s);
-        sendJson(out, response);
+        // JsonObject out = new JsonObject();
+        json.addString("status", "ok");
+        json.addString("stringIndex", Integer.toString(s));
+        sendJson(json, response);
     }
 
-    private void setConfigAccess() {
-        this.configService = handleConfigService(null);
-        this.rootConfig = handleRootConfig(null);
+    private boolean writeOverviewValues(int s, int cells, JsonObject req, HttpServletResponse response) {
+        // Required channels (created by your virtual payload builder)
+        String chCellQty     = "str" + s + "_cell_qty";
+        String chStringName  = "str" + s + "_string_name";
+        String chCellBrand   = "str" + s + "_cell_brand";
+        String chCellModel   = "str" + s + "_cell_model";
+        String chCnominal    = "str" + s + "_Cnominal";
+        String chVcutoff     = "str" + s + "_Vcutoff";
+        String chVfloat      = "str" + s + "_Vfloat";
+        String chSerialPort  = "str" + s + "_serial_port_id";
+
+        // Extract values from request (safe defaults)
+        String stringName   = getAsStringOr(req, "stringName", "String " + s);
+        String cellBrand    = getAsStringOr(req, "cellBrand", "");
+        String cellModel    = getAsStringOr(req, "cellModel", "");
+        String serialPortId = getAsStringOr(req, "serialPortId", "");
+
+        double ratedCapacity = getAsDoubleOr(req, "ratedCapacity", 0.0);   // maps to Cnominal
+        double cutoffVoltage = getAsDoubleOr(req, "cutoffVoltage", 0.0);   // maps to Vcutoff
+        double floatVoltage  = getAsDoubleOr(req, "floatVoltage", 0.0);    // maps to Vfloat
+
+        // Write values (same effect as PUT /rest/channels/{id} with a value body)
+        if (!writeChannelValue(chCellQty, new IntValue(cells), response)) return false;
+        if (!writeChannelValue(chStringName, new StringValue(stringName), response)) return false;
+        if (!writeChannelValue(chCellBrand, new StringValue(cellBrand), response)) return false;
+        if (!writeChannelValue(chCellModel, new StringValue(cellModel), response)) return false;
+        if (!writeChannelValue(chSerialPort, new StringValue(serialPortId), response)) return false;
+
+        if (ratedCapacity != 0.0 && !writeChannelValue(chCnominal, new DoubleValue(ratedCapacity), response)) return false;
+        if (cutoffVoltage != 0.0 && !writeChannelValue(chVcutoff, new DoubleValue(cutoffVoltage), response)) return false;
+        if (floatVoltage  != 0.0 && !writeChannelValue(chVfloat,  new DoubleValue(floatVoltage), response)) return false;
+
+        return true;
     }
+    private boolean writeChannelValue(String channelId, org.openmuc.framework.data.Value value, HttpServletResponse response) {
+        Channel channel = dataAccess.getChannel(channelId);
+        if (channel == null) {
+            ServletLib.sendHTTPErrorAndLogErr(response, HttpServletResponse.SC_CONFLICT, logger,
+                    "Channel not found (not loaded yet?): ", channelId);
+            return false;
+        }
+        try {
+//        Flag flag = channel.write(value);
+            long now = System.currentTimeMillis();
+            Record record = new Record(value, now, Flag.VALID);
+            channel.setLatestRecord(record);
+        }catch (Exception e){
+            ServletLib.sendHTTPErrorAndLogErr(response, HttpServletResponse.SC_CONFLICT, logger,
+                    "GEtting record and set failed", channelId);
+            return false;
+        }
+        return true;
+    }
+
+    private static String getAsStringOr(JsonObject obj, String key, String def) {
+        if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) return def;
+        try { return obj.get(key).getAsString(); }
+        catch (Exception ignored) { return def; }
+    }
+
+    private static double getAsDoubleOr(JsonObject obj, String key, double def) {
+        if (obj == null || !obj.has(key) || obj.get(key).isJsonNull()) return def;
+        try { return obj.get(key).getAsDouble(); }
+        catch (Exception ignored) { return def; }
+    }
+
+
 
     // This is basically DeviceResourceServlet_v2.setAndWriteHttpPostDeviceConfig,
     // but taking JsonObject instead of reading from HTTP.
@@ -122,63 +214,9 @@ public class BatteryStringResourceServlet extends GenericServlet {
             return false;
         }
     }
-
-    // --- Builders (port your TS builders here) ---
-
-    private JsonObject buildModbusPayload(int s, int cells, JsonObject portConfig) {
-        JsonObject payload = new JsonObject();
-        payload.addProperty("driver", "modbus");
-
-        JsonObject configs = new JsonObject();
-        configs.addProperty("id", "str" + s + "_modbus");
-        configs.addProperty("description", "String " + s + " Modbus RTU");
-        configs.addProperty("deviceAddress", portConfig.get("port").getAsString());
-
-        // This should match your TS buildModbusSettings result format
-        configs.addProperty("settings", buildModbusSettings(portConfig));
-        configs.addProperty("samplingTimeout", 12000);
-        configs.addProperty("connectRetryInterval", 1000);
-        configs.addProperty("disabled", false);
-
-        payload.add("configs", configs);
-
-        JsonArray channels = new JsonArray();
-        // TODO: port loop from buildModbusPayload() in TS:
-        // for c=1..cells add channel configs exactly like FE does
-        for(int i = 1; i <= cells; i++){
-
-        }
-        payload.add("channels", channels);
-
-        return payload;
-    }
-
-    private JsonObject buildVirtualPayload(int s, int cells) {
-        JsonObject payload = new JsonObject();
-        payload.addProperty("driver", "virtual");
-
-        JsonObject configs = new JsonObject();
-        configs.addProperty("id", "str" + s + "_virtual");
-        configs.addProperty("description", "String " + s + " calculated channels");
-        configs.addProperty("disabled", false);
-
-        payload.add("configs", configs);
-
-        JsonArray channels = new JsonArray();
-        // TODO: port buildVirtualPayload() loop from TS
-        payload.add("channels", channels);
-
-        return payload;
-    }
-
-    private String buildModbusSettings(JsonObject portConfig) {
-        // Build same format as FE used (your TS returns a string like RTU:SERIAL_ENCODING_RTU:... )
-        // Example placeholder:
-        int baudRate = portConfig.get("baudRate").getAsInt();
-        int dataBits = portConfig.get("dataBits").getAsInt();
-        String parity = portConfig.get("parity").getAsString();
-        String stopBits = portConfig.get("stopBits").getAsString();
-        return "RTU:SERIAL_ENCODING_RTU:" + baudRate + ":DATABITS_" + dataBits +
-                ":PARITY_" + parity + ":STOPBITS_" + stopBits + ":ECHO_FALSE:FLOWCONTROL_NONE:FLOWCONTROL_NONE";
+    private void setConfigAccess() {
+        this.dataAccess = handleDataAccessService(null);
+        this.configService = handleConfigService(null);
+        this.rootConfig = handleRootConfig(null);
     }
 }

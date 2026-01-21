@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.openmuc.framework.server.restws.servlets.GenericServlet;
-import org.openmuc.framework.server.restws.servlets.ServletLib;;
+import org.openmuc.framework.server.restws.servlets.ServletLib;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;

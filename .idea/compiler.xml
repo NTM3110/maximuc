@@ -34,6 +34,7 @@
       <module name="openmuc-at.openmuc-lib-filePersistence.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc-at.openmuc-lib-mqtt.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc-at.openmuc-lib-osgi.main" options="-Xlint:unchecked -Xlint:deprecation" />
+      <module name="openmuc-at.openmuc-lib-parser-custom.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc-at.openmuc-lib-parser-openmuc.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc-at.openmuc-lib-rest1.main" options="-Xlint:unchecked -Xlint:deprecation" />
       <module name="openmuc-at.openmuc-lib-ssl.main" options="-Xlint:unchecked -Xlint:deprecation" />

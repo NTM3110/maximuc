@@ -530,36 +530,60 @@ export class BatteryStringService {
     );
   }
 
-  private createStringApi(
-    s: number,
-    formData: StringFormData,
-    portConfig: SerialPortConfig
-  ): Observable<any> {
-    const modbusPayload = this.buildModbusPayload(s, formData.cellQty, portConfig);
-    const virtualPayload = this.buildVirtualPayload(s, formData.cellQty);
+ private createStringApi(
+   s: number,
+   formData: StringFormData,
+   portConfig: SerialPortConfig
+ ): Observable<any> {
 
-    const postModbus$ = this.apiPost(`/devices_v2/str${s}_modbus`, modbusPayload);
-    const postVirtual$ = this.apiPost(`/devices_v2/str${s}_virtual`, virtualPayload);
+   // New small request DTO (matches your Postman screenshot)
+   const reqBody = {
+     stringIndex: s,
+     cellQty: formData.cellQty,
 
-    return forkJoin([postModbus$, postVirtual$]).pipe(
-      switchMap(() => {
-        return timer(2000);
-      }),
-      switchMap(() => {
-        const putCalls = [
-          this.apiPutChannel(`str${s}_string_name`, formData.stringName),
-          this.apiPutChannel(`str${s}_cell_qty`, formData.cellQty),
-          this.apiPutChannel(`str${s}_cell_brand`, formData.cellBrand),
-          this.apiPutChannel(`str${s}_cell_model`, formData.cellModel),
-          this.apiPutChannel(`str${s}_Cnominal`, formData.ratedCapacity),
-          this.apiPutChannel(`str${s}_Vcutoff`, formData.cutoffVoltage),
-          this.apiPutChannel(`str${s}_Vfloat`, formData.floatVoltage),
-          this.apiPutChannel(`str${s}_serial_port_id`, formData.serialPortId)
-        ];
-        return forkJoin(putCalls);
-      })
-    );
-  }
+     // metadata (BE can ignore for now; good for future)
+     stringName: formData.stringName,
+     cellBrand: formData.cellBrand,
+     cellModel: formData.cellModel,
+     ratedCapacity: formData.ratedCapacity,
+     cutoffVoltage: formData.cutoffVoltage,
+     floatVoltage: formData.floatVoltage,
+     serialPortId: formData.serialPortId,
+
+     // port settings for Modbus RTU
+     portConfig: {
+       port: portConfig.port,
+       baudRate: portConfig.baudRate,
+       dataBits: portConfig.dataBits,
+       stopBits: portConfig.stopBits,
+       parity: portConfig.parity
+     }
+   };
+
+   // Your Postman shows: POST http://localhost:8888/rest/string
+   // BASE_URL is '/rest', so path must be '/string'
+   const post =  this.http.post(`${this.BASE_URL}/string`, reqBody)
+   return forkJoin([post]).pipe(
+     switchMap(() => {
+       return timer(1000);
+     }),
+     switchMap(() => {
+       const putCalls = [
+         this.apiPutChannel(`str${s}_string_name`, formData.stringName),
+         this.apiPutChannel(`str${s}_cell_qty`, formData.cellQty),
+         this.apiPutChannel(`str${s}_cell_brand`, formData.cellBrand),
+         this.apiPutChannel(`str${s}_cell_model`, formData.cellModel),
+         this.apiPutChannel(`str${s}_Cnominal`, formData.ratedCapacity),
+         this.apiPutChannel(`str${s}_Vcutoff`, formData.cutoffVoltage),
+         this.apiPutChannel(`str${s}_Vfloat`, formData.floatVoltage),
+         this.apiPutChannel(`str${s}_serial_port_id`, formData.serialPortId)
+       ];
+       return forkJoin(putCalls);
+     })
+   );
+ }
+
+
 
   // ==============================================================================
   // 1. PHẦN MODBUS

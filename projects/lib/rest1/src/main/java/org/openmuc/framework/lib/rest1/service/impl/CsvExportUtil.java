@@ -5,13 +5,13 @@ import org.postgresql.copy.CopyManager;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
+import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
+import java.sql.*;
 import java.io.ByteArrayOutputStream;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.time.OffsetDateTime;
 
 public final class CsvExportUtil {
 
@@ -59,13 +59,63 @@ public final class CsvExportUtil {
         }
     }
 
-    public static void importLatestValuesCsv(DataSource dataSource, ByteArrayOutputStream csvData, Charset charset) throws Exception {
-        try (Connection conn = dataSource.getConnection()) {
-            CopyManager copyManager = conn.unwrap(PGConnection.class).getCopyAPI();
-            String copyCommand = "COPY latest_values (channelid, value_type, value_double, value_string, value_boolean, updated_at) FROM STDIN WITH (FORMAT csv, HEADER true, DELIMITER ',', NULL '')";
-            copyManager.copyIn(copyCommand, new java.io.ByteArrayInputStream(csvData.toByteArray()));
+    public static void importCsv(BufferedReader reader, DataSource dataSource) throws Exception {
+
+        String header = reader.readLine(); // skip header
+        if (header == null) return;
+
+        String sql =
+                "INSERT INTO latest_values (" +
+                        " channelid," +
+                        " value_type," +
+                        " value_double," +
+                        " value_string," +
+                        " value_boolean," +
+                        " updated_at" +
+                        ") VALUES (?, ?, ?, ?, ?, ?) " +
+                        "ON CONFLICT (channelid) DO UPDATE SET " +
+                        " value_type = EXCLUDED.value_type," +
+                        " value_double = EXCLUDED.value_double," +
+                        " value_string = EXCLUDED.value_string," +
+                        " value_boolean = EXCLUDED.value_boolean," +
+                        " updated_at = EXCLUDED.updated_at";
+
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            conn.setAutoCommit(false);
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] c = line.split(",", -1); // keep empty columns
+
+                ps.setString(1, c[0]);              // channelid
+                ps.setString(2, c[1]);              // value_type
+
+                // value_double
+                if (c[2].isEmpty()) ps.setNull(3, Types.DOUBLE);
+                else ps.setDouble(3, Double.parseDouble(c[2]));
+
+                // value_string
+                if (c[3].isEmpty()) ps.setNull(4, Types.VARCHAR);
+                else ps.setString(4, c[3]);
+
+                // value_boolean
+                if (c[4].isEmpty()) ps.setNull(5, Types.BOOLEAN);
+                else ps.setBoolean(5, Boolean.parseBoolean(c[4]));
+
+                // updated_at
+                ps.setObject(6, OffsetDateTime.parse(c[5].replace(" ", "T")));
+
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            conn.commit();
         }
     }
+
 
     private static String sanitizeFileName(String name) {
         // keep it simple: remove path separators and quotes
