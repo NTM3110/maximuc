@@ -48,7 +48,7 @@
             <option value="$PROJECT_DIR$/projects/webui/channelconfigurator" />
             <option value="$PROJECT_DIR$/projects/webui/dataexporter" />
             <option value="$PROJECT_DIR$/projects/webui/dataplotter" />
-            <option value="$PROJECT_DIR$/projects/webui/maxicom-bms" />
+            <option value="$PROJECT_DIR$/projects/webui/maxicom-bms-svelte" />
             <option value="$PROJECT_DIR$/projects/webui/mediaviewer" />
             <option value="$PROJECT_DIR$/projects/webui/simpledemovisualisation" />
             <option value="$PROJECT_DIR$/projects/webui/spi" />

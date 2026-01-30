@@ -71,8 +71,8 @@ public class BatteryStringResourceServlet extends GenericServlet {
 
         // 2) build the BIG payloads (same structure FE builds today)
         //TODO: change back to no Demo when deploy to real-world system
-        JsonObject modbusPayload = BatteryStringPayloadBuilderDemo.buildModbusPayload(s, cells, portConfig);
-        JsonObject virtualPayload = BatteryStringPayloadBuilderDemo.buildVirtualPayload(s, cells);
+        JsonObject modbusPayload = BatteryStringPayloadBuilder.buildModbusPayload(s, cells, portConfig);
+        JsonObject virtualPayload = BatteryStringPayloadBuilder.buildVirtualPayload(s, cells);
 
         // 3) apply them using the same logic as DeviceResourceServlet_v2 does in POST
         // (driverConfig.addDevice + FromJson.setDeviceConfigV2 + write config)

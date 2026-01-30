@@ -1,0 +1,52 @@
+def projectName = "OpenMUC WebUI - Maxicom BMS"
+def projectDescription = "Maxicom BMS Angular Dashboard"
+
+dependencies {
+    implementation project(':openmuc-core-api')
+    implementation project(':openmuc-webui-spi')
+    implementation group: 'org.apache.felix', name: 'org.apache.felix.http.servlet-api', version: apacheFelixServletVersion
+    // implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+}
+
+task npmInstall(type: Exec) {
+    group = "node"
+    description = "Installs node dependencies"
+    
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'npm', 'install'
+    } else {
+        commandLine 'npm', 'install'
+    }
+}
+
+task npmBuild(type: Exec) {
+    group = "node"
+    description = "Builds the Angular application"
+    dependsOn npmInstall
+    
+    if (System.getProperty('os.name').toLowerCase(Locale.ROOT).contains('windows')) {
+        commandLine 'cmd', '/c', 'npm', 'run', 'build'
+    } else {
+        commandLine 'npm', 'run', 'build'
+    }
+}
+
+jar {
+    dependsOn npmBuild    
+    bnd('Bundle-Name': projectName, 'Export-Package': 'org.openmuc.webui.maxicombms')
+    
+    from('dist') {
+        into 'html'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            pom {
+                name = projectName
+                description = projectDescription
+            }
+        }
+    }
+}

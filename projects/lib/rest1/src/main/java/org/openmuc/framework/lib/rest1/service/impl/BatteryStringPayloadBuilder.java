@@ -75,48 +75,26 @@ public final class BatteryStringPayloadBuilder {
             ));
         }
 
-        // Pack channels (note: FE uses offsetFor(113) even when channelAddress uses slave 111)
-        if (s == 1) {
-            channels.add(buildPackChannel(
-                    "str" + s + "_total_I",
-                    "String " + s + " (I)",
-                    "113:HOLDING_REGISTERS:3:INT16",
-                    "INTEGER",
-                    "INPUT_REGISTERS:" + (3000 + (s - 1) * 10000) + ":INTEGER",
-                    "",
-                    offsetFor.applyAsInt(113)
-            ));
+        // Pack channels 
+        channels.add(buildPackChannel(
+                "str" + s + "_total_I",
+                "String " + s + " (I)",
+                "206:HOLDING_REGISTERS:3:INT16",
+                "INTEGER",
+                "INPUT_REGISTERS:" + (3000 + (s - 1) * 10000) + ":INTEGER",
+                "str" + s + "_sg_pack",
+                offsetFor.applyAsInt(113) // same as FE
+        ));
 
-            channels.add(buildPackChannel(
-                    "str" + s + "_ambient_T",
-                    "String " + s + " (T ambient)",
-                    "113:HOLDING_REGISTERS:4:INT16",
-                    "INTEGER",
-                    "INPUT_REGISTERS:" + (3100 + (s - 1) * 10000) + ":INTEGER",
-                    "",
-                    offsetFor.applyAsInt(113)
-            ));
-        } else {
-            channels.add(buildPackChannel(
-                    "str" + s + "_total_I",
-                    "String " + s + " (I)",
-                    "111:HOLDING_REGISTERS:3:INT16",
-                    "INTEGER",
-                    "INPUT_REGISTERS:" + (3000 + (s - 1) * 10000) + ":INTEGER",
-                    "",
-                    offsetFor.applyAsInt(113) // same as FE
-            ));
-
-            channels.add(buildPackChannel(
-                    "str" + s + "_ambient_T",
-                    "String " + s + " (T ambient)",
-                    "111:HOLDING_REGISTERS:4:INT16",
-                    "INTEGER",
-                    "INPUT_REGISTERS:" + (3100 + (s - 1) * 10000) + ":INTEGER",
-                    "",
-                    offsetFor.applyAsInt(113) // same as FE
-            ));
-        }
+        channels.add(buildPackChannel(
+                "str" + s + "_ambient_T",
+                "String " + s + " (T ambient)",
+                "206:HOLDING_REGISTERS:4:INT16",
+                "INTEGER",
+                "INPUT_REGISTERS:" + (3100 + (s - 1) * 10000) + ":INTEGER",
+                "str" + s + "_sg_pack",
+                offsetFor.applyAsInt(113) // same as FE
+        ));
 
         JsonObject configs = new JsonObject();
         configs.addProperty("id", "str" + s + "_modbus");

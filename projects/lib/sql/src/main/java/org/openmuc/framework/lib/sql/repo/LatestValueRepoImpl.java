@@ -1,28 +1,28 @@
 package org.openmuc.framework.server.restws.sql;
 
 import java.sql.*;
-import  org.slf4j.Logger;
-import  org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.openmuc.framework.server.restws.domain.model.LatestValue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LatestValueRepoImpl{
-    private final static String url      = "jdbc:postgresql://localhost:5432/openmuc";
-    private final static String user     = "openmuc_user";
+public class LatestValueRepoImpl {
+    private final static String url = "jdbc:postgresql://localhost:5432/openmuc";
+    private final static String user = "openmuc_user";
     private final static String password = "openmuc";
-    private static final String SELECT_PREFIX_SQL =
-        "SELECT channelid, value_type, value_double, value_string, value_boolean, updated_at " +
-        "FROM latest_values " +
-        "WHERE channelid LIKE ?";
+    private static final String SELECT_PREFIX_SQL = "SELECT channelid, value_type, value_double, value_string, value_boolean, updated_at "
+            +
+            "FROM latest_values " +
+            "WHERE channelid LIKE ?";
 
     private static final Logger logger = LoggerFactory.getLogger(LatestValueRepoImpl.class);
 
-    public static List<LatestValue> findByChannelIdStartingWith(String prefix){
+    public static List<LatestValue> findByChannelIdStartingWith(String prefix) {
         List<LatestValue> latestValues = new ArrayList<>();
         try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(SELECT_PREFIX_SQL)){
+                PreparedStatement ps = conn.prepareStatement(SELECT_PREFIX_SQL)) {
 
             logger.info("Connected to DB: Finding latest values with channelId starting with {}", prefix);
 
@@ -45,11 +45,12 @@ public class LatestValueRepoImpl{
         }
         return latestValues;
     }
-    public static LatestValue findLatestValueByChannelId(String channelId){
+
+    public static LatestValue findLatestValueByChannelId(String channelId) {
         LatestValue lv = null;
         String sql = SELECT_PREFIX_SQL.replace("LIKE ?", "= ?");
         try (Connection conn = DriverManager.getConnection(url, user, password);
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             logger.info("Connected to DB: Finding latest value for channelId {}", channelId);
 
@@ -71,10 +72,11 @@ public class LatestValueRepoImpl{
         }
         return lv;
     }
-    public static void deleteAllByChannelIdStartingWith(String prefix){
+
+    public static void deleteAllByChannelIdStartingWith(String prefix) {
         String sql = "DELETE FROM latest_values WHERE channelid LIKE ?";
         try (Connection conn = DriverManager.getConnection(url, user, password);
-            PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
 
             logger.info("Connected to DB: Deleting latest values with channelId starting with {}", prefix);
 

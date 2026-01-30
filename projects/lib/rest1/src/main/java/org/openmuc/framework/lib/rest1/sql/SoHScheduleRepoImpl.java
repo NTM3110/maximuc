@@ -15,12 +15,12 @@ import org.openmuc.framework.lib.rest1.common.enums.Status;
 import org.openmuc.framework.lib.rest1.domain.model.SoHSchedule;
 
 public class SoHScheduleRepoImpl {
-    private final static String url      = "jdbc:postgresql://localhost:5432/openmuc";
-    private final static String user     = "openmuc_user";
+    private final static String url = "jdbc:postgresql://localhost:5432/openmuc";
+    private final static String user = "openmuc_user";
     private final static String password = "openmuc";
 
-    private static final String BASE_SELECT =
-            "SELECT id, str_id, used_q, soh, soc_before, soc_after, current, state, status, start_datetime, update_datetime, end_datetime " +
+    private static final String BASE_SELECT = "SELECT id, str_id, used_q, soh, soc_before, soc_after, current, state, status, start_datetime, update_datetime, end_datetime "
+            +
             "FROM soh_schedule ";
 
     private Connection getConnection() throws SQLException {
@@ -33,25 +33,50 @@ public class SoHScheduleRepoImpl {
         }
 
         boolean isInsert = (s.getId() == null || s.getId() == 0);
-        String insertSql = "INSERT INTO soh_schedule (str_id, used_q, soh, soc_before, soc_after, current, state, status, start_datetime, update_datetime, end_datetime) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        String updateSql = "UPDATE soh_schedule SET str_id = ?, used_q = ?, soh = ?, soc_before = ?, soc_after = ?, current = ?, state = ?, status = ?, start_datetime = ?, update_datetime = ?, end_datetime = ? " +
-                        "WHERE id = ?";
+        String insertSql = "INSERT INTO soh_schedule (str_id, used_q, soh, soc_before, soc_after, current, state, status, start_datetime, update_datetime, end_datetime) "
+                +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String updateSql = "UPDATE soh_schedule SET str_id = ?, used_q = ?, soh = ?, soc_before = ?, soc_after = ?, current = ?, state = ?, status = ?, start_datetime = ?, update_datetime = ?, end_datetime = ? "
+                +
+                "WHERE id = ?";
 
         try (Connection con = getConnection()) {
             if (isInsert) {
                 try (PreparedStatement ps = con.prepareStatement(insertSql, PreparedStatement.RETURN_GENERATED_KEYS)) {
                     int idx = 1;
                     ps.setString(idx++, s.getStrId());
-                    if (s.getUsedQ() != null) ps.setDouble(idx++, s.getUsedQ()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSoh() != null) ps.setDouble(idx++, s.getSoh()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSocBefore() != null) ps.setDouble(idx++, s.getSocBefore()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSocAfter() != null) ps.setDouble(idx++, s.getSocAfter()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getCurrent() != null) ps.setDouble(idx++, s.getCurrent()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getState() != null) ps.setInt(idx++, s.getState().ordinal()); else ps.setNull(idx++, java.sql.Types.INTEGER);
-                    if (s.getStatus() != null) ps.setInt(idx++, s.getStatus().ordinal()); else ps.setNull(idx++, java.sql.Types.INTEGER);
-                    ps.setTimestamp(idx++, s.getStartDatetime() != null ? Timestamp.valueOf(s.getStartDatetime()) : null);
-                    ps.setTimestamp(idx++, s.getUpdateDatetime() != null ? Timestamp.valueOf(s.getUpdateDatetime()) : null);
+                    if (s.getUsedQ() != null)
+                        ps.setDouble(idx++, s.getUsedQ());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSoh() != null)
+                        ps.setDouble(idx++, s.getSoh());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSocBefore() != null)
+                        ps.setDouble(idx++, s.getSocBefore());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSocAfter() != null)
+                        ps.setDouble(idx++, s.getSocAfter());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getCurrent() != null)
+                        ps.setDouble(idx++, s.getCurrent());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getState() != null)
+                        ps.setInt(idx++, s.getState().ordinal());
+                    else
+                        ps.setNull(idx++, java.sql.Types.INTEGER);
+                    if (s.getStatus() != null)
+                        ps.setInt(idx++, s.getStatus().ordinal());
+                    else
+                        ps.setNull(idx++, java.sql.Types.INTEGER);
+                    ps.setTimestamp(idx++,
+                            s.getStartDatetime() != null ? Timestamp.valueOf(s.getStartDatetime()) : null);
+                    ps.setTimestamp(idx++,
+                            s.getUpdateDatetime() != null ? Timestamp.valueOf(s.getUpdateDatetime()) : null);
                     ps.setTimestamp(idx++, s.getEndDatetime() != null ? Timestamp.valueOf(s.getEndDatetime()) : null);
 
                     ps.executeUpdate();
@@ -65,15 +90,38 @@ public class SoHScheduleRepoImpl {
                 try (PreparedStatement ps = con.prepareStatement(updateSql)) {
                     int idx = 1;
                     ps.setString(idx++, s.getStrId());
-                    if (s.getUsedQ() != null) ps.setDouble(idx++, s.getUsedQ()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSoh() != null) ps.setDouble(idx++, s.getSoh()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSocBefore() != null) ps.setDouble(idx++, s.getSocBefore()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getSocAfter() != null) ps.setDouble(idx++, s.getSocAfter()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getCurrent() != null) ps.setDouble(idx++, s.getCurrent()); else ps.setNull(idx++, java.sql.Types.DOUBLE);
-                    if (s.getState() != null) ps.setInt(idx++, s.getState().ordinal()); else ps.setNull(idx++, java.sql.Types.INTEGER);
-                    if (s.getStatus() != null) ps.setInt(idx++, s.getStatus().ordinal()); else ps.setNull(idx++, java.sql.Types.INTEGER);
-                    ps.setTimestamp(idx++, s.getStartDatetime() != null ? Timestamp.valueOf(s.getStartDatetime()) : null);
-                    ps.setTimestamp(idx++, s.getUpdateDatetime() != null ? Timestamp.valueOf(s.getUpdateDatetime()) : null);
+                    if (s.getUsedQ() != null)
+                        ps.setDouble(idx++, s.getUsedQ());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSoh() != null)
+                        ps.setDouble(idx++, s.getSoh());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSocBefore() != null)
+                        ps.setDouble(idx++, s.getSocBefore());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getSocAfter() != null)
+                        ps.setDouble(idx++, s.getSocAfter());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getCurrent() != null)
+                        ps.setDouble(idx++, s.getCurrent());
+                    else
+                        ps.setNull(idx++, java.sql.Types.DOUBLE);
+                    if (s.getState() != null)
+                        ps.setInt(idx++, s.getState().ordinal());
+                    else
+                        ps.setNull(idx++, java.sql.Types.INTEGER);
+                    if (s.getStatus() != null)
+                        ps.setInt(idx++, s.getStatus().ordinal());
+                    else
+                        ps.setNull(idx++, java.sql.Types.INTEGER);
+                    ps.setTimestamp(idx++,
+                            s.getStartDatetime() != null ? Timestamp.valueOf(s.getStartDatetime()) : null);
+                    ps.setTimestamp(idx++,
+                            s.getUpdateDatetime() != null ? Timestamp.valueOf(s.getUpdateDatetime()) : null);
                     ps.setTimestamp(idx++, s.getEndDatetime() != null ? Timestamp.valueOf(s.getEndDatetime()) : null);
                     ps.setLong(idx, s.getId());
 
@@ -83,8 +131,7 @@ public class SoHScheduleRepoImpl {
                     }
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -111,13 +158,11 @@ public class SoHScheduleRepoImpl {
                 if (rs.next()) {
                     System.out.println("SoHSchedule found with ID: " + id);
                     return mapRow(rs);
-                }
-                else{
+                } else {
                     System.out.println("No SoHSchedule found with ID: " + id + " in specified states and status.");
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -145,8 +190,7 @@ public class SoHScheduleRepoImpl {
                     return mapRow(rs);
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -166,8 +210,7 @@ public class SoHScheduleRepoImpl {
                     return mapRow(rs);
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -187,14 +230,14 @@ public class SoHScheduleRepoImpl {
                     return mapRow(rs);
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
 
-    public List<SoHSchedule> findByStartDatetimeBeforeAndStateAndStatus(LocalDateTime startDatetime, DischargeState state, Status status) {
+    public List<SoHSchedule> findByStartDatetimeBeforeAndStateAndStatus(LocalDateTime startDatetime,
+            DischargeState state, Status status) {
         List<SoHSchedule> list = new ArrayList<>();
         if (startDatetime == null || state == null || status == null) {
             return list;
@@ -209,8 +252,7 @@ public class SoHScheduleRepoImpl {
                     list.add(mapRow(rs));
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return list;
@@ -229,8 +271,7 @@ public class SoHScheduleRepoImpl {
                     list.add(mapRow(rs));
                 }
             }
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
         return list;
@@ -238,7 +279,8 @@ public class SoHScheduleRepoImpl {
 
     private static void appendPlaceholders(StringBuilder sb, int count) {
         for (int i = 0; i < count; i++) {
-            if (i > 0) sb.append(',');
+            if (i > 0)
+                sb.append(',');
             sb.append('?');
         }
     }
@@ -267,11 +309,14 @@ public class SoHScheduleRepoImpl {
             }
         }
         Timestamp tsStart = rs.getTimestamp("start_datetime");
-        if (tsStart != null) s.setStartDatetime(tsStart.toLocalDateTime());
+        if (tsStart != null)
+            s.setStartDatetime(tsStart.toLocalDateTime());
         Timestamp tsUpdate = rs.getTimestamp("update_datetime");
-        if (tsUpdate != null) s.setUpdateDatetime(tsUpdate.toLocalDateTime());
+        if (tsUpdate != null)
+            s.setUpdateDatetime(tsUpdate.toLocalDateTime());
         Timestamp tsEnd = rs.getTimestamp("end_datetime");
-        if (tsEnd != null) s.setEndDatetime(tsEnd.toLocalDateTime());
+        if (tsEnd != null)
+            s.setEndDatetime(tsEnd.toLocalDateTime());
         return s;
     }
 }

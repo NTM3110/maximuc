@@ -45,5 +45,6 @@ project(":openmuc-webui-spi").projectDir = file("projects/webui/spi")
 project(":openmuc-webui-userconfigurator").projectDir = file("projects/webui/userconfigurator")
 
 include "openmuc-webui-maxicom-bms"
-project(":openmuc-webui-maxicom-bms").projectDir = file("projects/webui/maxicom-bms")
+project(":openmuc-webui-maxicom-bms").projectDir = file("projects/webui/maxicom-bms-svelte")
 project(":openmuc-lib-parser-custom").projectDir = file("projects/lib/parser/custom")
+ 
