@@ -6,9 +6,15 @@ configurations.create('embed')
 dependencies {
     implementation project(':openmuc-core-api')
     implementation project(':openmuc-lib-rest1')
+    implementation project(':openmuc-datalogger-sql')
     implementation group: "commons-codec", name: "commons-codec", version: commonsCodecVersion
 
     implementation group: 'org.apache.felix', name: 'org.apache.felix.http.servlet-api', version: apacheFelixServletVersion
+
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '5.5.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '5.5.0'
 }
 
 jar {
@@ -25,5 +31,3 @@ publishing {
         }
     }
 }
-
-

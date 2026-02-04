@@ -52,9 +52,9 @@ public class SoCEngine {
         return soc;
     }
     public double updatedSoC(double lastSoC, double current, double deltaTimeSeconds) {   
-    	logger.info("------------------ Updating SOC ----------------");
+    	// logger.info("------------------ Updating SOC ----------------");
         double deltaSoC = (current * deltaTimeSeconds) / (C_NOMINAL_AH * 3600);
-        logger.info("Updating SOC: Last SoC = {} ------------> deltaSoC: {}", lastSoC, deltaSoC);
+        // logger.info("Updating SOC: Last SoC = {} ------------> deltaSoC: {}", lastSoC, deltaSoC);
         double newSoC = lastSoC - deltaSoC;
         if (newSoC > 100.0) {
             return 100.0;
@@ -70,7 +70,7 @@ public class SoCEngine {
     	
     	EKFSoC.Result result = ekfSoC.step(voltage, current, temperature, R0);
     	
-    	logger.info("SoC: {}, Vp: {}, y_pred: {}, nu: {}, R0: {}", result.SoC, result.Vp, result.y_pred, result.nu, result.R0_used);
+    	// logger.info("SoC: {}, Vp: {}, y_pred: {}, nu: {}, R0: {}", result.SoC, result.Vp, result.y_pred, result.nu, result.R0_used);
     	
     	return result.SoC;
     }

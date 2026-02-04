@@ -57,17 +57,35 @@ public class MqttConnection {
     private boolean sslReady = false;
 
     private Mqtt3ClientBuilder clientBuilder;
-    private Mqtt3AsyncClient client;
+    private volatile Mqtt3AsyncClient client;
 
     private SslManagerInterface sslManager = null;
 
     private Timer connectionWatch = new Timer();
+    public interface ConnectionListener {
+        void onDisconnected(Throwable cause);
+    }
+
+    private final List<ConnectionListener> connectionListeners = new ArrayList<>();
+
+    private Runnable onConnectedCallback;
+    private Runnable onConnected;
+
+    public void setOnConnected(Runnable onConnected) {
+        this.onConnected = onConnected;
+    }
+
+    public void addConnectionListener(ConnectionListener l) {
+        connectionListeners.add(l);
+    }
+
+
 
     /**
      * A connection to a MQTT broker
      *
      * @param settings
-     *            connection details {@link MqttSettings}
+     *                 connection details {@link MqttSettings}
      */
     public MqttConnection(MqttSettings settings) {
         this.settings = settings;
@@ -78,18 +96,35 @@ public class MqttConnection {
             logger.debug("Disconnection (UUID={}) cause: {} / source {}. Will reconnect: {}",
                     context.getClientConfig().getClientIdentifier().map(MqttClientIdentifier::toString).orElse("none"),
                     context.getCause(), context.getSource(), context.getReconnector().isReconnect());
+            for (ConnectionListener l : connectionListeners) {
+                try {
+                    l.onDisconnected(context.getCause());
+                } catch (Exception e) {
+                    logger.warn("ConnectionListener threw exception", e);
+                }
+            }
         });
         addConnectedListener(context -> logger.debug("Reconnected (UUID={})",
                 context.getClientConfig().getClientIdentifier().map(MqttClientIdentifier::toString).orElse("none")));
     }
 
     private Mqtt3ClientBuilder getClientBuilder() {
+        // Use clientId from settings if provided, otherwise generate random short ID
+        String clientId;
+        if (settings.getClientId() != null && !settings.getClientId().isEmpty()) {
+            clientId = settings.getClientId();
+            logger.info("Using configured client ID: {}", clientId);
+        } else {
+            // Generate short random client ID (MQTT v3.1 has 23 char limit)
+            clientId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            logger.debug("Generated client ID: {}", clientId);
+        }
         Mqtt3ClientBuilder clientBuilder = Mqtt3Client.builder()
-                .identifier(UUID.randomUUID().toString())
-                .automaticReconnect()
-                .initialDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
-                .maxDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
-                .applyAutomaticReconnect()
+                .identifier(clientId)
+                // .automaticReconnect()
+                // .initialDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
+                // .maxDelay(settings.getConnectionRetryInterval(), TimeUnit.SECONDS)
+                // .applyAutomaticReconnect()
                 .serverHost(settings.getHost())
                 .serverPort(settings.getPort());
         if (settings.isSsl() && sslManager != null) {
@@ -100,6 +135,11 @@ public class MqttConnection {
         }
         return clientBuilder;
     }
+
+    public boolean isConnected() {
+        return client != null && client.getState().isConnected();
+    }
+
 
     private Mqtt3AsyncClient buildClient() {
         return clientBuilder.buildAsync();
@@ -124,14 +164,16 @@ public class MqttConnection {
         logger.warn("SSL configuration changed, reconnecting.");
         sslReady = true;
         client.disconnect().whenComplete((ack, e) -> {
-            clientBuilder.sslConfig(getSslConfig());
-            clientBuilder.identifier(UUID.randomUUID().toString());
+            clientBuilder = clientBuilder.sslConfig(getSslConfig());
+            String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+            clientBuilder = clientBuilder.identifier(shortId);
             connect();
         });
     }
 
     private Mqtt3Connect getConnect() {
         Mqtt3ConnectBuilder connectBuilder = Mqtt3Connect.builder();
+        connectBuilder.cleanSession(true); // Don't maintain session state
         connectBuilder.keepAlive(settings.getConnectionAliveInterval());
         if (settings.isLastWillSet()) {
             connectBuilder.willPublish()
@@ -148,30 +190,63 @@ public class MqttConnection {
         return connectBuilder.build();
     }
 
+    private void attachListenersToBuilder() {
+        for (MqttClientConnectedListener l : connectedListeners) {
+            clientBuilder.addConnectedListener(l);
+        }
+        for (MqttClientDisconnectedListener l : disconnectedListeners) {
+            clientBuilder.addDisconnectedListener(l);
+        }
+    }
+
+    public void setOnConnectedCallback(Runnable cb) {
+        this.onConnectedCallback = cb;
+    }
+
     /**
      * Connect to the MQTT broker
      */
     public void connect() {
+        // Always create a fresh builder
+        clientBuilder = getClientBuilder();
+
+        // Reattach ALL listeners to THIS builder
+        attachListenersToBuilder();
+
         client = buildClient();
         String uuid = client.getConfig().getClientIdentifier().map(MqttClientIdentifier::toString).orElse("<no uuid>");
-        logger.trace("Client {} connecting to server {}", uuid, settings.getHost());
+        logger.warn("Client {} connecting to server {}", uuid, settings.getHost());
         LocalDateTime time = LocalDateTime.now();
         client.connect(getConnect()).whenComplete((ack, e) -> {
             if (e != null) {
                 if (uuid.equals(client.getConfig().getClientIdentifier().toString())) {
                     logger.error("Error with connection initiated at {}: {}", time, e.getMessage());
-                }
-                else {
+                } else {
                     logger.warn("Error with some old connection with UUID={}", uuid, e);
                 }
-            }
-            else {
-                logger.debug("connect successfully");
+            } else {
+                logger.warn("Connect successfully!!!");
+                if (e == null && onConnectedCallback != null) {
+                    onConnectedCallback.run();
+                }
+                if (e == null && onConnected != null) {
+                    onConnected.run();  // 🔴 THIS IS THE SIGNAL
+        }
+                // writer.markConnected();
             }
         });
 
-        watchConnection();
+        // watchConnection();
     }
+    // private synchronized void rebuildClient() {
+    //     try {
+    //         client.disconnect();
+    //         client.close();
+    //     } catch (Exception ignored) {}
+
+    //     clientBuilder = getClientBuilder(); // NEW builder
+    //     client = buildClient();
+    // }
 
     private void watchConnection() {
         // stop tasks that were running before
@@ -192,14 +267,13 @@ public class MqttConnection {
                         .map(MqttClientIdentifier::toString)
                         .orElse("<none>");
 
-                logger.debug("Client (identifier={}, host={}) state: connected={}, connectedOrReconnect={}",
+                logger.warn("Client (identifier={}, host={}) state: connected={}, connectedOrReconnect={}",
                         clientIdentifier, settings.getHost(), connected, connectedOrReconnect);
 
-                if (connectedOrReconnect) {
-                    logger.debug("Is connectedOrReconnect");
+                if (connected) {
+                    logger.warn("Is connected");
                     disconnectedCount.set(0);
-                }
-                else {
+                } else {
                     int disconnectedSince = disconnectedCount.incrementAndGet();
                     logger.debug("Is now disconnected since {} runs", disconnectedSince);
                 }
@@ -209,10 +283,21 @@ public class MqttConnection {
                     logger.info(
                             "Was disconnected for more than {}ms. Starting manual reconnect by creating a new client, disconnecting old client",
                             periodMillis * disconnectedCnt);
-                    client.disconnect();
-                    String newIdentifier = UUID.randomUUID().toString();
-                    clientBuilder.identifier(newIdentifier);
-                    connect();
+                    // client.disconnect().whenComplete((ack, throwable) -> {
+                    //     // if (settings.getClientId() != null && !settings.getClientId().isEmpty()) {
+
+                    //     //     logger.warn("----------------------- Reconnect with client id: {} -----------------------",
+                    //     //             settings.getClientId());
+                    //     //     clientBuilder.identifier(settings.getClientId());
+                    //     // } else {
+                    //     //     logger.warn(
+                    //     //             "----------------------- Reconnect with random client id -----------------------");
+                    //     //     String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+                    //     //     clientBuilder.identifier(shortId);
+                    //     // }
+                    //     rebuildClient();
+                    //     connect();
+                    // });
                 }
             }
         };
@@ -224,6 +309,21 @@ public class MqttConnection {
         }));
         logger.trace("Watching connection");
     }
+
+    public synchronized void shutdown() {
+        logger.info("Shutting down MQTT connection");
+
+        try {
+            connectionWatch.cancel();
+        } catch (Exception ignored) {}
+
+        try {
+            if (client != null) {
+                client.disconnect();
+            }
+        } catch (Exception ignored) {}
+    }
+
 
     /**
      * Disconnect from the MQTT broker
@@ -237,18 +337,16 @@ public class MqttConnection {
                     .whenComplete((publish, e) -> {
                         client.disconnect();
                     });
-        }
-        else {
+        } else {
             client.disconnect();
         }
     }
 
-    void addConnectedListener(MqttClientConnectedListener listener) {
+    public void addConnectedListener(MqttClientConnectedListener listener) {
         logger.trace("addConnectedListener ");
         if (clientBuilder == null) {
             connectedListeners.add(listener);
-        }
-        else {
+        } else {
             clientBuilder.addConnectedListener(listener);
             if (!connectedListeners.contains(listener)) {
                 connectedListeners.add(listener);
@@ -256,12 +354,11 @@ public class MqttConnection {
         }
     }
 
-    void addDisconnectedListener(MqttClientDisconnectedListener listener) {
+    public void addDisconnectedListener(MqttClientDisconnectedListener listener) {
         logger.trace("addDisconnectedListener");
         if (clientBuilder == null) {
             disconnectedListeners.add(listener);
-        }
-        else {
+        } else {
             clientBuilder.addDisconnectedListener(listener);
             if (!disconnectedListeners.contains(listener)) {
                 disconnectedListeners.add(listener);
@@ -274,7 +371,8 @@ public class MqttConnection {
     }
 
     /**
-     * @return the settings {@link MqttSettings} this connection was constructed with
+     * @return the settings {@link MqttSettings} this connection was constructed
+     *         with
      */
     public MqttSettings getSettings() {
         return settings;
@@ -309,21 +407,22 @@ public class MqttConnection {
             if (!disconnectedClientId.equals(thisClientIdentifier)) {
                 logger.debug("Old client was disconnected. Preventing further reconnects.");
                 context.getReconnector().reconnect(false);
-            }
-            else if (context.getReconnector().getAttempts() >= 3) {
-                // if the reconnect was not successful for 3 times, then it probably will be never!
+            } else if (context.getReconnector().getAttempts() >= 3) {
+                // if the reconnect was not successful for 3 times, then it probably will be
+                // never!
                 // just create a new connection instead!
-                // this case is only interesting for ssl, did not without ssl according to martin
+                // this case is only interesting for ssl, did not without ssl according to
+                // martin
 
-                logger.debug("Shutting down old client");
-                context.getReconnector().reconnect(false);
-                client.disconnect();
-                logger.info("Disconnected old client {}, starting new client", thisClientIdentifier);
+                // logger.debug("Shutting down old client");
+                // context.getReconnector().reconnect(false);
+                // client.disconnect();
+                // logger.info("Disconnected old client {}, starting new client", thisClientIdentifier);
 
-                String newIdentifier = UUID.randomUUID().toString();
-                clientBuilder.identifier(newIdentifier);
-                connect();
-                logger.debug("Connected to new client {}", newIdentifier);
+                // String shortId = UUID.randomUUID().toString().replace("-", "").substring(0, 20);
+                // clientBuilder.identifier(shortId);
+                // connect();
+                // logger.debug("Connected to new client {}", shortId);
             }
         });
         client = buildClient();

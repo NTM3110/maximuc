@@ -24,7 +24,7 @@ dependencies {
 
 jar {
     bnd('Bundle-Name': projectName, 'Bundle-ClassPath': '.,lib/org.osgi.service.jdbc-'+jdbcVersion+'.jar',
-            'Export-Package': 'org.osgi.service.jdbc',
+            'Export-Package': 'org.osgi.service.jdbc,'+ 'org.openmuc.framework.datalogger.sql.*',
             'Import-Package': 'org.postgresql,javax.sql,org.h2.tools,' +
                     'org.openmuc.framework.*,' +
                     'org.osgi.*,org.slf4j,!org.osgi.service.jdbc,' + jarDefaultImportPackageVersion)

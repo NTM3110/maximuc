@@ -64,15 +64,15 @@ public final class WebUiBase {
         BundleHttpContext bundleHttpContext = new BundleHttpContext(context.getBundle());
 
         try {
-            httpService.registerResources("/app", "/app", bundleHttpContext);
-            httpService.registerResources("/assets", "/assets", bundleHttpContext);
+            // httpService.registerResources("/app", "/app", bundleHttpContext);
+            // httpService.registerResources("/assets", "/assets", bundleHttpContext);
             httpService.registerResources("/openmuc/css", "/css", bundleHttpContext);
             httpService.registerResources("/openmuc/images", "/images", bundleHttpContext);
             httpService.registerResources("/openmuc/html", "/html", bundleHttpContext);
             httpService.registerResources("/openmuc/js", "/js", bundleHttpContext);
             httpService.registerResources("/media", "/media", bundleHttpContext);
             httpService.registerResources("/conf/webui", "/conf/webui", bundleHttpContext);
-            httpService.registerServlet("/", servlet, null, bundleHttpContext);
+            // httpService.registerServlet("/", servlet, null, bundleHttpContext);
         } catch (Exception e) {
         }
 
@@ -87,15 +87,15 @@ public final class WebUiBase {
     protected void deactivate() {
         logger.info("Deactivating WebUI Base");
 
-        httpService.unregister("/app");
-        httpService.unregister("/assets");
+        // httpService.unregister("/app");
+        // httpService.unregister("/assets");
         httpService.unregister("/openmuc/css");
         httpService.unregister("/openmuc/images");
         httpService.unregister("/openmuc/html");
         httpService.unregister("/openmuc/js");
         httpService.unregister("/media");
         httpService.unregister("/conf/webui");
-        httpService.unregister("/");
+        // httpService.unregister("/");
     }
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)

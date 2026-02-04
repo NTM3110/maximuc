@@ -20,7 +20,6 @@
  */
 
 package org.openmuc.framework.lib.parser.openmuc;
-
 import java.lang.reflect.Type;
 import java.util.Base64;
 import java.util.List;

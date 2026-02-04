@@ -1,0 +1,943 @@
+// src/app/services/battery-string.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Observable, of, throwError, forkJoin, BehaviorSubject, timer } from 'rxjs';
+import { catchError, map, switchMap, tap, filter, take, delay, retryWhen, mergeMap } from 'rxjs/operators';
+import {
+  BatteryString,
+  StringFormData,
+} from '../interfaces/string.interface';
+import { SerialPortConfig, SerialPortDefinition } from '../interfaces/communication.interface';
+import { ConfigService } from './config.service';
+import { v4 as uuidv4 } from 'uuid'; // npm install uuid && npm install @types/uuid
+import { LatestValueResponse } from '../interfaces/latest-value.interface';
+
+interface LatestStringDetailDto {
+  stringName?: string;
+  cellBrand?: string;
+  cellModel?: string;
+  cellQty?: number;
+  cNominal?: number;
+  vCutoff?: number;
+  vFloat?: number;
+  serialPortId?: string;
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class BatteryStringService {
+  private readonly BASE_URL = '/rest';
+  private latestValueApiUrl = '/rest/latest-value';
+  private readonly STORAGE_KEY = 'maxicom-strings-config';
+  private readonly MAX_STRING_SCAN = 12;
+  private stringsState: BatteryString[] = [];
+  private isLoadingFromApi = false; // Flag to prevent multiple loads
+  private stringsLoadedSubject = new BehaviorSubject<boolean>(false); // Track loading state
+  private readonly serialPortDefinitions: SerialPortDefinition[] = [];
+
+  constructor(
+    private http: HttpClient,
+    private configService: ConfigService,
+  ) {
+    this.serialPortDefinitions = this.configService.serialPorts;
+    this.loadStringsFromStorage();
+    this.stringsLoadedSubject.next(false);
+    this.loadStringsFromApi();
+  }
+
+  /**
+   * Load strings from localStorage (cache)
+   */
+  private loadStringsFromStorage(): void {
+    try {
+      const storedData = localStorage.getItem(this.STORAGE_KEY);
+      if (storedData) {
+        this.stringsState = JSON.parse(storedData);
+      }
+    } catch (e) {
+      console.error("Error reading String config from localStorage", e);
+      this.stringsState = [];
+    }
+  }
+
+  private fetchStringDetailFromLatestValue(stringIndex: number): Observable<LatestStringDetailDto | null> {
+    const params = new HttpParams().set('stringID', stringIndex.toString());
+    return this.http.get<LatestValueResponse<LatestStringDetailDto>>(
+      `${this.latestValueApiUrl}/string`,
+      { params }
+    ).pipe(
+      map(response => (response?.success ? response.data : null)),
+      catchError(err => {
+        if (err instanceof HttpErrorResponse && err.status !== 400) {
+          console.warn(`[Strings] Latest-value string API failed for stringId=${stringIndex}`, err);
+        }
+        return of(null);
+      })
+    );
+  }
+
+  private buildStringIndicesToCheck(forceScanAll: boolean = false): number[] {
+    const existingIndices = this.stringsState.map(s => s.stringIndex);
+
+    if (forceScanAll) {
+      const scanIndices = Array.from({ length: this.MAX_STRING_SCAN }, (_, i) => i + 1);
+      const unique = Array.from(new Set([...existingIndices, ...scanIndices]))
+        .filter(index => index > 0)
+        .sort((a, b) => a - b);
+      return unique;
+    }
+
+    return existingIndices
+      .filter(index => index > 0)
+      .sort((a, b) => a - b);
+  }
+
+  private hasStringDetail(dto: LatestStringDetailDto | null): boolean {
+    if (!dto) return false;
+    if (dto.stringName && dto.stringName.trim().length > 0) return true;
+    if (dto.cellBrand && dto.cellBrand.trim().length > 0) return true;
+    if (dto.cellModel && dto.cellModel.trim().length > 0) return true;
+    if (typeof dto.cellQty === 'number') return true;
+    if (typeof dto.cNominal === 'number') return true;
+    if (typeof dto.vCutoff === 'number') return true;
+    if (typeof dto.vFloat === 'number') return true;
+    return false;
+  }
+
+  private mapLatestValueDtoToBatteryString(
+    dto: LatestStringDetailDto,
+    baseId: string,
+    stringIndex: number,
+    existing?: BatteryString
+  ): BatteryString {
+    const normalize = (value?: number | null, fallback?: number): number => {
+      if (value === null || value === undefined) {
+        return fallback ?? 0;
+      }
+      const num = Number(value);
+      return Number.isFinite(num) ? num : (fallback ?? 0);
+    };
+
+    return {
+      id: existing?.id || uuidv4(),
+      stringIndex,
+      stringName: dto.stringName?.trim() || existing?.stringName || baseId,
+      cellQty: normalize(dto.cellQty, existing?.cellQty),
+      cellBrand: dto.cellBrand ?? existing?.cellBrand ?? '',
+      cellModel: dto.cellModel ?? existing?.cellModel ?? '',
+      ratedCapacity: normalize(dto.cNominal, existing?.ratedCapacity),
+      cutoffVoltage: normalize(dto.vCutoff, existing?.cutoffVoltage),
+      floatVoltage: normalize(dto.vFloat, existing?.floatVoltage),
+      serialPortId: dto.serialPortId ?? existing?.serialPortId ?? ''
+    };
+  }
+
+  private saveStringsToStorage(): void {
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.stringsState));
+  }
+
+  private loadStringsFromApi(forceScanAll: boolean = false): void {
+    if (this.isLoadingFromApi) return;
+    this.isLoadingFromApi = true;
+
+    const loadSource$ = forceScanAll
+      ? this.getStringIndicesFromOpenMUC().pipe(
+        map(openmucIndices => {
+          return openmucIndices
+            .filter(index => index > 0)
+            .sort((a, b) => a - b);
+        }),
+        catchError(err => {
+          console.warn('[Strings] Failed to get devices from OpenMUC, using cache indices:', err);
+          return of(this.buildStringIndicesToCheck(forceScanAll));
+        })
+      )
+      : of(this.buildStringIndicesToCheck(forceScanAll));
+
+    loadSource$.pipe(
+      switchMap(indicesToCheck => {
+        if (indicesToCheck.length === 0) {
+          if (forceScanAll) {
+            this.stringsState = [];
+            this.saveStringsToStorage();
+          }
+          this.isLoadingFromApi = false;
+          this.stringsLoadedSubject.next(true);
+          return of([]);
+        }
+
+        const existingByIndex = new Map(this.stringsState.map(s => [s.stringIndex, s]));
+        const validIndicesSet = forceScanAll ? new Set(indicesToCheck) : null;
+
+        const latestValueRequests = indicesToCheck.map(index => {
+          return this.fetchStringDetailFromLatestValue(index).pipe(
+            map(dto => ({ index, dto, source: 'latest-value' as const })),
+            catchError(err => {
+              if (err instanceof HttpErrorResponse && err.status !== 400) {
+                console.warn(`[Strings] Failed to load latest-value for str${index}:`, err);
+              }
+              return of({ index, dto: null, source: 'latest-value' as const });
+            })
+          );
+        });
+
+        return forkJoin(latestValueRequests).pipe(
+          switchMap(results => {
+            const missingIndices = results
+              .filter(r => !r.dto || !this.hasStringDetail(r.dto))
+              .map(r => r.index);
+
+            if (missingIndices.length === 0) {
+              return of(results);
+            }
+
+            const openmucRequests = missingIndices.map(index => {
+              return this.fetchStringDetailFromOpenMUC(index).pipe(
+                map(dto => ({ index, dto, source: 'openmuc' as const })),
+                catchError(() => of({ index, dto: null, source: 'openmuc' as const }))
+              );
+            });
+
+            return forkJoin(openmucRequests).pipe(
+              map(openmucResults => {
+                const resultMap = new Map<number, {
+                  index: number,
+                  dto: LatestStringDetailDto | null,
+                  source: string
+                }>();
+                results.forEach(r => resultMap.set(r.index, r));
+                openmucResults.forEach(r => {
+                  if (!resultMap.has(r.index) || !resultMap.get(r.index)?.dto) {
+                    resultMap.set(r.index, r);
+                  }
+                });
+                return Array.from(resultMap.values());
+              })
+            );
+          }),
+          map(allResults => {
+            const mergedMap = new Map<number, BatteryString>();
+
+            allResults.forEach(({ index, dto }) => {
+              if (validIndicesSet && !validIndicesSet.has(index)) {
+                return;
+              }
+
+              const existing = existingByIndex.get(index);
+              if (dto && this.hasStringDetail(dto)) {
+                const baseId = `str${index}`;
+                const mapped = this.mapLatestValueDtoToBatteryString(dto, baseId, index, existing);
+                mergedMap.set(index, mapped);
+              } else if (existing && !forceScanAll) {
+                mergedMap.set(index, existing);
+              }
+            });
+
+            if (!forceScanAll) {
+              existingByIndex.forEach((value, index) => {
+                if (!mergedMap.has(index)) {
+                  mergedMap.set(index, value);
+                }
+              });
+            }
+
+            const mergedStrings = Array.from(mergedMap.values()).sort((a, b) => a.stringIndex - b.stringIndex);
+
+            this.stringsState = mergedStrings;
+            this.saveStringsToStorage();
+            this.isLoadingFromApi = false;
+            this.stringsLoadedSubject.next(true);
+
+            return mergedStrings;
+          })
+        );
+      }),
+      catchError(err => {
+        console.error('Error in loadStringsFromApi (latest-value mode):', err);
+        this.isLoadingFromApi = false;
+        this.stringsLoadedSubject.next(true);
+        return of([]);
+      })
+    ).subscribe();
+  }
+
+  private getStringIndicesFromOpenMUC(): Observable<number[]> {
+    return this.http.get<{ devices: string[] }>(`${this.BASE_URL}/devices`).pipe(
+      map(response => {
+        const indices: number[] = [];
+        const pattern = /^str(\d+)_(modbus|virtual)$/;
+        response.devices?.forEach(deviceId => {
+          const match = deviceId.match(pattern);
+          if (match) {
+            const index = parseInt(match[1], 10);
+            if (!isNaN(index) && !indices.includes(index)) {
+              indices.push(index);
+            }
+          }
+        });
+        return indices.sort((a, b) => a - b);
+      }),
+      catchError(err => {
+        console.warn('[Strings] Failed to get devices from OpenMUC:', err);
+        return of([]);
+      })
+    );
+  }
+
+  private fetchStringDetailFromOpenMUC(stringIndex: number): Observable<LatestStringDetailDto | null> {
+    const channels = [
+      `str${stringIndex}_string_name`,
+      `str${stringIndex}_cell_qty`,
+      `str${stringIndex}_cell_brand`,
+      `str${stringIndex}_cell_model`,
+      `str${stringIndex}_Cnominal`,
+      `str${stringIndex}_Vnominal`,
+    ];
+
+    const requests = channels.map(channel => {
+      return this.http.get<any>(`${this.BASE_URL}/channels/${channel}`).pipe(
+        map(response => {
+          const value = response?.record?.value;
+          return { channel, value };
+        }),
+        catchError(() => of({ channel, value: null }))
+      );
+    });
+
+    return forkJoin(requests).pipe(
+      map(results => {
+        const dto: LatestStringDetailDto = {};
+        results.forEach(({ channel, value }) => {
+          if (value !== null && value !== undefined) {
+            if (channel.includes('string_name')) {
+              dto.stringName = String(value);
+            } else if (channel.includes('cell_qty')) {
+              dto.cellQty = Number(value);
+            } else if (channel.includes('cell_brand')) {
+              dto.cellBrand = String(value);
+            } else if (channel.includes('cell_model')) {
+              dto.cellModel = String(value);
+            } else if (channel.includes('Cnominal')) {
+              dto.cNominal = Number(value);
+            } else if (channel.includes('Vcutoff')) {
+              dto.vCutoff = Number(value);
+            } else if (channel.includes('Vfloat')) {
+              dto.vFloat = Number(value);
+            } else if (channel.includes('serial_port_id')) {
+              dto.serialPortId = String(value);
+            }
+
+          }
+        });
+        return this.hasStringDetail(dto) ? dto : null;
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  // === CRUD FUNCTIONS ===
+
+  getStrings(): Observable<BatteryString[]> {
+    return this.stringsLoadedSubject.pipe(
+      filter(loaded => loaded),
+      map(() => [...this.stringsState]),
+      take(1)
+    );
+  }
+
+  reloadStrings(): Observable<BatteryString[]> {
+    this.stringsLoadedSubject.next(false);
+    this.isLoadingFromApi = false;
+    this.loadStringsFromApi(true);
+
+    return this.stringsLoadedSubject.pipe(
+      filter(loaded => loaded),
+      map(() => [...this.stringsState]),
+      take(1)
+    );
+  }
+
+  getStringById(id: string): Observable<BatteryString | undefined> {
+    const string = this.stringsState.find((s) => s.id === id);
+    return of(string);
+  }
+
+  deleteString(id: string): Observable<any> {
+    const stringConfig = this.stringsState.find(s => s.id === id);
+    if (!stringConfig) {
+      return throwError(() => new Error('String Config not found'));
+    }
+
+    const s = stringConfig.stringIndex;
+
+    // 1. Xóa trên OpenMUC (Modbus & Virtual)
+    const deleteModbus$ = this.apiDelete(`/devices_v2/str${s}_modbus`);
+    const deleteVirtual$ = this.apiDelete(`/devices_v2/str${s}_virtual`);
+
+    return forkJoin([deleteModbus$, deleteVirtual$]).pipe(
+      // 2. Xóa trên Database (Latest Value)
+      switchMap(() => {
+        const deleteLatestValueUrl = `${this.latestValueApiUrl}/delete-string?stringId=${s}`;
+        return this.http.post<LatestValueResponse<null>>(
+          deleteLatestValueUrl,
+          null
+        ).pipe(
+          map(() => ({ success: true })),
+          catchError(err => {
+            // Nếu DB báo không tìm thấy thì coi như đã xóa thành công
+            if (err instanceof HttpErrorResponse && err.status === 400) {
+              return of({ success: true });
+            }
+            console.warn(`[Strings] Failed to delete metadata for str${s}`, err);
+            return of({ success: false, error: err });
+          })
+        );
+      }),
+      // 3. CẬP NHẬT STATE FRONTEND (QUAN TRỌNG)
+      tap(() => {
+        // Xóa khỏi mảng local
+        this.stringsState = this.stringsState.filter(item => item.id !== id);
+        // Cập nhật lại LocalStorage ngay lập tức để F5 không bị hiện lại
+        this.saveStringsToStorage();
+
+        // Bắn event để các component khác biết là dữ liệu đã thay đổi
+        this.stringsLoadedSubject.next(true);
+      }),
+      // 4. SỬA LỖI Ở ĐÂY: KHÔNG gọi loadStringsFromApi() ngay lập tức nữa
+      // Vì OpenMUC cần thời gian để dọn dẹp. Nếu gọi ngay nó sẽ tìm thấy lại string cũ.
+      switchMap(() => {
+        // Chỉ trả về null để kết thúc chuỗi Observable
+        return of(null);
+      })
+    );
+  }
+
+  addString(
+    formData: StringFormData,
+    portConfig: SerialPortConfig
+  ): Observable<any> {
+    return this.getStrings().pipe(
+      switchMap(strings => {
+        this.stringsState = strings;
+
+        const maxIndex = this.stringsState.reduce((max, s) => Math.max(max, s.stringIndex), 0);
+        const newStringIndex = maxIndex + 1;
+
+        const newStringConfig: BatteryString = {
+          ...formData,
+          id: uuidv4(),
+          stringIndex: newStringIndex,
+        };
+
+        return this.checkDeviceExists(newStringIndex).pipe(
+          switchMap(exists => {
+            if (exists) {
+              return throwError(() => new Error(`String ${newStringIndex} already exists on OpenMUC. Please reload the page.`));
+            }
+
+            return this.createStringApi(newStringIndex, formData, portConfig).pipe(
+              tap(() => {
+                this.stringsState.push(newStringConfig);
+                this.saveStringsToStorage();
+                this.stringsLoadedSubject.next(true);
+              }),
+              switchMap(() => {
+                return timer(2000).pipe(
+                  switchMap(() => this.fetchStringDetailFromLatestValue(newStringIndex).pipe(
+                    map(dto => {
+                      if (dto && this.hasStringDetail(dto)) {
+                        return this.mapLatestValueDtoToBatteryString(
+                          dto,
+                          `str${newStringIndex}`,
+                          newStringIndex,
+                          newStringConfig
+                        );
+                      }
+                      return newStringConfig;
+                    }),
+                    catchError(() => of(newStringConfig))
+                  ))
+                );
+              }),
+              tap((enrichedConfig) => {
+                const index = this.stringsState.findIndex(s => s.id === newStringConfig.id);
+                if (index >= 0) {
+                  this.stringsState[index] = enrichedConfig;
+                  this.saveStringsToStorage();
+                }
+              }),
+              map(() => newStringConfig)
+            );
+          })
+        );
+      })
+    );
+  }
+
+  private checkDeviceExists(stringIndex: number): Observable<boolean> {
+    const checkModbus$ = this.http.get(`${this.BASE_URL}/devices_v2/str${stringIndex}_modbus`).pipe(
+      map(() => true),
+      catchError(err => {
+        if (err instanceof HttpErrorResponse && err.status === 404) {
+          return of(false);
+        }
+        return of(false);
+      })
+    );
+
+    const checkVirtual$ = this.http.get(`${this.BASE_URL}/devices_v2/str${stringIndex}_virtual`).pipe(
+      map(() => true),
+      catchError(err => {
+        if (err instanceof HttpErrorResponse && err.status === 404) {
+          return of(false);
+        }
+        return of(false);
+      })
+    );
+
+    return forkJoin([checkModbus$, checkVirtual$]).pipe(
+      map(([modbusExists, virtualExists]) => modbusExists || virtualExists)
+    );
+  }
+
+  updateString(
+    stringId: string,
+    formData: StringFormData,
+    portConfig: SerialPortConfig
+  ): Observable<any> {
+    const stringConfig = this.stringsState.find(s => s.id === stringId);
+    if (!stringConfig) {
+      return throwError(() => new Error('String Config not found'));
+    }
+
+    const s = stringConfig.stringIndex;
+
+    const deleteModbus$ = this.apiDelete(`/devices_v2/str${s}_modbus`);
+    const deleteVirtual$ = this.apiDelete(`/devices_v2/str${s}_virtual`);
+
+    return forkJoin([deleteModbus$, deleteVirtual$]).pipe(
+      switchMap(() => {
+        return this.createStringApi(s, formData, portConfig);
+      }),
+      tap(() => {
+        const updatedConfig = { ...stringConfig, ...formData };
+        this.stringsState = this.stringsState.map(str =>
+          str.id === stringId ? updatedConfig : str
+        );
+        this.saveStringsToStorage();
+      })
+    );
+  }
+
+ private createStringApi(
+   s: number,
+   formData: StringFormData,
+   portConfig: SerialPortConfig
+ ): Observable<any> {
+
+   // New small request DTO (matches your Postman screenshot)
+   const reqBody = {
+     stringIndex: s,
+     cellQty: formData.cellQty,
+
+     // metadata (BE can ignore for now; good for future)
+     stringName: formData.stringName,
+     cellBrand: formData.cellBrand,
+     cellModel: formData.cellModel,
+     ratedCapacity: formData.ratedCapacity,
+     cutoffVoltage: formData.cutoffVoltage,
+     floatVoltage: formData.floatVoltage,
+     serialPortId: formData.serialPortId,
+
+     // port settings for Modbus RTU
+     portConfig: {
+       port: portConfig.port,
+       baudRate: portConfig.baudRate,
+       dataBits: portConfig.dataBits,
+       stopBits: portConfig.stopBits,
+       parity: portConfig.parity
+     }
+   };
+
+   // Your Postman shows: POST http://localhost:8888/rest/string
+   // BASE_URL is '/rest', so path must be '/string'
+   const post =  this.http.post(`${this.BASE_URL}/string`, reqBody)
+   return forkJoin([post]).pipe(
+     switchMap(() => {
+       return timer(1000);
+     }),
+     switchMap(() => {
+       const putCalls = [
+         this.apiPutChannel(`str${s}_string_name`, formData.stringName),
+         this.apiPutChannel(`str${s}_cell_qty`, formData.cellQty),
+         this.apiPutChannel(`str${s}_cell_brand`, formData.cellBrand),
+         this.apiPutChannel(`str${s}_cell_model`, formData.cellModel),
+         this.apiPutChannel(`str${s}_Cnominal`, formData.ratedCapacity),
+         this.apiPutChannel(`str${s}_Vcutoff`, formData.cutoffVoltage),
+         this.apiPutChannel(`str${s}_Vfloat`, formData.floatVoltage),
+         this.apiPutChannel(`str${s}_serial_port_id`, formData.serialPortId)
+       ];
+       return forkJoin(putCalls);
+     })
+   );
+ }
+
+
+
+  // ==============================================================================
+  // 1. PHẦN MODBUS
+  // ==============================================================================
+  private buildModbusPayload(
+    s: number,
+    cells: number,
+    portConfig: SerialPortConfig
+  ): any {
+    const settings = this.buildModbusSettings(portConfig);
+    const channels = [];
+    // const STRING_REGISTER_OFFSET = 1000;
+
+    const offsetFor = (slave: number, stepMs: number = 100): number => {
+      return ((slave - 1)) * stepMs;
+    };
+
+    for (let c = 1; c <= cells; c++) {
+      // if (c == 64 && s == 1) continue;
+      const base = `str${s}_cell${c}`;
+      const sg = `str${s}_sg_slave_${c}`;
+      const off = offsetFor(c);
+
+      // CẤU HÌNH CELL DETAIL (R, V, T)
+      const cellProps = {
+        samplingInterval: 12000, // Chỉ đọc 8s để hiển thị
+        samplingGroup: sg,
+        samplingTimeOffset: off,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        disabled: false
+      };
+
+      // R channel
+      channels.push({
+        id: `${base}_R`,
+        description: `Cell (R) (${base})`,
+        channelAddress: `${c}:HOLDING_REGISTERS:3:INT16`,
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${1000 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
+          }
+        ],
+        ...cellProps
+      });
+
+      // V channel
+      channels.push({
+        id: `${base}_V`,
+        description: `Cell (V) (${base})`,
+        channelAddress: `${c}:HOLDING_REGISTERS:1:INT16`,
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${1300 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
+          }
+        ],
+        ...cellProps
+      });
+
+      // T channel
+      channels.push({
+        id: `${base}_T`,
+        description: `Cell (T) (${base})`,
+        channelAddress: `${c}:HOLDING_REGISTERS:2:INT16`,
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${1600 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`,
+          }
+        ],
+        ...cellProps
+      });
+    }
+
+    if (s == 1) {
+      // Total Current - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_total_I`,
+        description: `String ${s} (I)`,
+        channelAddress: '113:HOLDING_REGISTERS:3:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${3000 + (s - 1) * 10000}:INTEGER`,
+          }
+        ],
+        samplingInterval: 12000,
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        disabled: false,
+      });
+
+      // Ambient Temperature - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_ambient_T`,
+        description: `String ${s} (T ambient)`,
+        channelAddress: '113:HOLDING_REGISTERS:4:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${3100 + (s - 1) * 10000}:INTEGER`,
+          }
+        ],
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        disabled: false,
+      });
+    }
+    else {
+      // Total Current - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_total_I`,
+        description: `String ${s} (I)`,
+        channelAddress: '111:HOLDING_REGISTERS:3:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${3000 + (s - 1) * 10000}:INTEGER`,
+          }
+        ],
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        disabled: false,
+      });
+
+      // Ambient Temperature - CÓ LOG 8s
+      channels.push({
+        id: `str${s}_ambient_T`,
+        description: `String ${s} (T ambient)`,
+        channelAddress: '111:HOLDING_REGISTERS:4:INT16',
+        valueType: 'INTEGER',
+        serverMappings: [
+          {
+            id: 'modbus',
+            serverAddress: `INPUT_REGISTERS:${3100 + (s - 1) * 10000}:INTEGER`,
+          }
+        ],
+        samplingInterval: 12000,
+        loggingInterval: 60000,
+        loggingSettings: "mqttlogger:topic=v1/gateway/telemetry",
+        samplingGroup: `str${s}_sg_pack`,
+        samplingTimeOffset: offsetFor(113),
+        disabled: false,
+      });
+    }
+
+    return {
+      driver: 'modbus',
+      configs: {
+        id: `str${s}_modbus`,
+        description: `String ${s} Modbus RTU`,
+        deviceAddress: portConfig.port,
+        settings: settings,
+        samplingTimeout: 12000,
+        connectRetryInterval: 1000,
+        disabled: false,
+      },
+      channels: channels,
+    };
+  }
+
+  // ==============================================================================
+  // 2. PHẦN VIRTUAL
+  // ==============================================================================
+  private buildVirtualPayload(s: number, cells: number): any {
+    const channels: any[] = [];
+
+    const pushOverview = (id: string, valueType: string, description: string, unit?: string, valueTypeLength?: number) => {
+      const item: any = {
+        id: id,
+        description: description,
+        valueType: valueType,
+        disabled: false,
+      };
+      if (unit) item.unit = unit;
+      if (valueType.toUpperCase() === 'STRING') item.valueTypeLength = valueTypeLength || 64;
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
+      channels.push(item);
+    };
+
+    // Helper cho STATS
+    const pushStats = (id: string, valueType: string, description: string, unit?: string, reg_d?: number) => {
+      const item: any = {
+        id: id,
+        description: description,
+        valueType: valueType,
+        disabled: false,
+      };
+      if (unit) item.unit = unit;
+
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
+
+      if (reg_d !== undefined && reg_d !== null) {
+        const valueTypeStr = valueType === 'DOUBLE' ? 'FLOAT' : 'INTEGER';
+        item.serverMappings = [{
+          id: 'modbus',
+          serverAddress: `INPUT_REGISTERS:${reg_d + (s - 1) * 10000}:${valueTypeStr}`,
+        }];
+      }
+
+      channels.push(item);
+    };
+
+    // Helper đặc biệt cho Cell SOC/SOH (đảm bảo không log)
+    const pushCellSocSoh = (id: string, valueType: string, description: string, unit?: string, serverAddress?: string) => {
+      const item: any = {
+        id: id,
+        description: description,
+        valueType: valueType,
+        disabled: false,
+        // No loggingInterval
+      };
+      if (unit) item.unit = unit;
+      item.loggingInterval = 60000;
+      item.loggingSettings = 'mqttlogger:topic=v1/gateway/telemetry';
+
+      if (serverAddress) {
+        item.serverMappings = [{
+          id: 'modbus',
+          serverAddress: serverAddress,
+        }];
+      }
+
+      channels.push(item);
+    };
+
+    // Overview channels (no logging)
+    pushOverview(`str${s}_cell_qty`, 'INTEGER', 'number of cells');
+    pushOverview(`str${s}_Cnominal`, 'DOUBLE', 'C nominal', 'Ah');
+    pushOverview(`str${s}_string_name`, 'STRING', 'String name', undefined, 64);
+    pushOverview(`str${s}_cell_brand`, 'STRING', 'Cell Brand', undefined, 64);
+    pushOverview(`str${s}_cell_model`, 'STRING', 'Cell Model', undefined, 64);
+    pushOverview(`str${s}_Vcutoff`, 'DOUBLE', 'V cutoff', 'V');
+    pushOverview(`str${s}_Vfloat`, 'DOUBLE', 'V float', 'V');
+    pushOverview(`str${s}_serial_port_id`, 'STRING', 'Serial port id', 'ID', 64);
+
+    // String stats channels
+    const stats: Array<[string, string, string, string | undefined, number | undefined]> = [
+      [`str${s}_string_SOC`, 'DOUBLE', 'Total SoC', '%', 3200],
+      [`str${s}_string_SOH`, 'DOUBLE', 'Total SoH', '%', 3300],
+      [`str${s}_string_vol`, 'DOUBLE', 'String Voltage', 'V', 3400],
+
+      [`str${s}_max_voltage_cell_id`, 'INTEGER', 'Max V Cell ID', undefined, 3500],
+      [`str${s}_min_voltage_cell_id`, 'INTEGER', 'Min V Cell ID', undefined, 3600],
+      [`str${s}_max_temp_cell_id`, 'INTEGER', 'Max T Cell ID', undefined, 3700],
+      [`str${s}_min_temp_cell_id`, 'INTEGER', 'Min T Cell ID', undefined, 3800],
+      [`str${s}_max_rst_cell_id`, 'INTEGER', 'Max R Cell ID', undefined, 3900],
+      [`str${s}_min_rst_cell_id`, 'INTEGER', 'Min R Cell ID', undefined, 4000],
+      [`str${s}_average_vol`, 'DOUBLE', 'Average Cell Voltage', 'V', 4100],
+      [`str${s}_average_temp`, 'DOUBLE', 'Average Cell Temperature', 'C', 4200],
+      [`str${s}_average_rst`, 'DOUBLE', 'Average Cell R', 'miliOhm', 4300],
+      [`str${s}_max_voltage_value`, 'DOUBLE', 'Max Cell Voltage', 'V', 4400],
+      [`str${s}_min_voltage_value`, 'DOUBLE', 'Min Cell Voltage', 'V', 4500],
+      [`str${s}_max_temp_value`, 'DOUBLE', 'Max Cell Temperature', 'C', 4600],
+      [`str${s}_min_temp_value`, 'DOUBLE', 'Min Cell Temperature', 'C', 4700],
+      [`str${s}_max_rst_value`, 'DOUBLE', 'Max Cell Internal Resistance', 'miliOhm', 4800],
+      [`str${s}_min_rst_value`, 'DOUBLE', 'Min Cell Internal Resistance', 'miliOhm', 4900],
+    ];
+
+    for (const [id, valueType, description, unit, reg_d] of stats) {
+      pushStats(id, valueType, description, unit, reg_d);
+    }
+
+    // Per-cell SOC/SOH channels (No log)
+    for (let c = 1; c <= cells; c++) {
+      const base = `str${s}_cell${c}`;
+      pushCellSocSoh(
+        `${base}_SOC`,
+        'DOUBLE',
+        'State of Charge',
+        '%',
+        `INPUT_REGISTERS:${1900 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`
+      );
+      pushCellSocSoh(
+        `${base}_SOH`,
+        'DOUBLE',
+        'State of Health',
+        '%',
+        `INPUT_REGISTERS:${2200 + (s - 1) * 10000 + (c - 1) * 2}:INTEGER`
+      );
+    }
+
+    return {
+      driver: 'virtual',
+      configs: {
+        id: `str${s}_virtual`,
+        description: `String ${s} calculated channels`,
+        disabled: false,
+      },
+      channels: channels,
+    };
+  }
+
+  private buildModbusSettings(portConfig: SerialPortConfig): string {
+    const stopBits = portConfig.stopBits.toString().replace('.', '_');
+    return `RTU:SERIAL_ENCODING_RTU:${portConfig.baudRate}:DATABITS_${portConfig.dataBits}:${portConfig.parity}:STOPBITS_${stopBits}:ECHO_FALSE:FLOWCONTROL_NONE:FLOWCONTROL_NONE`;
+  }
+
+  private apiPost(path: string, payload: any): Observable<any> {
+    return this.http.post(`${this.BASE_URL}${path}`, payload).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private apiDelete(path: string): Observable<any> {
+    return this.http.delete(`${this.BASE_URL}${path}`).pipe(
+      catchError(err => (err.status === 404 ? of(null) : this.handleError(err)))
+    );
+  }
+
+  private apiPutChannel(channelId: string, value: string | number | boolean): Observable<any> {
+    const path = `/channels/${channelId}`;
+    const payload = {
+      record: {
+        flag: 'VALID',
+        value: value,
+      },
+    };
+    return this.http.put(`${this.BASE_URL}${path}`, payload).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    let errorMessage = 'Unknown error';
+    if (error.error instanceof ErrorEvent) {
+      errorMessage = `Client Error: ${error.error.message}`;
+    } else {
+      errorMessage = `Server Error (Code: ${error.status}): ${error.message}`;
+      if (error.error && typeof error.error === 'string') {
+        errorMessage += ` - ${error.error}`;
+      } else if (error.error && error.error.detail) {
+        errorMessage += ` - ${error.error.detail}`;
+      }
+    }
+    console.error(errorMessage);
+    return throwError(() => new Error(errorMessage));
+  }
+}

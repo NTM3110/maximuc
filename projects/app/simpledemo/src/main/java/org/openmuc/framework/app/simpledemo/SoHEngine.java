@@ -30,6 +30,7 @@ public class SoHEngine {
     	return new Status(isStart, isEnd, usedQ / C_NOMINAL_AS);
     }
     public static double updatedSoHRegular(double resistance) {
+		if(resistance == 0 ) return 1;
     	return ((R_EOL- resistance) / (R_EOL-R_NEW));
     }
 }

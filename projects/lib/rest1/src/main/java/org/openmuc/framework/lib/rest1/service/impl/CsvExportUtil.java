@@ -1,0 +1,143 @@
+package org.openmuc.framework.lib.rest1.service.impl;
+
+import org.postgresql.PGConnection;
+import org.postgresql.copy.CopyManager;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
+import java.io.BufferedReader;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
+import java.io.ByteArrayOutputStream;
+import java.time.OffsetDateTime;
+
+public final class CsvExportUtil {
+
+    private CsvExportUtil() {}
+
+    public static void exportLatestValuesCsv(HttpServletResponse resp, DataSource dataSource, String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            fileName = "latest_values.csv";
+        } else if (!fileName.toLowerCase().endsWith(".csv")) {
+            fileName = fileName + ".csv";
+        }
+
+        resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        resp.setContentType("text/csv; charset=UTF-8");
+        resp.setHeader("Content-Disposition", "attachment; filename=\"" + sanitizeFileName(fileName) + "\"");
+        // Optional: prevent caching
+        resp.setHeader("Cache-Control", "no-store");
+
+        try (Connection conn = dataSource.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(
+                "SELECT channelid, value_type, value_double, value_string, value_boolean, updated_at " +
+                "FROM latest_values ORDER BY channelid");
+            OutputStream out = resp.getOutputStream()) {
+
+            out.write("channelid,value_type,value_double,value_string,value_boolean,updated_at\n"
+                    .getBytes(StandardCharsets.UTF_8));
+
+            while (rs.next()) {
+                out.write((
+                    rs.getString(1) + "," +
+                    rs.getString(2) + "," +
+                    rs.getObject(3) + "," +
+                    rs.getString(4) + "," +
+                    rs.getObject(5) + "," +
+                    rs.getTimestamp(6) + "\n"
+                ).getBytes(StandardCharsets.UTF_8));
+            }
+
+            out.flush();
+        }catch (Exception e) {
+            // If we already started writing bytes, reset may fail; still try to return a clean error.
+            safeWriteError(resp, e);
+            System.out.println("Error at export latest value csv: " + e.getMessage());
+        }
+    }
+
+    public static void importCsv(BufferedReader reader, DataSource dataSource) throws Exception {
+
+        String header = reader.readLine(); // skip header
+        if (header == null) return;
+
+        String sql =
+                "INSERT INTO latest_values (" +
+                        " channelid," +
+                        " value_type," +
+                        " value_double," +
+                        " value_string," +
+                        " value_boolean," +
+                        " updated_at" +
+                        ") VALUES (?, ?, ?, ?, ?, ?) " +
+                        "ON CONFLICT (channelid) DO UPDATE SET " +
+                        " value_type = EXCLUDED.value_type," +
+                        " value_double = EXCLUDED.value_double," +
+                        " value_string = EXCLUDED.value_string," +
+                        " value_boolean = EXCLUDED.value_boolean," +
+                        " updated_at = EXCLUDED.updated_at";
+
+
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            conn.setAutoCommit(false);
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] c = line.split(",", -1); // keep empty columns
+
+                ps.setString(1, c[0]);              // channelid
+                ps.setString(2, c[1]);              // value_type
+
+                // value_double
+                if (c[2].isEmpty()) ps.setNull(3, Types.DOUBLE);
+                else ps.setDouble(3, Double.parseDouble(c[2]));
+
+                // value_string
+                if (c[3].isEmpty()) ps.setNull(4, Types.VARCHAR);
+                else ps.setString(4, c[3]);
+
+                // value_boolean
+                if (c[4].isEmpty()) ps.setNull(5, Types.BOOLEAN);
+                else ps.setBoolean(5, Boolean.parseBoolean(c[4]));
+
+                // updated_at
+                ps.setObject(6, OffsetDateTime.parse(c[5].replace(" ", "T")));
+
+                ps.addBatch();
+            }
+
+            ps.executeBatch();
+            conn.commit();
+        }
+    }
+
+
+    private static String sanitizeFileName(String name) {
+        // keep it simple: remove path separators and quotes
+        return name.replace("\\", "_")
+                .replace("/", "_")
+                .replace("\"", "_")
+                .replace("\n", "_")
+                .replace("\r", "_");
+    }
+
+    private static void safeWriteError(HttpServletResponse resp, Exception e) {
+        try {
+            if (!resp.isCommitted()) {
+                resp.reset();
+                resp.setStatus(500);
+                resp.setCharacterEncoding(StandardCharsets.UTF_8.name());
+                resp.setContentType("text/plain; charset=UTF-8");
+                resp.getWriter().write("Export failed: " + e.getMessage());
+            }
+        } catch (Exception ignored) {
+            // nothing else we can do
+        }
+    }
+}
+

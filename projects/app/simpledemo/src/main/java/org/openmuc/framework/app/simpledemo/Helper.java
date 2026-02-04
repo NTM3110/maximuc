@@ -38,7 +38,7 @@ public class Helper {
 				}						
 			}
 			
-			logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOC[i], validCellCount);
+			// logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOC[i], validCellCount);
 			str_SOC[i] = str_SOC[i] / validCellCount;
 			validCellCount = 0;
 		}
@@ -57,7 +57,7 @@ public class Helper {
 			        validCellCount++;
 				}						
 			}
-			logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOH[i], validCellCount);
+			// logger.info("String {} -----------> Total :{}, Cell count: {}", i, str_SOH[i], validCellCount);
 			str_SOH[i] = str_SOH[i] / validCellCount;
 			validCellCount = 0;
 		}
@@ -80,12 +80,31 @@ public class Helper {
 		int minVoltageIndex = -1;
 		double minVoltage = 100.0;
 		for(int i = 0; i < cellNumbers[stringIndex]; i++) {
+			if(powerCells[stringIndex][i].getVoltage() <= 0)
+				continue;
 			if(powerCells[stringIndex][i].getVoltage() < minVoltage) {
 				minVoltageIndex = i+1;
 				minVoltage = powerCells[stringIndex][i].getVoltage();
 			}
 		}
 		return new Result(minVoltageIndex, minVoltage);
+	}
+	public static double getAverageVoltageBattery(int stringIndex, int[] cellNumbers, PowerCell[][] powerCells) {
+		double averageVoltage = 0.0;
+		int validCellCount = 0;
+		for(int i = 0; i < cellNumbers[stringIndex]; i++) {
+			if (powerCells[stringIndex][i].getVoltage() <= 0) {
+				continue;
+			}
+			averageVoltage += powerCells[stringIndex][i].getVoltage();
+			validCellCount++;
+		}
+		averageVoltage /= validCellCount;
+		if(validCellCount == 0) {
+			// logger.warn("No valid cell count in getAverageResis")
+			return 0;
+		}
+		return averageVoltage;
 	}
 	
 	public static Result getMaxResistanceBattery(int stringIndex, int[] cellNumbers, PowerCell[][] powerCells) {
@@ -111,6 +130,10 @@ public class Helper {
 			validCellCount++;
 		}
 		averageResistance /= validCellCount;
+		if(validCellCount == 0) {
+			// logger.warn("No valid cell count in getAverageResis")
+			return 0;
+		}
 		return averageResistance;
 	}
 	

@@ -71,6 +71,10 @@ public class DbConnector {
         getConnectionToDb();
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
     protected String getUrlFromProperties() {
         PropertyHandler propertyHandler = PropertyHandlerProvider.getInstance().getPropertyHandler();
         return propertyHandler.getString(Settings.URL);

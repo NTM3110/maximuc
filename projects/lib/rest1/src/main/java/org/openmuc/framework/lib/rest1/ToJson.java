@@ -25,6 +25,7 @@ import static org.openmuc.framework.lib.rest1.Const.VALUE_STRING;
 
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Map;
 
 import org.openmuc.framework.config.ChannelConfig;
 import org.openmuc.framework.config.ChannelScanInfo;
@@ -58,6 +59,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
+import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import com.google.gson.JsonPrimitive;
+
+import org.openmuc.framework.lib.rest1.domain.dto.StringDetailDTO;
+
 public class ToJson {
 
     private final Gson gson;
@@ -65,9 +73,18 @@ public class ToJson {
 
     public ToJson() {
 
-        gson = new GsonBuilder().serializeSpecialFloatingPointValues()
-                .registerTypeAdapter(byte[].class, new ByteArraySerializer())
-                .create();
+        gson = new GsonBuilder()
+        .serializeSpecialFloatingPointValues()
+        .registerTypeAdapter(byte[].class, new ByteArraySerializer())
+        .registerTypeAdapter(LocalDateTime.class, (JsonSerializer<LocalDateTime>) (src, typeOfSrc, context) -> {
+        return src == null ? JsonNull.INSTANCE : new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        })
+        .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) -> {
+        return src == null ? JsonNull.INSTANCE : new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE));
+        })
+        .create();
+
+
         jsonObject = new JsonObject();
     }
 
@@ -86,8 +103,30 @@ public class ToJson {
         return gson.toJson(jsonObject);
     }
 
-    public void addRecord(Record record, ValueType valueType) throws ClassCastException {
+    public void addMap(String propertyName, Map<String, String> map) {
+        JsonObject jo = new JsonObject();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            jo.addProperty(entry.getKey(), entry.getValue());
+        }
+        jsonObject.add(propertyName, jo);
+    }
 
+    public void addObject(Object object) {
+        JsonElement jo = gson.toJsonTree(object);
+        jsonObject.add("data", jo);
+    }
+
+    public void addObjectList(String propertyName, List<?> objectList) {
+        JsonArray jsa = new JsonArray();
+        if (objectList != null) {
+            for (Object object : objectList) {
+                jsa.add(gson.toJsonTree(object));
+            }
+        }
+        jsonObject.add(propertyName, jsa);
+    }
+
+    public void addRecord(Record record, ValueType valueType) throws ClassCastException {
         jsonObject.add(Const.RECORD, getRecordAsJsonElement(record, valueType));
     }
 
@@ -307,6 +346,18 @@ public class ToJson {
         return jso;
     }
 
+    private JsonObject stringDetailToJson(StringDetailDTO stringDetailDTO) {
+        JsonObject data = new JsonObject();
+        data.addProperty("stringName",stringDetailDTO.getStringName());
+        data.addProperty("cellBrand",stringDetailDTO.getCellBrand());
+        data.addProperty("cellModel",stringDetailDTO.getCellModel());
+        data.addProperty("cellQty",stringDetailDTO.getCellQty());
+        data.addProperty("cnominal",stringDetailDTO.getCNominal());
+        data.addProperty("vcutoff",stringDetailDTO.getVCutoff());
+        data.addProperty("vfloat", stringDetailDTO.getVFloat());
+        data.addProperty("serialPortId", stringDetailDTO.getSerialPortId());
+        return data;
+    }
     private JsonElement getRecordAsJsonElement(Record record, ValueType valueType) throws ClassCastException {
 
         return gson.toJsonTree(getRestRecord(record, valueType), RestRecord.class);

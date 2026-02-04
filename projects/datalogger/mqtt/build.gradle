@@ -1,6 +1,7 @@
 def projectName = "OpenMUC Data Logger - MQTT"
 def projectDescription = "MQTT data logger for the OpenMUC framework."
  
+def hivemqVersion = '1.3.3'
 configurations.create('embed')
 
 

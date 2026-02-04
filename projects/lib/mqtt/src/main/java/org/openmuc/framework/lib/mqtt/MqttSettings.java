@@ -26,6 +26,7 @@ public class MqttSettings {
     private final int port;
     private final String username;
     private final String password;
+    private final String clientId;
     private final boolean ssl;
     private final long maxBufferSize;
     private final long maxFileSize;
@@ -43,7 +44,8 @@ public class MqttSettings {
     private final boolean webSocket;
     private final boolean retainedMessages;
 
-    public MqttSettings(String host, int port, String username, String password, boolean ssl, long maxBufferSize,
+    public MqttSettings(String host, int port, String username, String password, String clientId, boolean ssl,
+            long maxBufferSize,
             long maxFileSize, int maxFileCount, int connectionRetryInterval, int connectionAliveInterval,
             String persistenceDirectory, String lastWillTopic, byte[] lastWillPayload, boolean lastWillAlways,
             String firstWillTopic, byte[] firstWillPayload, int recoveryChunkSize, int recoveryDelay, boolean webSocket,
@@ -52,6 +54,7 @@ public class MqttSettings {
         this.port = port;
         this.username = username;
         this.password = password;
+        this.clientId = clientId;
         this.ssl = ssl;
         this.webSocket = webSocket;
         this.maxBufferSize = maxBufferSize;
@@ -84,6 +87,10 @@ public class MqttSettings {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getClientId() {
+        return clientId;
     }
 
     public boolean isSsl() {

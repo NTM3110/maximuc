@@ -48,7 +48,7 @@ public class ASCIIOrganiser {
         try {
             Path dir = Paths.get(ASCII_DIR);
             if (!Files.isDirectory(dir)) {
-                logger.info("[AsciiRestore] ASCII directory does not exist: {}", dir);
+//                logger.info("[AsciiRestore] ASCII directory does not exist: {}", dir);
                 return;
             }
 

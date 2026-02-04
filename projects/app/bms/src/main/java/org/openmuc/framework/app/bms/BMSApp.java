@@ -1,3 +1,4 @@
+
 package org.openmuc.framework.app.bms;
 
 import org.openmuc.framework.data.Record;
